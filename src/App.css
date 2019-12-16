@@ -1,0 +1,45 @@
+a{
+  text-decoration: none !important;
+}
+
+.contentContainer{
+  padding: 20px;
+}
+ol.breadcrumb{
+  display: flex !important;
+  flex-direction: row !important;
+  list-style-type: none;
+  padding-left: 0;
+}
+li.breadcrumb-item{
+  padding-right: 10px;
+}
+li.breadcrumb-item::after{
+  content: '  >';
+  color: #cdcdcd;
+}
+li.breadcrumb-item:last-child::after{
+  content: ''
+}
+
+.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignLeft{
+  max-width: 200px !important;
+}
+.MuiExpansionPanelSummary-content.Mui-expanded{
+  margin:0;
+}
+.MuiCollapse-entered {
+  margin-bottom: 1em;
+}
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
+.MuiPopover-paper {
+  margin-top: 1em;
+}
+
+li{
+  font-weight: 300;
+}
