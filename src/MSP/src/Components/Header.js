@@ -143,10 +143,10 @@ export default function Header() {
           </Grid>
      
           <Grid item xs={2}>
-          <Button type="button" className={classes.button} onClick={handleOpen}>
+          {/* <Button type="button" className={classes.button} onClick={handleOpen}>
           <AccountIcon className={classes.accountIcon}/>
          {user==='' ? 'Login': user}
-        </Button>
+        </Button> */}
 
           <Modal
         aria-labelledby="transition-modal-title"

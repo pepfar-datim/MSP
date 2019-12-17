@@ -676,7 +676,7 @@ const handleChange = (event, newPanel) => {
       <Grid item xs={12} md={5} justifycontent="flex-end" >
 
        {/* search bar */}
-      <form 
+      {/* <form 
        className={classes.searchForm}
        onSubmit={e => {
           e.preventDefault();
@@ -727,7 +727,7 @@ const handleChange = (event, newPanel) => {
       </TextField>
        
      
-      </form>
+      </form> */}
       
       </Grid>
 </Grid>
@@ -764,7 +764,7 @@ const handleChange = (event, newPanel) => {
 {/* source filter */}
 
 
-<Grid item xs={12} className={classes.filter} >
+{/* <Grid item xs={12} className={classes.filter} >
 <FormControl className={classes.formControl}>
 
 
@@ -789,7 +789,7 @@ const handleChange = (event, newPanel) => {
     <option value={'MOH'} disabled>MOH</option>
   </Select>
 </FormControl>
-</Grid>
+</Grid> */}
 
 
 {/* fiscal year filter */}
@@ -798,7 +798,7 @@ const handleChange = (event, newPanel) => {
   <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
   <Select
     native
-    value={values.fiscal}
+    // value={values.fiscal}
     onChange={handleFilterChange}
     className={classes.select}
     inputProps={{
@@ -810,9 +810,9 @@ const handleChange = (event, newPanel) => {
     }}
    
   >
-    <option value={""} />
+    {/* <option value={""} /> */}
     <option value={'2020'}>2020</option>
-    <option value={'2019'}>2019</option>
+    <option value={'2019'} selected="selected">2019</option>
     <option value={'2018'}>2018</option>
   </Select>
 </FormControl>
@@ -821,7 +821,7 @@ const handleChange = (event, newPanel) => {
 
 
 {/* type filter */}
-<Grid item xs={12} className={classes.filter}  >
+{/* <Grid item xs={12} className={classes.filter}  >
 <FormControl className={classes.formControl}>
   <InputLabel htmlFor="type">Type</InputLabel>
   <Select
@@ -844,13 +844,14 @@ const handleChange = (event, newPanel) => {
     <option value={'SIMS'}>SIMS</option>
   </Select>
 </FormControl>
-</Grid>
+</Grid> */}
 
 
 
 
 {/* data set filter */}
-<Grid item xs={12} className={advanced ? classes.filter : classes.hide}>
+{/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
+<Grid item xs={12} className={classes.filter}>
 <FormControl className={classes.formControl}>
   <InputLabel htmlFor="dataSet">Data Set</InputLabel>
   <Select
@@ -867,7 +868,7 @@ const handleChange = (event, newPanel) => {
     }}
   
   >
-    <option value={""} />
+    {/* <option value={""} /> */}
     <option value={'facility'}>Facility Based Code List</option>
     <option value={'community'}>Community Based Code List</option>
   </Select>
@@ -877,7 +878,7 @@ const handleChange = (event, newPanel) => {
 
 
 {/* frequency filter */}
-<Grid item xs={12} className={advanced ? classes.filter : classes.hide} >
+{/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} >
 <FormControl className={classes.formControl}>
   <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
   <Select
@@ -900,15 +901,15 @@ const handleChange = (event, newPanel) => {
     <option value={'annual'}>Annual</option>
   </Select>
 </FormControl>
-</Grid>
+</Grid> */}
 
 
 </form>
 
 {/* filter functions */}
-<Button onClick={displayAdvanced} className={classes.toggleFilters}>
+{/* <Button onClick={displayAdvanced} className={classes.toggleFilters}>
       {advanced ? 'Less Filters' : 'More Filters'}
-</Button>
+</Button> */}
 <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
        Clear Filters
 </Button>
@@ -930,7 +931,7 @@ const handleChange = (event, newPanel) => {
 <div className={classes.tabDashboard}>
   <div>
 <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton">
-Download selected data elements
+{/* Download selected data elements */} Download Code List
 </Button>
 <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 Compare selected data elements

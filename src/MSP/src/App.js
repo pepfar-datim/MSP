@@ -130,7 +130,7 @@ export default function App() {
             edge="start"
             className={clsx(classes.menuButton, open && classes.hide)}
           >
-            <MenuIcon />
+            {/* <MenuIcon /> */}
         </IconButton>
          
         <Header/>

@@ -665,7 +665,7 @@ return (
 <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
 <Select
 native
-value={values.fiscal}
+// value={values.fiscal}
 onChange={handleFilterChange}
 className={classes.select}
 inputProps={{
@@ -677,9 +677,9 @@ inputProps={{
 }}
 
 >
-<option value={""} />
+{/* <option value={""} /> */}
 <option value={'2020'}>2020</option>
-<option value={'2019'}>2019</option>
+{/* <option value={'2019'}>2019</option> */}
 <option value={'2018'}>2018</option>
 </Select>
 </FormControl>
@@ -715,7 +715,7 @@ inputProps={{
 
 
 {/* frequency filter */}
-<Grid item xs={12} className={classes.filter} >
+{/* <Grid item xs={12} className={classes.filter} >
 <FormControl className={classes.formControl}>
 <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
 <Select
@@ -737,7 +737,7 @@ inputProps={{
 <option value={'Annually'}>Annually</option>
 </Select>
 </FormControl>
-</Grid>
+</Grid> */}
 
 </form>
 
