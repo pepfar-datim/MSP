@@ -1,4 +1,4 @@
-import React, {useEffect }  from 'react';
+import React, {useState,useEffect }  from 'react';
 
 import * as headings from '../Styles/Text';
 
@@ -436,6 +436,36 @@ const useStyles = makeStyles(theme => ({
 
 export default function Codelist() {
 
+  /////// added OCL query
+  const [data, setData] = useState([] );
+  const [query, setQuery] = useState([] );
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    
+    console.log("useEffect is called ");
+    async function fetchData() {
+      const apiUrl = 'https://api.staging.openconceptlab.org/orgs/PEPFAR/sources/MER/concepts/?conceptClass=Indicator&q=HTS';
+      fetch(apiUrl)
+      .then(res => res.json())
+      .then(json => {        
+        console.log("json from api call in OCL ");
+        console.log(json);
+        setData(json);        
+      })
+      .catch(err => {
+        setError(err)
+      })
+     
+    }
+    fetchData();
+    
+  }, [query]);
+
+
+  console.log( data);
+
+  ///////////
 
 
   const classes = useStyles();
@@ -661,6 +691,18 @@ const handleChange = (event, newPanel) => {
     
     return (
       <div>
+
+
+      <div>
+        { 
+          data &&
+          data.length > 0 &&
+          data.map(dataTemp => 
+        <div key={dataTemp.id}>id:{dataTemp.external_id} -  name: {dataTemp.display_name}</div>)
+        } 
+      </div>
+
+
 
 <div className={classes.heroContainer}>
 <div className={classes.container}>
