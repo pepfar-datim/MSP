@@ -27,7 +27,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     flexDirection: 'column',
     backgroundSize: 'cover',
-    backgroundImage: 'url(https://www.icfcreative.com/2019/datim/images/GettyImages-904833344.png)'
+    backgroundImage: 'url(./assets/GettyImages_homepage.png)' 
+    
   },
   heading:{
     width: '100%',
@@ -155,7 +156,10 @@ const useStyles = makeStyles(theme => ({
   },
   cardGrid:{
     padding: '0px 20px'
-  }
+  },
+  readMoreLink:{
+    color: '#E38A3E'
+  },
  
 }));
 
@@ -178,12 +182,11 @@ export default function Welcome(){
    
       <Grid item xs={12} md={7}>
 
-        <headings.H1 className={classes.heading}>Welcome to OCL Metadata Browser {user === '' ? '' : ", "+ user}</headings.H1>
+        <headings.H1 className={classes.heading}>Welcome to the Metadata Sharing Platform {user === '' ? '' : ", "+ user}</headings.H1>
         <div className={classes.divider}/>
         <p className={classes.headPara}>
-        Nisi orci lacinia voluptate molestias etiam massa odit iste! Temporibus quidem eveniet, 
-        turpis veritatis quia neque? Consectetuer lorem duis imperdiet? Class aliquip, lacus lectus, 
-        montes voluptatibus, sociosqu exercitationem! Ducimus? Ligula? Facilis.
+        The Metadata Sharing Platform (MSP) is an open-source tool offered by the U.S. President's Emergency Plan for AIDS Relief (PEPFAR) for users within the Data Exchange and Interoperability community with access to the MER Indicator metadata across multiple sources.
+        <NavLink to="/about"> <span className={classes.readMoreLink}>Read More ...</span></NavLink>
         </p>
 
         <Grid container>

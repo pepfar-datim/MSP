@@ -8,6 +8,7 @@ const routes = {
   '/inputs': 'Inputs',
   '/codelist': 'Codelist',
   '/indicator': 'Indicator',
+  '/about': 'About',
   '/codelist/indicator': 'Indicator'
 };
 

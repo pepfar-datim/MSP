@@ -8,6 +8,7 @@ import Basic from './AppShell/Basic';
 import Codelist from './AppShell/Codelist';
 import Sidebar from './Components/Sidebar';
 import Inputs from './AppShell/Inputs';
+import About from './AppShell/About';
 import Indicator from './AppShell/Indicator';
 import {StateProvider} from './ContextSetup';
 
@@ -175,6 +176,7 @@ export default function App() {
               <Route path="/inputs" component={Inputs} />
               <Route path="/indicator" component={Indicator} />
               <Route path="/codelist/indicator" component={Indicator} />
+              <Route path="/about" component={About} />
               <Route exact path="/2019/datim/v3/index.html" component={Welcome} />
             </Switch>
             </main>

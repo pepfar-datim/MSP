@@ -1,4 +1,5 @@
-import React, {useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
+import { Remarkable } from 'remarkable';
 import * as headings from '../Styles/Text';
 import styled from 'styled-components';
 import * as color_palette from '../Styles/Colors';
@@ -33,10 +34,6 @@ import Button from '@material-ui/core/Button';
 
 
 import {WhatIsNew} from './WhatIsNew';
-
-
-
-
 
 //tab panel function
 function TabPanel(props) {
@@ -411,12 +408,11 @@ const useStyles = makeStyles(theme => ({
 export default function Indicator() {
 
     const classes = useStyles();
-
-   
+    
     //initial filter state
     const [values, setValues] = React.useState({
       frequency: "",
-      fiscal: "", 
+      fiscal: "2019", 
       type: ""
     });
 
@@ -437,28 +433,178 @@ export default function Indicator() {
       setFormularPanel(newFormularPanel);
     };
 
-   
+    const sortJSON = function (data, key, direction) {    
+      return data.sort(function(a, b) {       
+          var x = a[key]; var y = b[key];         
+          if (direction === 'asc' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+          if (direction === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+          return true;
+      });    
+    }
 
 
-    
+
+    const getIndicatorGroup = function (indicatorData) { 
+      console.log("getIndicatorGroup is called." + values.fiscal + " freq:" + values.frequency);
+      var filteredByYearData = indicatorData.filter(function (data) {
+        if (values.frequency !== "" && values.periodYear !== "") {
+          console.log("all not all case 1:" + data.periodYear + " " + data.frequency + " eq? " + (data.frequency === values.frequency) );
+          return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
+        }else if (values.frequency !== "") {
+          console.log("all not all case 2");
+          return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
+        }else if (values.periodYear !== "") {
+          console.log("all not all case 3");
+          return data.periodYear === values.fiscal;
+        }
+        //return true;
+      });
+
+      console.log(filteredByYearData);
+      const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
+      distinctGroup.sort();           
+      return distinctGroup;
+    }
+   const createIndicatorListForUI = function(indicatorsDataOCL) {
+     var indicatorList = indicatorsDataOCL.map(function (indicator) {
+        console.log(indicator.id + " "  + indicator.display_name);
+        var indicatorItem = {};
+        
+        indicatorItem.id = indicator.id;
+        indicatorItem.name = indicator.display_name ? indicator.display_name : "";
+        indicatorItem.description = (indicator.descriptions && indicator.descriptions.length > 0) ? indicator.descriptions[0].description : "";        
+        indicatorItem.created_on = indicator.created_on ? indicator.created_on : "";
+        indicatorItem.updated_on = indicator.updated_on ? indicator.updated_on : "";        
+        indicatorItem.group = indicator.extras && indicator.extras["Indicator Group"] ? indicator.extras["Indicator Group"]: "";
+        indicatorItem.level = indicator.extras && indicator.extras["Reporting level"] ? indicator.extras["Reporting level"]: "";
+        indicatorItem.frequency = indicator.extras && indicator.extras["Reporting frequency"] ? indicator.extras["Reporting frequency"]: "";
+        indicatorItem.period = indicator.extras && indicator.extras["Period"] ? indicator.extras["Period"]: "";
+        indicatorItem.periodYear = (indicatorItem.period !== "") ? "20" + indicatorItem.period.trim().substring(2,4) : "";
+        indicatorItem.numerator = indicator.extras && indicator.extras["Numerator"] ? indicator.extras["Numerator"]: "";   
+        indicatorItem.numerator_description = indicator.extras && indicator.extras["Numerator Description"] ? indicator.extras["Numerator Description"]: "";               
+        indicatorItem.numerator_disaggregation_groups = indicator.extras && indicator.extras["Numerator Disaggregation Groups"] ? indicator.extras["Numerator Disaggregation Groups"]: "";       
+        indicatorItem.disaggregate_descriptions_and_definitions = indicator.extras && indicator.extras["Disaggregate descriptions and definitions"] ? indicator.extras["Disaggregate descriptions and definitions"]: "";           
+        indicatorItem.denominator = indicator.extras && indicator.extras["Denominator"] ? indicator.extras["Denominator"]: "";
+        indicatorItem.denominator_disaggregation_groups = indicator.extras && indicator.extras["Denominator Disaggregation Groups"] ? indicator.extras["Denominator Disaggregation Groups"]: "";    
+
+        indicatorItem.changeFromPreviousVersion = indicator.extras && indicator.extras["Change from previous version"] ? indicator.extras["Change from previous version"] : "";
+        indicatorItem.how_to_use = indicator.extras && indicator.extras["How to use"] ? indicator.extras["How to use"]: "";
+        indicatorItem.how_to_collect = indicator.extras && indicator.extras["How to collect"] ? indicator.extras["How to collect"]: "";
+        indicatorItem.how_to_review = indicator.extras && indicator.extras["How to review for data quality"] ? indicator.extras["How to review for data quality"] : "";
+        indicatorItem.how_to_calculate_annual_total = indicator.extras && indicator.extras["How to calculate annual total"] ? indicator.extras["How to calculate annual total"] : "";
+        indicatorItem.PEPFAR_support_definition = (indicator.extras && indicator.extras["PEPFAR-support definition"] ) ? indicator.extras["PEPFAR-support definition"] : "";
+        indicatorItem.guiding_narrative_questions = indicator.extras && indicator.extras["Guiding narrative questions"] ? indicator.extras["Guiding narrative questions"]: "";
+        indicatorItem.guidance_version = indicator.extras && indicator.extras["Guidance Version"] ? indicator.extras["Guidance Version"]: "";
+        console.log(indicatorItem);        
+        return indicatorItem;
+      });      
+     return indicatorList;
+   }
+
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
 
 
     //set states for different indicators
     const [allIndicators, setAllIndicators] = React.useState([]);
-    const [preventionIndicator, setPreventionIndicator] = React.useState([]);
-    const [testingIndicator, setTestingIndicator] = React.useState([]);
-    const [treatmentIndicator, setTreatmentIndicator] = React.useState([]);
-    const [viralIndicator, setViralIndicator] = React.useState([]);
-    const [healthSystemIndicator, setHealthSystemIndicator] = React.useState([]);
-    const [hostCountryIndicator, setHostCountryIndicator] = React.useState([]);
-
-
+    
 
     //before page load
-    useEffect(() => {
+    console.log("before page load");
 
+    var queryIndicators = "https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\"";   
+    var queryDataElements = "https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Data Elements\"";   
+    const [indicatorsData, setIndicatorsData] = useState([] );
+    const [dataElementsData, setDataElementsData] = useState([] ); // not implemented yet
+    const [error, setError] = useState(null)
+    const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
+    const [indicatorGroups, setIndicatorGroups] = useState([] );
+
+
+    
+    const loadDataAll = async ()=> {
+      console.log("queryIndicators :"+queryIndicators);
+      try {
+        const response = await fetch(queryIndicators);
+
+        let [indicatorsFromOCL, dataElementsFromOCL] = await Promise.all([
+          fetch(queryIndicators),
+          fetch(queryDataElements)
+        ]);
+    
+        
+        if (!response.ok) {
+          console.log(response);
+          throw new Error(
+            `Error when retrieve data for indicator page ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonIndicatorFromOCL = await indicatorsFromOCL.json();
+        const jsonDataElementsFromOCL = await dataElementsFromOCL.json();
+
+        if (!jsonIndicatorFromOCL.length || jsonIndicatorFromOCL.length === 0) {
+          console.log("jsonIndicatorFromOCL is empty");
+          throw new Error(
+            `Warning indicators data is emtpy from OCL `
+          );
+        }
+        setIndicatorsData(jsonIndicatorFromOCL); 
+        setDataElementsData(jsonDataElementsFromOCL); // not implemented yet
+        console.log(jsonIndicatorFromOCL);
+        var d = createIndicatorListForUI(jsonIndicatorFromOCL);
+        var sortedData = sortJSON(d, 'name', 'asc');
+        setIndicatorsListForUI (sortedData);
+        var indGroupTemp = getIndicatorGroup(d);        
+        setIndicatorGroups(indGroupTemp);
+      }catch (e){
+        console.log("error:" + e.message);
+        setError(e.message);
+      }
+    }
+
+    const loadIndicatorData = async ()=> {
+      console.log("queryIndicators :"+queryIndicators);
+      try {
+        const response = await fetch(queryIndicators);
+        if (!response.ok) {
+          console.log(response);
+          throw new Error(
+            `Error when retrieve indicators ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();
+        if (!jsonData.length || jsonData.length === 0) {
+          console.log("jsonData is empty");
+          throw new Error(
+            `Warning indicators data is emtpy from OCL `
+          );
+        }
+        setIndicatorsData(jsonData); 
+        console.log(jsonData);
+        var d = createIndicatorListForUI(jsonData);
+        var sortedData = sortJSON(d, 'name', 'asc');
+        setIndicatorsListForUI (sortedData);
+        var indGroupTemp = getIndicatorGroup(d);        
+        setIndicatorGroups(indGroupTemp);
+      }catch (e){
+        console.log("error:" + e.message);
+        setError(e.message);
+      }
+    }
+
+    useEffect(() => {
+      loadIndicatorData();
+    }, [queryIndicators]);
+
+
+
+    console.log(indicatorsData);
+    console.log(indicatorsListForUI);
+    console.log("error:" + error);
+    console.log(indicatorGroups);
+    console.log("values.fiscal:" + values.fiscal + " frequency:" + values.frequency);
+    useEffect(() => {
+      
      //temp indicator hosts
     const allIndicatorCounter = [];
     const preventionIndicatorCounter = [];
@@ -495,12 +641,7 @@ export default function Indicator() {
       return true;
     });
     setAllIndicators(allIndicatorCounter);
-    setPreventionIndicator(preventionIndicatorCounter);
-    setTestingIndicator(testingIndicatorCounter);
-    setTreatmentIndicator(treatmentIndicatorCounter);
-    setViralIndicator(viralIndicatorCounter);
-    setHealthSystemIndicator(healthSystemIndicatorCounter);
-    setHostCountryIndicator(hostCountryIndicatorCounter);
+  
 
     //indicator that the app has mounted
     setInit(true);
@@ -518,8 +659,9 @@ export default function Indicator() {
     })
      //match indicator details
 
-     indicators.map(indicator => {
-       if(indicator.name===indicator_name){
+     //indicators.map(indicator => {
+     indicatorsListForUI.map(indicator => {
+       if(indicator.name === indicator_name){
       //  setCurrentIndicator(indicator);
       dispatch({
         type: 'changeCurrentIndicator',
@@ -560,12 +702,16 @@ export default function Indicator() {
     })
   }
 
-
+  function convertMarkdown(text) {
+    var md = new Remarkable();    
+      return md.render(text) ;
+  }
+    
 
 
 //implement filtering function by set Values first
   const handleFilterChange = event => {
-   
+    event.persist();
       setValues(oldValues => ({
         ...oldValues,
         [event.target.name]: event.target.value,
@@ -574,25 +720,17 @@ export default function Indicator() {
   
   };
 
-
-
-
-
 //when value has changed, call useEffect function
   useEffect(() => {
 
 //if it's not the first time the app mounted
     if(init){
-
     const tempPreventionIndicator = [];
     const tempTestingIndicator = [];
     const tempTreatmentIndicator = [];
     const tempViralIndicator = [];
     const tempHealthSystemIndicator = [];
     const tempHostCountryIndicator = [];
-
-
-
 
     allIndicators.map(indicator => {
       if((values.frequency ==='' ? true : indicator[1] === values.frequency) &&
@@ -621,593 +759,251 @@ export default function Indicator() {
           }    
       return true;   
     });
-    setPreventionIndicator(tempPreventionIndicator);
-    setTestingIndicator(tempTestingIndicator);
-    setTreatmentIndicator(tempTreatmentIndicator);
-    setViralIndicator(tempViralIndicator);
-    setHealthSystemIndicator(tempHealthSystemIndicator);
-    setHostCountryIndicator(tempHostCountryIndicator);
+    
+
+    console.log("berfore calling getIndicatrGroup. indicatorListForUI size:" + indicatorsListForUI.length);
+    var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
+    setIndicatorGroups(indGroupTemp);
   }
   
   }, [values]);
 
+  //indicator group display
+  var groupExpansionPanelList = []; 
+  indicatorGroups.map(function(indGroup, index) {
+    console.log(indGroup + " - " + index);
+    groupExpansionPanelList.push(
+      <ExpansionPanel key={"panel" + index}>
+       <ExpansionPanelSummary key={"summary_" + index} expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content" id="panel1a-header" className={classes.sidebarExpansionSummary} >
+          <ExpandTitle key={"title_" + index} className={classes.sidebarExpandTitle}>{indGroup}</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails key={"detail_" + index} className={classes.indicatorList}>
+          {
+              indicatorsListForUI.filter(indicator => (indicator.group === indGroup && indicator.periodYear === values.fiscal))
+              .map(indicator =>{
+                console.log(indicator.id);
+              return(
+                <div key={"group_" + index + indicator.id } onClick={() => updateIndicator(indicator.id)} className={currentIndicator.name===indicator[0] ? classes.indicatorListItemActive : classes.indicatorListItem}>
+                {indicator.name} 
+                </div>
+              )                 
+            })
+          }             
+        </ExpansionPanelDetails>
+    </ExpansionPanel>
+    );
+  }, this);
 
 
-//layout
+  //layout
 return (
-
+ 
         
  <div className={classes.container}>
-<Breadcrumb></Breadcrumb>
+  <Breadcrumb></Breadcrumb>
 
-<Grid container>
+  <Grid container>
+  {/* sidebar */}
+  <Grid item xs={12} md={3}>
+    <Paper className={classes.sidebar}>
+    <h4 className={classes.sidebarTitle}>INDICATOR FILTERS</h4>
+    {/* filters */}
+    <form className={classes.filterContainer} autoComplete="off">
+      {/* fiscal filter */}
+      <Grid item xs={12} className={classes.filter} >
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
+            <Select native  value={values.fiscal} onChange={handleFilterChange} className={classes.select}
+              inputProps={{
+              name: 'fiscal',
+              id: 'fiscal',
+              classes: {
+                icon: classes.selectIcon
+              }
+              }}
+            >
+              <option value={'2020'}>2020</option>
+              <option value={'2019'}>2019</option>
+              <option value={'2018'}>2018</option>
+            </Select>
+        </FormControl>
+      </Grid>
 
+      {/* frequency filter */}
+      <Grid item xs={12} className={classes.filter} >
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
+          <Select native value={values.frequency} onChange={handleFilterChange} className={classes.select}
+            inputProps={{
+              name: 'frequency',
+              id: 'frequency',
+              classes: {
+                icon: classes.selectIcon
+              }
+            }}
+          >
+            <option value={""} />
+            <option value={'Quarterly'}>Quarterly</option>
+            <option value={'Semi-Annually'}>Semi-Annually</option>
+            <option value={'Annually'}>Annually</option>
+          </Select>
+        </FormControl>
+      </Grid> 
+    </form>
 
-{/* sidebar */}
-<Grid item xs={12} md={3}>
-  <Paper className={classes.sidebar}>
-       <h4 className={classes.sidebarTitle}>INDICATOR FILTERS</h4>
-
-
-
-{/* filters */}
-<form className={classes.filterContainer} autoComplete="off">
-
-
-
-
-
-
-
-{/* fiscal filter */}
-<Grid item xs={12} className={classes.filter} >
-<FormControl className={classes.formControl}>
-<InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
-<Select
-native
-// value={values.fiscal}
-onChange={handleFilterChange}
-className={classes.select}
-inputProps={{
- name: 'fiscal',
- id: 'fiscal',
- classes: {
-   icon: classes.selectIcon
- }
-}}
-
->
-{/* <option value={""} /> */}
-<option value={'2020'}>2020</option>
-{/* <option value={'2019'}>2019</option> */}
-<option value={'2018'}>2018</option>
-</Select>
-</FormControl>
+    {/* indicator groups */}
+    <div key="sidebarGroup" className={classes.sidebarGroup}>
+      <p className={classes.sidebarSubtitle}>INDICATOR GROUPS</p>
+      {groupExpansionPanelList}
+    </div>
+  </Paper>
 </Grid>
-
-
-
-{/* type filter */}
-<Grid item xs={12} className={classes.filter} >
-<FormControl className={classes.formControl}>
-<InputLabel htmlFor="type">Type</InputLabel>
-<Select
-native
-value={values.type}
-onChange={handleFilterChange}
-className={classes.select}
-inputProps={{
- name: 'type',
- id: 'type',
- classes: {
-   icon: classes.selectIcon
- }
-}}
-
->
-<option value={""} />
-<option value={'Target'}>Targets</option>
-<option value={'Results'}>Results</option>
-</Select>
-</FormControl>
-</Grid>
-
-
-
-{/* frequency filter */}
-{/* <Grid item xs={12} className={classes.filter} >
-<FormControl className={classes.formControl}>
-<InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
-<Select
-native
-value={values.frequency}
-onChange={handleFilterChange}
-className={classes.select}
-inputProps={{
- name: 'frequency',
- id: 'frequency',
- classes: {
-   icon: classes.selectIcon
- }
-}}
->
-<option value={""} />
-<option value={'Quarterly'}>Quarterly</option>
-<option value={'Semi-Annually'}>Semi-Annually</option>
-<option value={'Annually'}>Annually</option>
-</Select>
-</FormControl>
-</Grid> */}
-
-</form>
-
-
-
-{/* indicator groups */}
-
-<div className={classes.sidebarGroup}>
-<p className={classes.sidebarSubtitle}>INDICATOR GROUPS</p>
-
-
-{/* Prevention and support indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Prevention and support indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-                preventionIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={currentIndicator.name===indicator[0] ? classes.indicatorListItemActive : classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-             
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-
-
-{/* Testing indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Testing Indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-                testingIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-
-
-
-
-{/* Treatment indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Treatment Indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-                treatmentIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-
-
-{/* Viral Suppression indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Viral Suppressions Indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-                viralIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-
-
-{/* Health Systems indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Health Systems Indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-                healthSystemIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-
-
-
-{/* Host Country indicators */}
-<ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={classes.sidebarExpansionSummary}
-              >
-                <ExpandTitle className={classes.sidebarExpandTitle}>Host Country Indicators</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.indicatorList}>
-              {
-               hostCountryIndicator.map(indicator =>{
-                  return(
-                    <div onClick={() => updateIndicator(indicator[0])} className={classes.indicatorListItem} key={Math.random()}>
-                    {indicator[0]}
-                    </div>
-                  )
-                 
-                  
-                 
-                })
-              }
-              </ExpansionPanelDetails>
-</ExpansionPanel>
-</div>
-
-        </Paper>
-        </Grid>
 
 {/* main content */}
 <Grid item xs={12} md={9}>
 
-
-
-{/* if there is no indicator selected display default what's new, 
-otherwise display the indicator details and data elements related*/}
-        {
-        indicatorName===''? <WhatIsNew/> : 
-        <div>
-
-        <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
-        <headings.H1>{indicatorName}</headings.H1>
+{/* if there is no indicator selected display default what's new, otherwise display the indicator details and data elements related */}
+  {
+    indicatorName === '' ? <WhatIsNew/> : 
+    <div>
+      <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
+      <headings.H1>{indicatorName}</headings.H1>
+      
       {/* indicator tabs */}
-        <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-          <Tab label="INDICATOR DETAILS" {...a11yProps(0)} />
-          <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
-        </Tabs>
-
+      <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
+        <Tab label="INDICATOR DETAILS" {...a11yProps(0)} />
+        <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
+      </Tabs>
 
       {/* indicator details */}
-        <TabPanel value={panel} index={0} className={classes.tabPanel}>
+      <TabPanel value={panel} index={0} className={classes.tabPanel}>
       
-
-
-     {/* Indicator changes */}
-
-        <ExpansionPanel
-             defaultExpanded={true}
-        >
- 
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Indicator changes</ExpandTitle>
-                <ExpandSubTitle>(MER 2.0 v2.2 to v2.3)</ExpandSubTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              
-               <ChildList>
-               {
-             Object.keys(Object(currentIndicator.changes)).map(
-               key => <li key={Math.random()}>{Object(currentIndicator.changes)[key]}</li>
-             )
-            }
-               </ChildList>
-               
+      {/* Indicator changes */}
+      <ExpansionPanel defaultExpanded={true}>
+       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+        <ExpandTitle>Indicator changes</ExpandTitle>
+        <ExpandSubTitle> Guidance Version: {currentIndicator.guidance_version}</ExpandSubTitle>
+       </ExpansionPanelSummary>
+       <ExpansionPanelDetails>                        
+          <div><strong>Change from previous version</strong>: {currentIndicator.changeFromPreviousVersion}</div>                        
        </ExpansionPanelDetails>
        </ExpansionPanel>
 
+      {/* Indicator description */}        
+      <ExpansionPanel defaultExpanded={true}>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+            <ExpandTitle>Description</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <div>
+            <p className={classes.childContent}>
+              {currentIndicator.description}
+            </p>
+            <p>
+              <strong>Reporting level</strong>: {currentIndicator.level} <br/>
+              <strong>Reporting frequency</strong>: {currentIndicator.frequency} <br/>
+              <strong>How to calculate annual total</strong>:  {currentIndicator.how_to_calculate_annual_total} 
+            </p>
+          </div>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
 
-
-
-
-        {/* Indicator description */}
-        <ExpansionPanel
-             defaultExpanded={true}
-        >
- 
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Description</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <div>
-                <p className={classes.childContent}>
-               {currentIndicator.description}
-                </p>
-                <p>
-                  <strong>Reporting level</strong>: {currentIndicator.level} <br/>
-                  <strong>Reporting frequency</strong>: {currentIndicator.frequency} <br/>
-                  <strong>How to calculate annual total</strong>:  {currentIndicator.howtoCalculate} <br/>
-                </p>
-                </div>
-       </ExpansionPanelDetails>
+   {/* Indicator numerator */}   
+       <ExpansionPanel defaultExpanded={true}>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header" >
+          <ExpandTitle>Numerator</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails className={classes.panelDetails}>
+              <p className={classes.childContent}><strong>Numerator</strong>: {currentIndicator.numerator}</p>
+              <p className={classes.childContent}><strong>Numerator Description</strong>: {currentIndicator.numerator_description}</p>
+              <p className={classes.childContent}><strong>Disaggregate Groups</strong></p>              
+              <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.numerator_disaggregation_groups)}} />                                           
+        </ExpansionPanelDetails>
        </ExpansionPanel>
-
-
-     
-
-
-      
-
-  
-
-
-   {/* Indicator numerator */}
-       <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Numerator</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetails}>
-              <p className={classes.childContent}><strong>Numerator Name</strong>: {Object(currentIndicator.numerators).name}</p>
-              <p className={classes.childContent}><strong>Numerator Description</strong>: {Object(currentIndicator.numerators).description}</p>
-              <p className={classes.childContent}><strong>Disaggregate Groups</strong></p>
-
-              <ChildList>
-               {
-             Object.keys(Object(currentIndicator.disaggregate)).map(
-               key => <li key={Math.random()} className={classes.cardList}><strong>{key}</strong>:<ChildList> {Object.keys(Object(currentIndicator.disaggregate)[key]).map(
-                 i => <li key={Math.random()} className={classes.cardList}>{Object(currentIndicator.disaggregate)[key][i]}</li>
-               )}</ChildList></li>
-             )
-            }
-               </ChildList>
-                
-               
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
 
   {/* Indicator denominator */}
        <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Denominator</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetails}>
-              <p className={classes.childContent}><strong>Denominator Name</strong>: {Object(currentIndicator.denominator).name}</p>
-              <p className={classes.childContent}><strong>Denominator Description</strong>: {Object(currentIndicator.denominator).description}</p>
-              <p className={classes.childContent}><strong>Disaggregate Groups</strong>: {Object(currentIndicator.denominator).groups}</p>
-              <p className={classes.childContent}><strong>Disaggregate Disaggregates</strong>: {Object(currentIndicator.denominator).disaggregates}</p>
-             </ExpansionPanelDetails>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" >
+          <ExpandTitle>Denominator</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails className={classes.panelDetails}>
+              <p className={classes.childContent}><strong>Denominator</strong>: {currentIndicator.denominator}</p>
+              <p className={classes.childContent}><strong>Denominator Description</strong>: {currentIndicator.numerator_description}</p>
+              <p className={classes.childContent}><strong>Disaggregate Groups</strong>:                
+                <span dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.denominator_disaggregation_groups)}} />
+              </p>
+        </ExpansionPanelDetails>
        </ExpansionPanel>
-
 
   {/* Indicator disaggregate */}
+  {currentIndicator.disaggregate_descriptions_and_definitions.trim() !== "" ? 
        <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Disaggregate descriptions & definitions</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-             
-              {
-             Object.keys(Object(currentIndicator.disaggregateDefination)).map(
-               key => <li className={classes.cardList}  key={Math.random()}><strong>{key}</strong>:<ChildList> {Object.keys(Object(currentIndicator.disaggregateDefination)[key]).map(
-                 i => <li className={classes.cardList} key={Math.random()}>{Object(currentIndicator.disaggregateDefination)[key][i]}</li>
-               )}</ChildList></li>
-             )
-            }
-             
-               
-       </ExpansionPanelDetails>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+          <ExpandTitle>Disaggregate descriptions & definitions</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>                                    
+             <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.disaggregate_descriptions_and_definitions)}} />                         
+        </ExpansionPanelDetails>
        </ExpansionPanel>
-
+      : null }
 
   {/* Indicator pepfar definition */}
-       <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>PEPFAR-support definition</ExpandTitle>
-                <ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              
-               <ChildList>
-               {
-             Object.keys(Object(currentIndicator.pepfarDef)).map(
-               key => <li className={classes.cardList}  key={Math.random()}><strong>{key}</strong>:<ChildList> {Object.keys(Object(currentIndicator.pepfarDef)[key]).map(
-                 i => <li className={classes.cardList}  key={Math.random()}>{Object(currentIndicator.pepfarDef)[key][i]}</li>
-               )}</ChildList></li>
-             )
-            }
-               </ChildList>
-               
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
+  {currentIndicator.PEPFAR_support_definition.trim() !== "" ?  
+      <ExpansionPanel>
+        <ExpansionPanelSummary  expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
+          <ExpandTitle>PEPFAR-support definition</ExpandTitle>
+              {/*<ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>*/}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>                          
+          <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.PEPFAR_support_definition)}}/>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+  : null }
   {/* Indicator how to use */}
-        <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>How to use</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <ChildList>
-               {
-             Object.keys(Object(currentIndicator.howToUse)).map(
-               key => <p className={classes.childContent}  key={Math.random()}>{Object(currentIndicator.howToUse)[key]}</p>
-             )
-            }
-               </ChildList>
-            
+  {currentIndicator.how_to_use.trim() !== "" ?  
+      <ExpansionPanel>
+       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+        <ExpandTitle>How to use</ExpandTitle>
+       </ExpansionPanelSummary>
+       <ExpansionPanelDetails>
+       <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_use)}} />
        </ExpansionPanelDetails>
        </ExpansionPanel>
-
-
+  : null }
   {/* Indicator how to collect */}
+  {currentIndicator.how_to_collect.trim() !== "" ?  
        <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>How to collect</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <ChildList>
-              {
-             Object.keys(Object(currentIndicator.howToCollect)).map(
-               key => <p className={classes.childContent}  key={Math.random()}>{Object(currentIndicator.howToCollect)[key]}</p>
-             )
-            }
-            </ChildList>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+          <ExpandTitle>How to collect</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_collect)}}/>
        </ExpansionPanelDetails>
        </ExpansionPanel>
-
-
-
-      
-
+  : null }
   {/* Indicator how to review quality */}
-       <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>How to review data quality</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <ChildList>
-              {
-             Object.keys(Object(currentIndicator.howToReview)).map(
-               key => <p className={classes.childContent}  key={Math.random()}>{Object(currentIndicator.howToReview)[key]}</p>
-             )
-            }
-            </ChildList>
+  {currentIndicator.how_to_review.trim() !== "" ?  
+      <ExpansionPanel>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+          <ExpandTitle>How to review data quality</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+        <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_review)}} />
        </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
-      
-
+      </ExpansionPanel>
+    : null }
   {/* Indicator guiding narrative questions */}
-       <ExpansionPanel>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-                <ExpandTitle>Guiding narrative questions</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <ChildList>
-               {
-             Object.keys(Object(currentIndicator.questions)).map(
-               key => <li  key={Math.random()}><strong>{key}</strong>:<ChildList> {Object.keys(Object(currentIndicator.questions)[key]).map(
-                 i => <li  key={Math.random()}>{Object(currentIndicator.questions)[key][i]}</li>
-               )}</ChildList></li>
-             )
-            }
-               </ChildList>
+  {currentIndicator.guiding_narrative_questions.trim() !== "" ?  
+      <ExpansionPanel>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+          <ExpandTitle>Guiding narrative questions</ExpandTitle>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+        <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.guiding_narrative_questions)}}/>
        </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
+      </ExpansionPanel>
+  : null }
     </TabPanel>
 
 
