@@ -26,6 +26,8 @@ import Paper from '@material-ui/core/Paper';
 import { Route, BrowserRouter as Router, NavLink } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
 
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
@@ -38,14 +40,9 @@ import {WhatIsNew} from './WhatIsNew';
 //tab panel function
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      component="div" role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
       <Box p={3}>{children}</Box>
@@ -68,8 +65,9 @@ function a11yProps(index) {
 
 //formular panel function
 function FormularPanel(props) {
-  event.stopPropagation();
-  event.preventDefault();
+  
+  //event.stopPropagation(); // comment out as cause error, need to look further if this has any impact
+  //event.preventDefault();
   const { children, value, index, ...other } = props;
 
   return (
@@ -99,7 +97,10 @@ function formularProps(index) {
   };
 }
 
-
+export function getDomain(){
+  const domain = "staging.openconceptlab.org";
+  return domain;
+}
 
 const ExpandTitle = styled.p`
     margin:0;
@@ -412,7 +413,7 @@ export default function Indicator() {
     //initial filter state
     const [values, setValues] = React.useState({
       frequency: "",
-      fiscal: "2019", 
+      fiscal: "2020", 
       type: ""
     });
 
@@ -445,31 +446,26 @@ export default function Indicator() {
 
 
     const getIndicatorGroup = function (indicatorData) { 
-      console.log("getIndicatorGroup is called." + values.fiscal + " freq:" + values.frequency);
+      console.log( "filter value: " + values.fiscal + " freq:" + values.frequency);
       var filteredByYearData = indicatorData.filter(function (data) {
-        if (values.frequency !== "" && values.periodYear !== "") {
-          console.log("all not all case 1:" + data.periodYear + " " + data.frequency + " eq? " + (data.frequency === values.frequency) );
+        if (values.frequency !== "" && values.periodYear !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.frequency !== "") {
-          console.log("all not all case 2");
+        }else if (values.frequency !== "") {          
           return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.periodYear !== "") {
-          console.log("all not all case 3");
+        }else if (values.periodYear !== "") {          
           return data.periodYear === values.fiscal;
         }
         //return true;
       });
 
-      console.log(filteredByYearData);
+      //console.log(filteredByYearData);
       const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();           
       return distinctGroup;
     }
    const createIndicatorListForUI = function(indicatorsDataOCL) {
-     var indicatorList = indicatorsDataOCL.map(function (indicator) {
-        console.log(indicator.id + " "  + indicator.display_name);
-        var indicatorItem = {};
-        
+     var indicatorList = indicatorsDataOCL.map(function (indicator) {        
+        var indicatorItem = {};        
         indicatorItem.id = indicator.id;
         indicatorItem.name = indicator.display_name ? indicator.display_name : "";
         indicatorItem.description = (indicator.descriptions && indicator.descriptions.length > 0) ? indicator.descriptions[0].description : "";        
@@ -495,7 +491,7 @@ export default function Indicator() {
         indicatorItem.PEPFAR_support_definition = (indicator.extras && indicator.extras["PEPFAR-support definition"] ) ? indicator.extras["PEPFAR-support definition"] : "";
         indicatorItem.guiding_narrative_questions = indicator.extras && indicator.extras["Guiding narrative questions"] ? indicator.extras["Guiding narrative questions"]: "";
         indicatorItem.guidance_version = indicator.extras && indicator.extras["Guidance Version"] ? indicator.extras["Guidance Version"]: "";
-        console.log(indicatorItem);        
+        //console.log(indicatorItem);        
         return indicatorItem;
       });      
      return indicatorList;
@@ -503,67 +499,19 @@ export default function Indicator() {
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
-
-
-    //set states for different indicators
-    const [allIndicators, setAllIndicators] = React.useState([]);
+    var queryIndicators = "https://api." + getDomain() + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
     
-
-    //before page load
-    console.log("before page load");
-
-    var queryIndicators = "https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\"";   
-    var queryDataElements = "https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Data Elements\"";   
     const [indicatorsData, setIndicatorsData] = useState([] );
-    const [dataElementsData, setDataElementsData] = useState([] ); // not implemented yet
+    const [dataElementsData, setDataElementsData] = useState([] ); 
     const [error, setError] = useState(null)
     const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
     const [indicatorGroups, setIndicatorGroups] = useState([] );
-
-
-    
-    const loadDataAll = async ()=> {
-      console.log("queryIndicators :"+queryIndicators);
-      try {
-        const response = await fetch(queryIndicators);
-
-        let [indicatorsFromOCL, dataElementsFromOCL] = await Promise.all([
-          fetch(queryIndicators),
-          fetch(queryDataElements)
-        ]);
-    
-        
-        if (!response.ok) {
-          console.log(response);
-          throw new Error(
-            `Error when retrieve data for indicator page ${response.status} ${response.statusText}`
-          );
-        }
-        const jsonIndicatorFromOCL = await indicatorsFromOCL.json();
-        const jsonDataElementsFromOCL = await dataElementsFromOCL.json();
-
-        if (!jsonIndicatorFromOCL.length || jsonIndicatorFromOCL.length === 0) {
-          console.log("jsonIndicatorFromOCL is empty");
-          throw new Error(
-            `Warning indicators data is emtpy from OCL `
-          );
-        }
-        setIndicatorsData(jsonIndicatorFromOCL); 
-        setDataElementsData(jsonDataElementsFromOCL); // not implemented yet
-        console.log(jsonIndicatorFromOCL);
-        var d = createIndicatorListForUI(jsonIndicatorFromOCL);
-        var sortedData = sortJSON(d, 'name', 'asc');
-        setIndicatorsListForUI (sortedData);
-        var indGroupTemp = getIndicatorGroup(d);        
-        setIndicatorGroups(indGroupTemp);
-      }catch (e){
-        console.log("error:" + e.message);
-        setError(e.message);
-      }
-    }
-
+    const [indGrouploading, setIndGroupLoading] = useState(false);
+    const [deloading, setDELoading] = useState(false);
+ 
     const loadIndicatorData = async ()=> {
-      console.log("queryIndicators :"+queryIndicators);
+      console.log("loadIndicatorData - queryIndicators :"+queryIndicators);
+      setIndGroupLoading(true);
       try {
         const response = await fetch(queryIndicators);
         if (!response.ok) {
@@ -575,17 +523,83 @@ export default function Indicator() {
         const jsonData = await response.json();
         if (!jsonData.length || jsonData.length === 0) {
           console.log("jsonData is empty");
+          setIndGroupLoading(false);
           throw new Error(
             `Warning indicators data is emtpy from OCL `
           );
         }
         setIndicatorsData(jsonData); 
-        console.log(jsonData);
+        console.log("indicators: " + jsonData.length);
         var d = createIndicatorListForUI(jsonData);
         var sortedData = sortJSON(d, 'name', 'asc');
         setIndicatorsListForUI (sortedData);
         var indGroupTemp = getIndicatorGroup(d);        
         setIndicatorGroups(indGroupTemp);
+        setIndGroupLoading(false);
+      }catch (e){
+        console.log("error:" + e.message);
+        setError(e.message);
+      }
+    }
+
+    const loadDataElementsDataByIndicator = async (indicatorID)=> {
+      console.log("loadDataElementsByIndicator: " + indicatorID);      
+      var query = "https://api." + getDomain() + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?limit=0&conceptClass=\"Data+Element\"&includeMappings=ture&q=" + indicatorID;
+
+      console.log("query data eleemnts by indicator :"+query );
+      setDELoading(true);
+      try {
+        const response = await fetch(query);
+        if (!response.ok) {
+          console.log(response);
+          setDELoading(false);
+          throw new Error(
+            `Error when retrieve indicators ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();                
+        if (!jsonData) {
+          console.log("jsonData is empty");
+          setDELoading(false);
+          throw new Error(
+            `Warning data element data is emtpy from OCL  ` + indicatorID
+          );
+        }
+        console.log("data elements : " + jsonData.length);
+        setDELoading(false);
+        var mappedDataElements = [];
+        if (jsonData && Array.isArray(jsonData)){          
+          mappedDataElements = jsonData.map(item => {
+            var dataElementItem = {};
+            dataElementItem.source = item.owner;
+            dataElementItem.description = item.display_name; // change to description once available
+            dataElementItem.uid = item.external_id;
+            dataElementItem.code = item.id;
+            dataElementItem.name = item.display_name;   
+            var deMappings = [];            
+            const mappings = item.mappings.filter(mapping => mapping.map_type === "Has Option");
+            //console.log(mappings);
+            deMappings = mappings            
+              .map(mapping => {
+                var disagItem = {};
+                disagItem.code = mapping.to_concept_code;
+                disagItem.name = mapping.to_concept_name;
+                return disagItem;
+              })
+            //console.log(deMappings);
+            var sortedMappings = sortJSON(deMappings, 'name', 'asc');
+            dataElementItem.disags = sortedMappings;
+            return dataElementItem;
+          })
+        }
+                
+        var sortedData = sortJSON(mappedDataElements, 'name', 'asc');
+        setDataElementsData(mappedDataElements);
+        dispatch({
+          type: 'changeMatchDataElements',
+          matchDataElements: sortedData
+        })
+        
       }catch (e){
         console.log("error:" + e.message);
         setError(e.message);
@@ -593,62 +607,12 @@ export default function Indicator() {
     }
 
     useEffect(() => {
-      loadIndicatorData();
+      console.log("loadIndicator from useEffect");
+      loadIndicatorData();      
+      setInit(true);
     }, [queryIndicators]);
 
-
-
-    console.log(indicatorsData);
-    console.log(indicatorsListForUI);
-    console.log("error:" + error);
-    console.log(indicatorGroups);
-    console.log("values.fiscal:" + values.fiscal + " frequency:" + values.frequency);
-    useEffect(() => {
-      
-     //temp indicator hosts
-    const allIndicatorCounter = [];
-    const preventionIndicatorCounter = [];
-    const testingIndicatorCounter = [];
-    const treatmentIndicatorCounter = [];
-    const viralIndicatorCounter = [];
-    const healthSystemIndicatorCounter = [];
-    const hostCountryIndicatorCounter = [];
-
-
-    //get indicator from context, get the filtering elements from the indicator, and divide the indicator based on grouping
-
-    indicators.map(indicator => {
-      allIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-
-      if(indicator.group === "prevention"){
-        preventionIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      if(indicator.group === "testing"){
-        testingIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      if(indicator.group === "treatment"){
-        treatmentIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      if(indicator.group === "viral"){
-        viralIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      if(indicator.group === "health-system"){
-        healthSystemIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      if(indicator.group === "host-country"){
-        hostCountryIndicatorCounter.push([indicator.name, indicator.frequency, indicator.fiscal, indicator.type, indicator.group]);
-      }
-      return true;
-    });
-    setAllIndicators(allIndicatorCounter);
-  
-
-    //indicator that the app has mounted
-    setInit(true);
-
-  },[]);
-
-
+   
   //update the indicator details and matched data-element when select indicator
   function updateIndicator(indicator_name){
      //match indicator name
@@ -661,7 +625,7 @@ export default function Indicator() {
 
      //indicators.map(indicator => {
      indicatorsListForUI.map(indicator => {
-       if(indicator.name === indicator_name){
+       if(indicator.name.trim().toLowerCase() === indicator_name.trim().toLowerCase()){
       //  setCurrentIndicator(indicator);
       dispatch({
         type: 'changeCurrentIndicator',
@@ -671,7 +635,9 @@ export default function Indicator() {
       return true;
      });
 
-     //match data element of this indicator
+     //match data element of this indicator     
+     loadDataElementsDataByIndicator(indicator_name);
+     
      const match = [];
      data_Elements.map(data_Element => {
      if((data_Element.name).includes(indicator_name)){
@@ -679,12 +645,8 @@ export default function Indicator() {
      }
      return true;
    });
-  //  setMatchDataElements(match);
-  dispatch({
-    type: 'changeMatchDataElements',
-    matchDataElements: match
-  })
-  }
+  
+}
 
   //realize the function of "key update" to back to the default status
   function backtoDefault(){
@@ -704,74 +666,32 @@ export default function Indicator() {
 
   function convertMarkdown(text) {
     var md = new Remarkable();    
-      return md.render(text) ;
+    return md.render(text) ;
   }
     
-
-
 //implement filtering function by set Values first
   const handleFilterChange = event => {
     event.persist();
       setValues(oldValues => ({
         ...oldValues,
         [event.target.name]: event.target.value,
-      }));
-
-  
+      }));  
   };
 
-//when value has changed, call useEffect function
+  //when value has changed, call useEffect function
   useEffect(() => {
-
-//if it's not the first time the app mounted
+    //if it's not the first time the app mounted
     if(init){
-    const tempPreventionIndicator = [];
-    const tempTestingIndicator = [];
-    const tempTreatmentIndicator = [];
-    const tempViralIndicator = [];
-    const tempHealthSystemIndicator = [];
-    const tempHostCountryIndicator = [];
-
-    allIndicators.map(indicator => {
-      if((values.frequency ==='' ? true : indicator[1] === values.frequency) &&
-         (values.fiscal ===''? true : indicator[2] === values.fiscal) &&
-         (values.type ==='' ? true: indicator[3] === values.type)
-        ){
-
-            if(indicator[4]==='prevention'){
-              tempPreventionIndicator.push(indicator);
-            }
-            if(indicator[4]==='testing'){
-              tempTestingIndicator.push(indicator);
-            }
-            if(indicator[4]==='treatment'){
-              tempTreatmentIndicator.push(indicator);
-            }
-            if(indicator[4]==='viral'){
-              tempViralIndicator.push(indicator);
-            }
-            if(indicator[4]==='health-system'){
-              tempHealthSystemIndicator.push(indicator);
-            }
-            if(indicator[4]==='host-country'){
-              tempHostCountryIndicator.push(indicator);
-            }
-          }    
-      return true;   
-    });
-    
-
-    console.log("berfore calling getIndicatrGroup. indicatorListForUI size:" + indicatorsListForUI.length);
-    var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
-    setIndicatorGroups(indGroupTemp);
-  }
-  
+      console.log("indicatorListForUI:" + indicatorsListForUI.length);
+      var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
+      setIndicatorGroups(indGroupTemp);
+    }
   }, [values]);
 
   //indicator group display
   var groupExpansionPanelList = []; 
   indicatorGroups.map(function(indGroup, index) {
-    console.log(indGroup + " - " + index);
+    //console.log(indGroup + " - " + index);
     groupExpansionPanelList.push(
       <ExpansionPanel key={"panel" + index}>
        <ExpansionPanelSummary key={"summary_" + index} expandIcon={<ExpandMoreIcon />}
@@ -782,9 +702,9 @@ export default function Indicator() {
           {
               indicatorsListForUI.filter(indicator => (indicator.group === indGroup && indicator.periodYear === values.fiscal))
               .map(indicator =>{
-                console.log(indicator.id);
+                //console.log(indicator.id);
               return(
-                <div key={"group_" + index + indicator.id } onClick={() => updateIndicator(indicator.id)} className={currentIndicator.name===indicator[0] ? classes.indicatorListItemActive : classes.indicatorListItem}>
+                <div key={"group_" + index + indicator.id } onClick={() => updateIndicator(indicator.id)} className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : classes.indicatorListItem}>
                 {indicator.name} 
                 </div>
               )                 
@@ -793,6 +713,7 @@ export default function Indicator() {
         </ExpansionPanelDetails>
     </ExpansionPanel>
     );
+    return true;
   }, this);
 
 
@@ -855,7 +776,12 @@ return (
     {/* indicator groups */}
     <div key="sidebarGroup" className={classes.sidebarGroup}>
       <p className={classes.sidebarSubtitle}>INDICATOR GROUPS</p>
-      {groupExpansionPanelList}
+      {indGrouploading ? 
+          <div>
+              <LinearProgress mode="indeterminate" />
+              <div style={{paddingTop: '1rem', paddingLeft: '1rem'}}>Loading indicators ...</div>
+          </div> :
+          groupExpansionPanelList}
     </div>
   </Paper>
 </Grid>
@@ -870,7 +796,7 @@ return (
       <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
       <headings.H1>{indicatorName}</headings.H1>
       
-      {/* indicator tabs */}
+      {/* indicator tabs */}     
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
         <Tab label="INDICATOR DETAILS" {...a11yProps(0)} />
         <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
@@ -879,17 +805,6 @@ return (
       {/* indicator details */}
       <TabPanel value={panel} index={0} className={classes.tabPanel}>
       
-      {/* Indicator changes */}
-      <ExpansionPanel defaultExpanded={true}>
-       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-        <ExpandTitle>Indicator changes</ExpandTitle>
-        <ExpandSubTitle> Guidance Version: {currentIndicator.guidance_version}</ExpandSubTitle>
-       </ExpansionPanelSummary>
-       <ExpansionPanelDetails>                        
-          <div><strong>Change from previous version</strong>: {currentIndicator.changeFromPreviousVersion}</div>                        
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
       {/* Indicator description */}        
       <ExpansionPanel defaultExpanded={true}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
@@ -908,6 +823,17 @@ return (
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
+
+  {/* Indicator changes */}
+  <ExpansionPanel defaultExpanded={true}>
+       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+        <ExpandTitle>Indicator changes</ExpandTitle>
+        <ExpandSubTitle> Guidance Version: {currentIndicator.guidance_version}</ExpandSubTitle>
+       </ExpansionPanelSummary>
+       <ExpansionPanelDetails>                        
+          <div><strong>Change from previous version</strong>: {currentIndicator.changeFromPreviousVersion}</div>                        
+       </ExpansionPanelDetails>
+       </ExpansionPanel>
 
    {/* Indicator numerator */}   
        <ExpansionPanel defaultExpanded={true}>
@@ -1007,210 +933,182 @@ return (
     </TabPanel>
 
 
-      {/* data elements */}
-      <TabPanel value={panel} index={1} className={classes.tabPanel}>
+   {/* data elements */}
+    <TabPanel value={panel} index={1} className={classes.tabPanel}>
       {/* <div className={classes.tabDashboard}>
       <Button variant="contained" color="primary" className={classes.button} onClick={toggleDrawer('bottom', true)}>Comparison</Button>
-      </div> */}
+      </div> */}      
+      {deloading ? 
+        <div><LinearProgress mode="indeterminate" /></div> : 
+        matchDataElements.length === 0 ? 
+          <div>No data elements found </div> : null        
         
+      }
+      {/*matchDataElements.length === 0 ? 
+        <div>No data elements found </div> : null        
+      */}
+      {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
-      <div key={Math.random()}>
-      <ExpansionPanel className={classes.expansionPanel}>
+        <div key={dataElement.code}>
+          <ExpansionPanel className={classes.expansionPanel}>
 
-      {/* data elements summery */}
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          className={classes.expansionPanelSummary}
+            {/* data elements summery */}
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
+              <Grid container alignItems="center" justify="space-between">       
+                <Grid item  xs={11} md={9}>         
+                  <Typography className={classes.heading}> 
+                  <strong>{dataElement.name}</strong> {dataElement.category}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <Typography className={classes.heading}> 
+                  <strong>Data Element UID</strong>: {dataElement.uid} 
+                  </Typography>
+                  </Grid>
+              </Grid>         
+            </ExpansionPanelSummary>
 
-        >
-         <Grid container alignItems="center" justify="space-between">
+          {/* data elements details */}
+          <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+            <Grid container>
+            <Grid item  xs={12} className={classes.expansionPanelLeft}>
+              <Typography>
+                <strong>Description</strong>: {dataElement.description}<span style={{color: '#808080'}}>  [NOTE: The description need to be updated once available in OCL.]</span><br/> 
+                {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
+                {dataElement.indicatorName}
+                </NavLink> */}
+                <strong>Source</strong>: {dataElement.source}<br/>          
+              </Typography>
+            </Grid>
        
-          <Grid item  xs={11} md={9}>
-         
-          <Typography className={classes.heading}> 
-           <strong>{dataElement.name}</strong>: {dataElement.category}
-           </Typography>
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-          <Typography className={classes.heading}> 
-          <strong>Data Element UID</strong>: {dataElement.uid}
-          </Typography></Grid>
-          </Grid>
-         
-        </ExpansionPanelSummary>
-
-
-
-         {/* data elements details */}
-        <ExpansionPanelDetails 
-         className={classes.expansionPanelDetails}
-        >
-        <Grid container>
-        <Grid item  xs={12} className={classes.expansionPanelLeft}>
-          <Typography>
-
-          <strong>Description</strong>: {dataElement.description}<br/>
-          {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
-          {dataElement.indicatorCode}
-          </NavLink> */}
-          <strong>Source</strong>: {dataElement.source}<br/>
-        
-        
-
-          </Typography>
-        </Grid>
-       
-        {/* data element Disaggregations */}
-        <Grid item  xs={12} className={classes.comboTable}>
-        <strong>Disaggregations</strong>:<br/>
-       
+            {/* data element Disaggregations */}
+            <Grid item  xs={12} className={classes.comboTable}>
+              <strong>Disaggregations</strong>:<br/>       
           <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Disaggregations Name</TableCell>
-            <TableCell>Disaggregations Code</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {
-             Object.keys(Object(dataElement.combos)).map(
-               key => <TableRow key={Math.random()}>
-              <TableCell component="th" scope="row">
-              {Object(dataElement.combos)[key].name}
-              </TableCell> 
-              <TableCell component="th" scope="row">
-              {Object(dataElement.combos)[key].code}
-              </TableCell> 
+            <TableHead>
+              <TableRow>
+                <TableCell>Disaggregations Name</TableCell>
+                <TableCell>Disaggregations Code</TableCell>
               </TableRow>
-              
+            </TableHead>
+            <TableBody>
+            {
+             Object.keys(Object(dataElement.disags)).map(
+               key => 
+               <TableRow key={Math.random()}>
+                <TableCell component="th" scope="row">
+                {Object(dataElement.disags)[key].name}
+                </TableCell> 
+                <TableCell component="th" scope="row">
+                {Object(dataElement.disags)[key].code}
+                </TableCell> 
+              </TableRow>              
              )
             }
-        </TableBody>
+            </TableBody>
         </Table>
 
+         {/* open the formula panel */}        
+        { 
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content"  id="panel1a-header" className={classes.formulaButton}>
+            <Typography className={classes.heading}>Formula</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
+            <div className={classes.tableContainer} >                     
+              <Tabs value={formularPanel} onChange={handleFormularChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
+                <Tab label="HUMAN READABLE FORMAT" {...formularProps(0)} />
+                <Tab label="UID FORMAT" {...formularProps(1)} />
+              </Tabs>
 
-         {/* open the formula panel */}
-        
-         <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          className={classes.formulaButton}
-        >
-          <Typography className={classes.heading}>Formula</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
+              <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>
+                <Table className={classes.table} aria-label="simple table">
+                <TableBody>
+                  <TableRow key={Math.random()}>
+                    <TableCell component="th" scope="row">
+                    Numerator
+                    </TableCell> 
+                    <TableCell component="th" scope="row">                               
+                    {
+                      dataElement.disags.map(
+                        (item, index ) => 
+                          (index < dataElement.disags.length -1) ?
+                            ( <span key={"item" + index}> {item.name} +   </span>)
+                         :  ( <span key={"item" + index}> {item.name}   </span>)                                                    
+                      )
+                    }                        
+                    </TableCell> 
+                  </TableRow>
+                  <TableRow key={Math.random()}>
+                      <TableCell component="th" scope="row">
+                      Denominator
+                      </TableCell> 
+                      <TableCell component="th" scope="row">
+                      N/A
+                      </TableCell> 
+                  </TableRow>
+                  <TableRow> 
+                  
+                      <TableCell colSpan={2}><div style={{color: '#808080'}}>[NOTE: The formula need to be updated once finalized in OCL.]</div></TableCell>  
+                  </TableRow>
+                   
+                  </TableBody>
+                </Table>
+              </FormularPanel>
+              <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>
+                <Table className={classes.table} aria-label="simple table">
+                <TableBody>
+                  <TableRow key={Math.random()}>
+                    <TableCell component="th" scope="row">
+                    Numerator
+                    </TableCell> 
+                    <TableCell component="th" scope="row">                               
+                    {
+                      dataElement.disags.map(
+                        (item, index ) => 
+                          (index < dataElement.disags.length -1) ?
+                            ( <span key={"item_" + item.code + index}> {item.code} +   </span>  )
+                         : ( <span key={"item_" + item.code + index}> {item.code}   </span>   )                                                    
+                      )
+                    }           
+                   
+                    </TableCell> 
+                    </TableRow>
 
-          <div className={classes.tableContainer} >
-       
-          {/* indicator tabs */}
-        <Tabs value={formularPanel} onChange={handleFormularChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-          <Tab label="HUMAN READABLE FORMAT" {...formularProps(0)} />
-          <Tab label="UID FORMAT" {...formularProps(1)} />
-        </Tabs>
+                    <TableRow key={Math.random()}>
+                    <TableCell component="th" scope="row">
+                    Denominator
+                    </TableCell> 
+                    <TableCell component="th" scope="row">
+                    {dataElement.uidDenominator}
+                    </TableCell> 
+                    </TableRow>
 
-        <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>
-        <Table className={classes.table} aria-label="simple table">
-        <TableBody>
-        <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-          Numerator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-        {dataElement.readableNumerator}
-           </TableCell> 
-           </TableRow>
-
-           <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-           Denominator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-           {dataElement.readableDenominator}
-           </TableCell> 
-           </TableRow>
-
-
-          </TableBody>
-        </Table>
-        </FormularPanel>
-
-        <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>
-        <Table className={classes.table} aria-label="simple table">
-        <TableBody>
-        <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-          Numerator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-        {dataElement.uidNumerator}
-           </TableCell> 
-           </TableRow>
-
-           <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-           Denominator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-           {dataElement.uidDenominator}
-           </TableCell> 
-           </TableRow>
-
-
-          </TableBody>
-        </Table>
-        </FormularPanel>
-
-        </div>
-      
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-       
-        
-      
-     
-     
-
-        </Grid>
-
-
-
-
-
+                    <TableRow> 
+                      <TableCell colSpan={2}><div style={{color: '#808080'}}>[NOTE: The formula need to be updated once finalized in OCL.]</div></TableCell>  
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </FormularPanel>
+            </div>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        }        
+          </Grid>
         </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
-
-     
 
       </div>
 
       ))}
 
-
-
-
-
-
       </TabPanel>
       
       </div>
         }
-
-     
-      
       </Grid>
-
-
-
-
      </Grid>
-
-
      </div>
     );
   
