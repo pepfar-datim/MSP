@@ -499,7 +499,6 @@ export default function Codelist() {
       return codeLists;
     }
     );
-    )
     return codeLists;
   }
   useEffect(() => {
