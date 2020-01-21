@@ -36,6 +36,7 @@ import Button from '@material-ui/core/Button';
 
 
 import {WhatIsNew} from './WhatIsNew';
+import {getDomain} from '../config.js';
 
 //tab panel function
 function TabPanel(props) {
@@ -97,11 +98,7 @@ function formularProps(index) {
   };
 }
 
-export function getDomain(){
-  const domain = "staging.openconceptlab.org";
-  return domain;
-}
-
+const domain = getDomain();
 const ExpandTitle = styled.p`
     margin:0;
     padding:0;
@@ -420,6 +417,7 @@ export default function Indicator() {
 
     //get indicator and data-elements from context
     const [{ indicators, data_Elements, indicatorName, currentIndicator, matchDataElements }, dispatch] = useStateValue();
+    
 
     //set initial panel state and panel handle change function
     const [panel, setPanel] = React.useState(0);
@@ -446,23 +444,55 @@ export default function Indicator() {
 
 
     const getIndicatorGroup = function (indicatorData) { 
-      console.log( "filter value: " + values.fiscal + " freq:" + values.frequency);
+      //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
       var filteredByYearData = indicatorData.filter(function (data) {
-        if (values.frequency !== "" && values.periodYear !== "") {          
+        
+        if (values.frequency !== "" && values.fiscal !== "") { 
+          //console.log("case 1:" + data.periodYear + " " + data.frequency );
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.frequency !== "") {          
+        }else if (values.frequency !== "") {         
+          //console.log("case 2:" + data.periodYear + " " + data.frequency ); 
           return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.periodYear !== "") {          
+        }else if (values.periodYear !== "") {    
+             
           return data.periodYear === values.fiscal;
         }
+        
         //return true;
       });
 
       //console.log(filteredByYearData);
       const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();           
+
+      //// set indicators based on filter
+      ///??setIndicatorsListForUI(filteredByYearData);
+      var valueObj = {};
+      valueObj.indGroup = distinctGroup;
+      valueObj.indicatorsFiltered = filteredByYearData;
       return distinctGroup;
+      //return valueObj;
     }
+
+    const getFilteredIndicator = function (indicatorData) { 
+      console.log( "filter value: " + values.fiscal + " freq:" + values.frequency + " periodYear:" + values.periodYear);
+      var filteredByYearData = indicatorData.filter(function (data) {
+        
+        if (values.frequency !== "" && values.fiscal !== "") {           
+          return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
+        }else if (values.frequency !== "") {                   
+          return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
+        }else if (values.periodYear !== "") {                
+          return data.periodYear === values.fiscal;
+        }
+        
+        //return true;
+      });
+
+      //console.log(filteredByYearData);
+      return filteredByYearData;
+    }
+
    const createIndicatorListForUI = function(indicatorsDataOCL) {
      var indicatorList = indicatorsDataOCL.map(function (indicator) {        
         var indicatorItem = {};        
@@ -499,18 +529,19 @@ export default function Indicator() {
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
-    var queryIndicators = "https://api." + getDomain() + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
+    var queryIndicators = "https://api." + domain + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
     
     const [indicatorsData, setIndicatorsData] = useState([] );
     const [dataElementsData, setDataElementsData] = useState([] ); 
     const [error, setError] = useState(null)
     const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
+    const [filteredIndicatorsListForUI, setFilteredIndicatorsListForUI] = useState([] );
     const [indicatorGroups, setIndicatorGroups] = useState([] );
     const [indGrouploading, setIndGroupLoading] = useState(false);
     const [deloading, setDELoading] = useState(false);
  
     const loadIndicatorData = async ()=> {
-      console.log("loadIndicatorData - queryIndicators :"+queryIndicators);
+      //console.log("loadIndicatorData - queryIndicators :"+queryIndicators);
       setIndGroupLoading(true);
       try {
         const response = await fetch(queryIndicators);
@@ -533,8 +564,9 @@ export default function Indicator() {
         var d = createIndicatorListForUI(jsonData);
         var sortedData = sortJSON(d, 'name', 'asc');
         setIndicatorsListForUI (sortedData);
+        setFilteredIndicatorsListForUI(sortedData);
         var indGroupTemp = getIndicatorGroup(d);        
-        setIndicatorGroups(indGroupTemp);
+        setIndicatorGroups(indGroupTemp);        
         setIndGroupLoading(false);
       }catch (e){
         console.log("error:" + e.message);
@@ -544,9 +576,9 @@ export default function Indicator() {
 
     const loadDataElementsDataByIndicator = async (indicatorID)=> {
       console.log("loadDataElementsByIndicator: " + indicatorID);      
-      var query = "https://api." + getDomain() + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?limit=0&conceptClass=\"Data+Element\"&includeMappings=ture&q=" + indicatorID;
+      var query = "https://api." + domain + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?limit=0&verbose=true&conceptClass=\"Data+Element\"&includeMappings=ture&q=" + indicatorID;
 
-      console.log("query data eleemnts by indicator :"+query );
+      //console.log("query data eleemnts by indicator : " + query );
       setDELoading(true);
       try {
         const response = await fetch(query);
@@ -572,7 +604,7 @@ export default function Indicator() {
           mappedDataElements = jsonData.map(item => {
             var dataElementItem = {};
             dataElementItem.source = item.owner;
-            dataElementItem.description = item.display_name; // change to description once available
+            dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
             dataElementItem.uid = item.external_id;
             dataElementItem.code = item.id;
             dataElementItem.name = item.display_name;   
@@ -685,6 +717,9 @@ export default function Indicator() {
       console.log("indicatorListForUI:" + indicatorsListForUI.length);
       var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
       setIndicatorGroups(indGroupTemp);
+      var filteredInd = getFilteredIndicator(indicatorsListForUI);      
+      setFilteredIndicatorsListForUI(filteredInd);
+
     }
   }, [values]);
 
@@ -700,7 +735,7 @@ export default function Indicator() {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails key={"detail_" + index} className={classes.indicatorList}>
           {
-              indicatorsListForUI.filter(indicator => (indicator.group === indGroup && indicator.periodYear === values.fiscal))
+              filteredIndicatorsListForUI.filter(indicator => (indicator.group === indGroup && indicator.periodYear === values.fiscal))
               .map(indicator =>{
                 //console.log(indicator.id);
               return(
@@ -716,11 +751,12 @@ export default function Indicator() {
     return true;
   }, this);
 
+//console.log(currentIndicator);
+
 
   //layout
 return (
- 
-        
+         
  <div className={classes.container}>
   <Breadcrumb></Breadcrumb>
 
@@ -944,9 +980,7 @@ return (
           <div>No data elements found </div> : null        
         
       }
-      {/*matchDataElements.length === 0 ? 
-        <div>No data elements found </div> : null        
-      */}
+      
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
         <div key={dataElement.code}>
@@ -973,7 +1007,7 @@ return (
             <Grid container>
             <Grid item  xs={12} className={classes.expansionPanelLeft}>
               <Typography>
-                <strong>Description</strong>: {dataElement.description}<span style={{color: '#808080'}}>  [NOTE: The description need to be updated once available in OCL.]</span><br/> 
+                <strong>Description</strong>: {dataElement.description}<br/> 
                 {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
                 {dataElement.indicatorName}
                 </NavLink> */}
@@ -1028,16 +1062,20 @@ return (
                     <TableCell component="th" scope="row">
                     Numerator
                     </TableCell> 
-                    <TableCell component="th" scope="row">                               
-                    {
-                      dataElement.disags.map(
-                        (item, index ) => 
-                          (index < dataElement.disags.length -1) ?
-                            ( <span key={"item" + index}> {item.name} +   </span>)
-                         :  ( <span key={"item" + index}> {item.name}   </span>)                                                    
-                      )
-                    }                        
-                    </TableCell> 
+                    {(dataElement && dataElement.disags )? 
+                      <TableCell component="th" scope="row">                               
+                      {
+                        dataElement.disags.map(
+                          (item, index ) => 
+                            (index < dataElement.disags.length -1) ?
+                              ( <span key={"item" + index}> {item.name} +   </span>)
+                           :  ( <span key={"item" + index}> {item.name}   </span>)                                                    
+                        )
+                      }                        
+                      </TableCell> 
+                      : null
+                  }
+                    
                   </TableRow>
                   <TableRow key={Math.random()}>
                       <TableCell component="th" scope="row">
@@ -1062,6 +1100,8 @@ return (
                     <TableCell component="th" scope="row">
                     Numerator
                     </TableCell> 
+                    {(dataElement && dataElement.disags )? 
+
                     <TableCell component="th" scope="row">                               
                     {
                       dataElement.disags.map(
@@ -1073,6 +1113,7 @@ return (
                     }           
                    
                     </TableCell> 
+                    : null}
                     </TableRow>
 
                     <TableRow key={Math.random()}>
