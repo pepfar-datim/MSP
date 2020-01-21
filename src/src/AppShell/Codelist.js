@@ -458,7 +458,7 @@ export default function Codelist() {
   const handleChangeRowsPerPage = event => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    setExpanded(false);
+    //setExpanded(false);
   };
   const sortJSON = function (data, key, direction) {
     return data.sort(function (a, b) {
@@ -468,10 +468,8 @@ export default function Codelist() {
       return true;
     });
   }
-
-  const [init, setInit]= React.useState(true);
-  const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&page=' + (page + 1) + "&limit=" + (rowsPerPage * (page + 2));
-  //const queryDEsMappings = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&includeMappings=true";
+  const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&limit=0';
+  // const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&page=' + (page + 1) + "&limit=" + (rowsPerPage * (page + 2));
   let deMappings = {};
   let codeLists = {};
   let emptyMap = {};
@@ -509,6 +507,7 @@ export default function Codelist() {
 
   const [dataElementsInitial, setDataElementsInitialData] = useState([]);
   var [dataElements, setDataElementsData] = useState([]);
+  var [count, setCountOfValues] = useState([]);
   const [error, setError] = useState(null)
 
 
@@ -551,6 +550,7 @@ export default function Codelist() {
         }
       });
       setDataElementsData(temp);
+      setCountOfValues(temp.size);
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
@@ -655,7 +655,7 @@ export default function Codelist() {
     });
 
     setDataElementsData(tempDataElement);
-
+    setCountOfValues(tempDataElement.size)
 
   }, [values]);
 
@@ -1428,7 +1428,7 @@ Compare selected data elements
 
                   <TablePagination
                     rowsPerPageOptions={[10, 25, 50, 100]}
-                    labelDisplayedRows={({ from, to, count }) => `Displaying rows ${from}-${to}`}
+                    labelDisplayedRows={({ from, to, count }) => `Displaying rows ${from}-${to} of ${count}`}
                     // page={0}
                     // rowsPerPage={10}
                     // count={100}
