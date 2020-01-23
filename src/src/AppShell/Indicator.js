@@ -36,7 +36,7 @@ import Button from '@material-ui/core/Button';
 
 
 import {WhatIsNew} from './WhatIsNew';
-import {getDomain} from '../config.js';
+import {getConfig} from '../config.js';
 
 //tab panel function
 function TabPanel(props) {
@@ -98,7 +98,7 @@ function formularProps(index) {
   };
 }
 
-const domain = getDomain();
+const domain = getConfig().domain;
 const ExpandTitle = styled.p`
     margin:0;
     padding:0;

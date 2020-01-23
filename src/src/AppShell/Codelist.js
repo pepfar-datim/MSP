@@ -40,7 +40,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
-
+import {getConfig} from '../config.js';
+import {getCodeListMap} from '../currentCodelist.js'
 
 //tab panel function
 function TabPanel(props) {
@@ -73,7 +74,11 @@ function a11yProps(index) {
   };
 }
 
-
+const domain = getConfig().domain;
+const org = getConfig().org;
+const source = getConfig().source;
+const codeLists = getCodeListMap();
+let deMappings = {};
 
 
 const useStyles = makeStyles(theme => ({
@@ -460,7 +465,8 @@ export default function Codelist() {
     setPage(0);
     //setExpanded(false);
   };
-  const sortJSON = function (data, key, direction) {
+
+  const sortJSONByKey = function (data, key, direction) {
     return data.sort(function (a, b) {
       var x = a[key]; var y = b[key];
       if (direction === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
@@ -468,41 +474,50 @@ export default function Codelist() {
       return true;
     });
   }
-  const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&limit=0';
+
+  const sortJSON = function (data, direction) {
+    return data.sort(function (x, y) {
+      if (direction === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+      if (direction === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+      return true;
+    });
+  }
+
+  const queryDataElements = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=0';
   // const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&page=' + (page + 1) + "&limit=" + (rowsPerPage * (page + 2));
-  let deMappings = {};
-  let codeLists = {};
+  
+  //codeLists = sortJSON(codeLists, 'desc');
   let emptyMap = {};
 
   //get data-elements from context
-  const [{ data_Elements, pdhDataElements, mohDataElements, codeList }] = useStateValue();
+  const [{ data_Elements, pdhDataElements, mohDataElements }] = useStateValue();
 
-  //get code list
-  function getCodeListMap(codeListJson) {
-    var codeListMap = codeListJson.map(function (codeList) {
-      //let codeLists = [];
-      codeList.periods.map(function (period) {
-        const year = "20" + period.substring(2, 4)
-        if (!codeLists[year]) {
-          let codeListArray = [];
-          codeListArray.push(codeList.full_name);
-          codeLists[year] = codeListArray;
-        }
-        else {
-          let codeListArray = Array.from(codeLists[year]);
-          codeListArray.push(codeList.full_name);
-          codeLists[year] = codeListArray;
-        }
-      });
-      return codeLists;
-    }
-    );
-    return codeLists;
-  }
-  useEffect(() => {
-    getCodeListMap(codeList);
+  // //get code list
+  // function getCodeListMap(codeListJson) {
+  //   var codeListMap = codeListJson.map(function (codeList) {
+  //     //let codeLists = [];
+  //     codeList.periods.map(function (period) {
+  //       const year = "20" + period.substring(2, 4)
+  //       if (!codeLists[year]) {
+  //         let codeListArray = [];
+  //         codeListArray.push(codeList.full_name);
+  //         codeLists[year] = codeListArray;
+  //       }
+  //       else {
+  //         let codeListArray = Array.from(codeLists[year]);
+  //         codeListArray.push(codeList.full_name);
+  //         codeLists[year] = codeListArray;
+  //       }
+  //     });
+  //     return codeLists;
+  //   }
+  //   );
+  //   return codeLists;
+  // }
+  // useEffect(() => {
+  //   getCodeListMap(codeLists);
 
-  })
+  // })
 
 
   const [dataElementsInitial, setDataElementsInitialData] = useState([]);
@@ -512,7 +527,6 @@ export default function Codelist() {
 
 
   const loadDataElementsData = async () => {
-    console.log("queryDataElements :" + queryDataElements);
     try {
       const response = await fetch(queryDataElements);
       if (!response.ok) {
@@ -529,12 +543,12 @@ export default function Codelist() {
         );
       }
       setDataElementsInitialData(jsonData);
-      var sortedData = sortJSON(jsonData, 'display_name', 'asc');
+      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
 
       //filter by default filters
 
       const temp = [];
-      getCodeListMap(codeList);
+      //getCodeListMap(codeList);
       sortedData.map(data_Element => {
         const fy = data_Element.extras["Applicable Periods"].map(period =>
           "20" + period.substring(2, 4)
@@ -578,7 +592,7 @@ export default function Codelist() {
   const [values, setValues] = React.useState({
     fiscal: new Date().getFullYear(),
     type: "",
-    dataSet: "facility",
+    dataSet:  "",
     source: "",
     frequency: ""
   });
@@ -615,16 +629,13 @@ export default function Codelist() {
     setPage(0);
     setExpanded(false);
 
-
-
-
   };
 
 
   //when value has changed, call useEffect function
   useEffect(() => {
 
-
+    setExpanded(false);
     const tempDataElement = [];
     dataElements = dataElementsInitial;
     dataElements.map(data_Element => {
@@ -656,13 +667,15 @@ export default function Codelist() {
 
     setDataElementsData(tempDataElement);
     setCountOfValues(tempDataElement.size)
-
   }, [values]);
 
 
 
   async function getMappings(id) {
-    const queryMapping = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/' + id + '/?includeMappings=true';
+    // event.preventDefault();
+    // event.stopPropagation();
+    setExpanded(true);
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
 
     try {
       const response = await fetch(queryMapping);
@@ -817,7 +830,9 @@ export default function Codelist() {
     setPanel(newPanel);
   };
 
-
+ useEffect(() => {
+    setExpanded(false);
+}, [dataElements])
 
 
 
@@ -989,7 +1004,7 @@ export default function Codelist() {
                         {/* <option value={""} /> */}
                         {
 
-                          Object.keys(getCodeListMap(codeList)).map(
+                          Object.keys(codeLists).reverse().map(
 
                               key => <option key={Math.random()} >{key}</option>
                           )
@@ -1221,7 +1236,7 @@ Compare selected data elements
 
                 // defaultExpanded=false
 
-                //expanded={false}
+                
                 >
                   {/* data elements summary */}
                   <ExpansionPanelSummary
@@ -1281,7 +1296,9 @@ Compare selected data elements
                   </ExpansionPanelDetails>
                   <ExpansionPanel className={classes.dataElementContainer}
                     TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                    onClick={() => getMappings(dataElement.id)}>
+                    onClick={() => getMappings(dataElement.id)}
+                    //expanded={expanded}
+                    >
                     <ExpansionPanelSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -1294,6 +1311,7 @@ Compare selected data elements
 
                       <div className={classes.tableContainer} ></div>
                       <Grid item xs={12} className={classes.comboTable}>
+
 
                         <Route render={() => (
                           <div className={classes.tableContainer}>
@@ -1311,7 +1329,8 @@ Compare selected data elements
                                 {
                                   (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id].mappings)).map(
 
-                                    key => <TableRow key={Math.random()}>
+                                    key =>
+                                     <TableRow key={Math.random()}>
                                       <TableCell component="th" scope="row">
                                         {Object(deMappings[dataElement.id].mappings)[key].to_concept_name}
                                       </TableCell>
@@ -1320,9 +1339,9 @@ Compare selected data elements
                                       </TableCell>
                                     </TableRow>
 
-                                  ) : Object.keys(emptyMap).map(
+                                  ) : (Object.keys(emptyMap).map(
 
-                                  )
+                                  ))
                                 }
                               </TableBody>
                             </Table>
