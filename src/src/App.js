@@ -2,13 +2,13 @@ import React from 'react';
 import './App.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Switch, Redirect} from 'react-router-dom';
 import Welcome from './AppShell/Welcome';
-import Basic from './AppShell/Basic';
+
 import Codelist from './AppShell/Codelist';
 import Sidebar from './Components/Sidebar';
-import Inputs from './AppShell/Inputs';
 import About from './AppShell/About';
+import NotFound from './AppShell/NotFound';
 import Indicator from './AppShell/Indicator';
 import {StateProvider} from './ContextSetup';
 
@@ -97,6 +97,7 @@ export default function App() {
   const classes = useStyles();
   const theme = useTheme();
 
+  
   const [open, setOpen] = React.useState(false);
 
   function handleDrawerOpen() {
@@ -107,89 +108,66 @@ export default function App() {
     setOpen(false);
   }
 
- 
+
     return (
-      <StateProvider initialState={initialState} reducer={reducer}>
-      <div className={classes.root}>
-
       
-     
-
-
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-       <div className={classes.topBar}/>
-        <Toolbar>
-        {/* <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
+      <StateProvider initialState={initialState} reducer={reducer}>
+        <div className={classes.root}>
+          <AppBar position="fixed"
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: open,
+            })}
           >
-             <MenuIcon /> 
-        </IconButton> */}
-         
-        <Header/>
-        </Toolbar></AppBar>
-
-
-      <Router history={history}>
-
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </div>
-
-
+            <div className={classes.topBar}/>
+            <Toolbar>
+              <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  className={clsx(classes.menuButton, open && classes.hide)}
+                >
+                  {/* <MenuIcon /> */}
+              </IconButton>         
+              <Header/>
+            </Toolbar>
+          </AppBar>
+          <Router history={history}>
+            <Drawer className={classes.drawer} variant="persistent" anchor="left"  open={open}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+            >
+              <div className={classes.drawerHeader}>
+                <IconButton onClick={handleDrawerClose}>
+                  {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </IconButton>
+              </div>
               <Sidebar/>
-      </Drawer>
-
-
-
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
-        <div className={classes.drawerHeader} />     
-            <Switch>
-            
-              <Route exact path="/" component={Welcome} />
-              <Route path="/basic" component={Basic} />
-              <Route path="/codelist" component={Codelist} />
-              <Route path="/inputs" component={Inputs} />
-              <Route path="/indicator" component={Indicator} />
-              <Route path="/codelist/indicator" component={Indicator} />
-              <Route path="/about" component={About} />
-              <Route exact path="/2019/datim/v3/index.html" component={Welcome} />
-            </Switch>
-            </main>
-          
-         
-       
-
-        </Router>
-      </div>
+            </Drawer>
+            <main
+              className={clsx(classes.content, {
+                [classes.contentShift]: open,
+              })}
+            >
+              <div className={classes.drawerHeader} />     
+                  <Switch>           
+                    <Redirect from="/home" to="/" /> 
+                    <Route exact path="/" component={Welcome} />              
+                    <Route path="/codelist" component={Codelist} />             
+                    <Route path="/indicator" component={Indicator} /> 
+                    <Route path="/codelist/indicator" component={Indicator} />
+                    <Route path="/about" component={About} />
+                    <Route exact path="/index.html" component={Welcome} />                    
+                    <Route path="/indicator/:id" component={Indicator} /> 
+                    <Route component={NotFound} />
+                  </Switch>
+            </main>          
+          </Router>
+        </div>
       <Footer></Footer>
-       </StateProvider>
-    );
-  
+    </StateProvider>
+    );  
 }
 
 
