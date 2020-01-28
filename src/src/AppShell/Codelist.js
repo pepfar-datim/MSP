@@ -490,7 +490,7 @@ export default function Codelist() {
   const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
  
   const [collection, setCollection] = useState("");
-  const queryByDataElement = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
+  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
  
   let emptyMap = {};
 
@@ -567,11 +567,11 @@ export default function Codelist() {
 
   const loadDataElementsData = async () => {
     if(collection !== "" && values.dataSet !== "All"){
-    console.log(" queryByDataElement " + queryByDataElement)
+    console.log(" queryByCodeList " + queryByCodeList)
     //setDataElementsData([]);
     //setCountOfValues(0);
     try {
-      const response = await fetch(queryByDataElement);
+      const response = await fetch(queryByCodeList);
       if (!response.ok) {
         console.log(response);
         setDataElementsData([]);
@@ -603,7 +603,7 @@ export default function Codelist() {
   }
   useEffect(() => {
     loadDataElementsData();
-  }, [queryByDataElement]);
+  }, [queryByCodeList]);
   ///////////
 
   const [search, setSearch] = React.useState("");
@@ -719,6 +719,7 @@ export default function Codelist() {
   async function getMappings(id) {
     setExpanded(true);
     const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
+    console.log(" queryByDataElement " + queryMapping)
 
     try {
       const response = await fetch(queryMapping);
