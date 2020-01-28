@@ -42,6 +42,7 @@ import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
 import {getConfig} from '../config.js';
 import {getCodeListMap} from '../currentCodelist.js'
+import {getCodeList} from '../currentCodelist.js'
 
 //tab panel function
 function TabPanel(props) {
@@ -77,7 +78,9 @@ function a11yProps(index) {
 const domain = getConfig().domain;
 const org = getConfig().org;
 const source = getConfig().source;
-const codeLists = getCodeListMap();
+const codeListMap = getCodeListMap();
+const codeListJson = getCodeList();
+
 let deMappings = {};
 
 
@@ -483,54 +486,34 @@ export default function Codelist() {
     });
   }
 
-  const queryDataElements = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=0';
-  // const queryDataElements = 'https://api.staging.openconceptlab.org/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&conceptClass="Data+Element"&page=' + (page + 1) + "&limit=" + (rowsPerPage * (page + 2));
-  
-  //codeLists = sortJSON(codeLists, 'desc');
+  const [period, setPeriod] = useState(["FY" + (new Date().getFullYear() + "").substring(2, 4)]);
+  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
+ 
+  const [collection, setCollection] = useState("");
+  const queryByDataElement = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
+ 
   let emptyMap = {};
 
   //get data-elements from context
   const [{ data_Elements, pdhDataElements, mohDataElements }] = useStateValue();
 
-  // //get code list
-  // function getCodeListMap(codeListJson) {
-  //   var codeListMap = codeListJson.map(function (codeList) {
-  //     //let codeLists = [];
-  //     codeList.periods.map(function (period) {
-  //       const year = "20" + period.substring(2, 4)
-  //       if (!codeLists[year]) {
-  //         let codeListArray = [];
-  //         codeListArray.push(codeList.full_name);
-  //         codeLists[year] = codeListArray;
-  //       }
-  //       else {
-  //         let codeListArray = Array.from(codeLists[year]);
-  //         codeListArray.push(codeList.full_name);
-  //         codeLists[year] = codeListArray;
-  //       }
-  //     });
-  //     return codeLists;
-  //   }
-  //   );
-  //   return codeLists;
-  // }
-  // useEffect(() => {
-  //   getCodeListMap(codeLists);
-
-  // })
-
 
   const [dataElementsInitial, setDataElementsInitialData] = useState([]);
   var [dataElements, setDataElementsData] = useState([]);
-  var [count, setCountOfValues] = useState([]);
+  var [count, setCountOfValues] = useState(0);
   const [error, setError] = useState(null)
 
 
-  const loadDataElementsData = async () => {
+  const loadDataElementsByPeriod = async () => {
+    if(values.dataSet === "All"){
+    console.log(" queryDataElementsByPeriod " + queryDataElementsByPeriod)
+    //setDataElementsData([]);
+    //setCountOfValues(0);
     try {
-      const response = await fetch(queryDataElements);
+      const response = await fetch(queryDataElementsByPeriod);
       if (!response.ok) {
         console.log(response);
+        setDataElementsData([]);
         throw new Error(
           `Error when retrieving data elements ${response.status} ${response.statusText}`
         );
@@ -538,42 +521,85 @@ export default function Codelist() {
       const jsonData = await response.json();
       if (!jsonData.length || jsonData.length === 0) {
         console.log("jsonData is empty");
+        setDataElementsData([]);
         throw new Error(
           `Warning data elements data from OCL is emtpy. `
         );
       }
-      setDataElementsInitialData(jsonData);
+     // setDataElementsInitialData(jsonData);
       var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
 
       //filter by default filters
 
       const temp = [];
       //getCodeListMap(codeList);
-      sortedData.map(data_Element => {
-        const fy = data_Element.extras["Applicable Periods"].map(period =>
-          "20" + period.substring(2, 4)
-        );
-        const ds = data_Element.extras["dataSets"].map(dataSet =>
-          dataSet.name.split(": ")[1].includes(codeLists[values.fiscal][0]) ? codeLists[values.fiscal] : ""
-        );
-        if (
-          fy.includes(new Date().getFullYear()) &&
-          ds.includes(codeLists[values.fiscal][0])
-        ) {
-          temp.push(data_Element);
-        }
-      });
-      setDataElementsData(temp);
-      setCountOfValues(temp.size);
+      //sortedData.map(data_Element => {
+      //   const fy = data_Element.extras["Applicable Periods"].map(period =>
+      //     "20" + period.substring(2, 4)
+      //   );
+      //   const ds = data_Element.extras["dataSets"].map(dataSet =>
+      //     dataSet.name.split(": ")[1].includes(codeListMap[values.fiscal][0]) ? codeListMap[values.fiscal] : ""
+      //   );
+      //   if (
+      //     fy.includes(values.fiscal) &&
+      //     ds.includes(codeListMap[values.fiscal][0])
+      //   ) {
+      //    temp.push(data_Element);
+      //   }
+      //});
+      setDataElementsData(sortedData);
+      setCountOfValues(parseInt(response.headers.get('num_found')));
+      console.log(dataElements.length + " results returned ")
+      console.log(response.headers.get('num_found') + " results found ")
+
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
     }
   }
+  }
 
   useEffect(() => {
+    loadDataElementsByPeriod();
+  }, [queryDataElementsByPeriod]);
+
+  const loadDataElementsData = async () => {
+    if(collection !== "" && values.dataSet !== "All"){
+    console.log(" queryByDataElement " + queryByDataElement)
+    //setDataElementsData([]);
+    //setCountOfValues(0);
+    try {
+      const response = await fetch(queryByDataElement);
+      if (!response.ok) {
+        console.log(response);
+        setDataElementsData([]);
+        throw new Error(
+          `Error when retrieving data elements ${response.status} ${response.statusText}`
+        );
+      }
+      const jsonData = await response.json();
+      if (!jsonData.length || jsonData.length === 0) {
+        console.log("jsonData is empty");
+        setDataElementsData([]);
+        throw new Error(
+          `Warning data elements data from OCL is emtpy. `
+        );
+      }
+      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+      setDataElementsData(sortedData);
+      setCountOfValues(parseInt(response.headers.get('num_found')));
+      console.log(dataElements.length + " results returned ")
+      console.log(response.headers.get('num_found') + " results found ")
+
+    } catch (e) {
+      console.log("error:" + e.message);
+      setError(e.message);
+    }
+  }
+  }
+  useEffect(() => {
     loadDataElementsData();
-  }, [queryDataElements]);
+  }, [queryByDataElement]);
   ///////////
 
   const [search, setSearch] = React.useState("");
@@ -592,7 +618,7 @@ export default function Codelist() {
   const [values, setValues] = React.useState({
     fiscal: new Date().getFullYear(),
     type: "",
-    dataSet:  "",
+    dataSet:  "All",
     source: "",
     frequency: ""
   });
@@ -634,46 +660,59 @@ export default function Codelist() {
 
   //when value has changed, call useEffect function
   useEffect(() => {
-
+    values.dataSet = "All";
+    console.log(" values.fiscal " + values.fiscal)
+    console.log(" values.dataSet " + values.dataSet)
+    setPeriod("FY" + (values.fiscal + "").substring(2, 4));
     setExpanded(false);
-    const tempDataElement = [];
-    dataElements = dataElementsInitial;
-    dataElements.map(data_Element => {
-      const fy = data_Element.extras["Applicable Periods"].map(period =>
-        "20" + period.substring(2, 4)
-      );
-      const ds = data_Element.extras["dataSets"].map(dataSet =>
-        dataSet.name.split(": ")[1]
-        // dataSet.name.includes("Facility") ? "facility" : "community"
-      );
+    //dataElements = dataElementsInitial;
+     //dataElementsInitial.map(data_Element => {
+    //   const fy = data_Element.extras["Applicable Periods"].map(period =>
+    //     "20" + period.substring(2, 4)
+    //   );
+    //   const ds = data_Element.extras["dataSets"].map(dataSet =>
+    //     dataSet.name.split(": ")[1]
+    //     // dataSet.name.includes("Facility") ? "facility" : "community"
+    //   );
 
-      if (
-        fy.includes(values.fiscal) &&
-        // (values.fiscal ==='2019' ? true : period === values.fiscal) &&
-        //  (values.source ===''? true : data_Element.source === values.source) &&
-        //  (values.type ==='' ? true: data_Element.type === values.type)&&
-        //  (values.dataSet ===''? true : data_Element.dataSet === values.dataSet)
-        ds.includes(values.dataSet.split(": ")[1])
-        //(values.dataSet ==='Facility Based Code List'? true : data_Element.dataSet === values.dataSet) 
-        //&&
-        //  (values.frequency ==='' ? true: data_Element.frequency=== values.frequency)
-      ) {
-        tempDataElement.push(data_Element);
-        return true;
-      }
+    //   if (
+    //     fy.includes(values.fiscal) &&
+    //     // (values.fiscal ==='2019' ? true : period === values.fiscal) &&
+    //     //  (values.source ===''? true : data_Element.source === values.source) &&
+    //     //  (values.type ==='' ? true: data_Element.type === values.type)&&
+    //     //  (values.dataSet ===''? true : data_Element.dataSet === values.dataSet)
+    //     ds.includes(values.dataSet.split(": ")[1])
+    //     //(values.dataSet ==='Facility Based Code List'? true : data_Element.dataSet === values.dataSet) 
+    //     //&&
+    //     //  (values.frequency ==='' ? true: data_Element.frequency=== values.frequency)
+    //   ) {
+    //     tempDataElement.push(data_Element);
+    //     return true;
+    // })
+    //});
+    console.log(" displaying " + dataElements.length + " results")
+  }, [values.fiscal]);
 
-      return true;
-    });
+  useEffect(() => {
+    console.log(" values.fiscal " + values.fiscal)
+    console.log(" values.dataSet " + values.dataSet)
+    console.log(" values.dataSet === All " + (values.dataSet === "All"))
 
-    setDataElementsData(tempDataElement);
-    setCountOfValues(tempDataElement.size)
-  }, [values]);
-
-
+    if(values.dataSet === "All"){
+      loadDataElementsByPeriod()
+    }
+    else{
+      codeListJson.codeList.map(cl => {
+        if(values.dataSet === cl.full_name){
+          console.log(" dataset changed ")
+          setCollection(cl.id)
+        }
+      })
+    console.log(" displaying " + dataElements.length + " results")
+    }
+  }, [values.dataSet]);
 
   async function getMappings(id) {
-    // event.preventDefault();
-    // event.stopPropagation();
     setExpanded(true);
     const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
 
@@ -830,10 +869,9 @@ export default function Codelist() {
     setPanel(newPanel);
   };
 
- useEffect(() => {
-    setExpanded(false);
-}, [dataElements])
-
+//  useEffect(() => {
+//     setExpanded(false);
+// }, [dataElements])
 
 
   //layout below
@@ -1004,7 +1042,7 @@ export default function Codelist() {
                         {/* <option value={""} /> */}
                         {
 
-                          Object.keys(codeLists).reverse().map(
+                          Object.keys(codeListMap).reverse().map(
 
                               key => <option key={Math.random()} >{key}</option>
                           )
@@ -1066,8 +1104,9 @@ export default function Codelist() {
                         }}
 
                       >
+                        {<option value={'All'}>All</option>}
                         {/* <option value={""} /> */}
-                        {Object.values(codeLists[values.fiscal]).map(
+                        {Object.values(codeListMap[values.fiscal]).map(
 
                           key => <option key={Math.random()} >{key}</option>
                         )
@@ -1226,9 +1265,12 @@ Compare selected data elements
 
 
             </div>
+            {/* <Parent> */}
 
             {/* data elements */}
-            {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => (
+            {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
+            {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
+            {dataElements.map(dataElement => ( 
               <div key={dataElement.display_name}>
                 <ExpansionPanel className={classes.dataelementContainer}
                   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
@@ -1439,8 +1481,9 @@ Compare selected data elements
 
                 </ExpansionPanel>
               </div>
-
             ))}
+            {/* </Parent> */}
+
             <table>
               <tbody>
                 <TableRow>
@@ -1452,7 +1495,7 @@ Compare selected data elements
                     // rowsPerPage={10}
                     // count={100}
                     // onChangePage={() => {}}
-                    count={dataElements.length}
+                    count={count}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
@@ -1532,6 +1575,7 @@ Compare selected data elements
                                   </div>)}></Route>
                               </ExpansionPanelDetails>
                             </ExpansionPanel>
+                          
                           </div>
 
 
@@ -1698,7 +1742,6 @@ Compare selected data elements
 
 
     </div>
-
 
 
   );

@@ -1400,3 +1400,7 @@ export function getCodeListMap() {
       );
       return codeLists;
       }
+
+      export function getCodeList() {
+          return list;
+      }
