@@ -487,10 +487,10 @@ export default function Codelist() {
   }
 
   const [period, setPeriod] = useState(["FY" + (new Date().getFullYear() + "").substring(2, 4)]);
-  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
+  const queryDataElementsByPeriod = 'https://' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
  
   const [collection, setCollection] = useState("");
-  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
+  const queryByCodeList = 'https://' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
  
   let emptyMap = {};
 
@@ -718,7 +718,7 @@ export default function Codelist() {
 
   async function getMappings(id) {
     setExpanded(true);
-    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
+    const queryMapping = 'https://' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
     try {
