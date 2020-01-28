@@ -19,6 +19,13 @@ MSP is currently work-in-progress and being managed by the Regenstrief Institute
 The current release of MSP is v1.0.0. Updates and release notes are available here.
 -->
 
+## Production Build
+
+```
+export OCL_DOMAIN=qa.openconceptlab.org #default
+docker-compose up
+```
+
 ## License
 This project is licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License.You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 
