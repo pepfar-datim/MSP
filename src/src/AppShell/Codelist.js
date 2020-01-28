@@ -514,6 +514,7 @@ export default function Codelist() {
       if (!response.ok) {
         console.log(response);
         setDataElementsData([]);
+        setCountOfValues(0);
         throw new Error(
           `Error when retrieving data elements ${response.status} ${response.statusText}`
         );
@@ -522,6 +523,7 @@ export default function Codelist() {
       if (!jsonData.length || jsonData.length === 0) {
         console.log("jsonData is empty");
         setDataElementsData([]);
+        setCountOfValues(0);
         throw new Error(
           `Warning data elements data from OCL is emtpy. `
         );
@@ -573,6 +575,7 @@ export default function Codelist() {
       if (!response.ok) {
         console.log(response);
         setDataElementsData([]);
+        setCountOfValues(0);
         throw new Error(
           `Error when retrieving data elements ${response.status} ${response.statusText}`
         );
@@ -581,6 +584,7 @@ export default function Codelist() {
       if (!jsonData.length || jsonData.length === 0) {
         console.log("jsonData is empty");
         setDataElementsData([]);
+        setCountOfValues(0);
         throw new Error(
           `Warning data elements data from OCL is emtpy. `
         );
