@@ -527,7 +527,7 @@ const useStyles = makeStyles(theme => ({
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
-    var queryIndicators = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
+    var queryIndicators = "https://" + domain + "/orgs/" + org + "/sources/" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
 
     const [error, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
@@ -580,7 +580,7 @@ const useStyles = makeStyles(theme => ({
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {
           
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source +  "/concepts/?limit=0&verbose=true&includeMappings=ture&q=" + indicatorID + "&conceptClass=\"Data+Element\"";
+      var query = "https://" + domain + "/orgs/" + org + "/sources/" + source +  "/concepts/?limit=0&verbose=true&includeMappings=ture&q=" + indicatorID + "&conceptClass=\"Data+Element\"";
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query); 
      
       setDELoading(true);
@@ -667,7 +667,7 @@ const useStyles = makeStyles(theme => ({
     
     const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
       console.log("loadIndicatorDetail: " + indicatorID);      
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID;      
+      var query = "https://" + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID;      
       console.log("query indicator detail : " + query );
       setIndicatorDetailLoading(true);
       try {
