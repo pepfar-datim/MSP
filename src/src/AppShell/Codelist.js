@@ -551,9 +551,9 @@ export default function Codelist() {
       //});
       setDataElementsData(sortedData);
       setCountOfValues(parseInt(response.headers.get('num_found')));
-      console.log(dataElements.length + " results returned ")
+      console.log(dataElements.length + " dataElements.length ")
       console.log(response.headers.get('num_found') + " results found ")
-
+      console.log(response.headers.get('num_returned') + " results returned ")
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
@@ -1329,8 +1329,7 @@ Compare selected data elements
                     <Grid container>
                       <Grid item xs={12} className={classes.expansionPanelLeft}>
                         <Typography>
-
-                          <strong>Description</strong>: {dataElement.descriptions[0].description}<br />
+                          <strong>Description</strong>: {(dataElement.descriptions) ? dataElement.descriptions[0].description : "Not Available"}<br />
                           {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
           {dataElement.indicatorCode}
           </NavLink> */}
