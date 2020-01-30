@@ -1,5 +1,4 @@
 import React, {useState, useEffect } from 'react';
-import { Remarkable } from 'remarkable';
 import * as headings from '../Styles/Text';
 import styled from 'styled-components';
 import * as color_palette from '../Styles/Colors';
@@ -23,10 +22,11 @@ import {useStateValue} from '../ContextSetup';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 // eslint-disable-next-line no-unused-vars
-import { Route, BrowserRouter as Router, NavLink } from 'react-router-dom';
+import { Route, BrowserRouter as Router, NavLink, useParams, useLocation, Redirect } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -37,6 +37,8 @@ import Button from '@material-ui/core/Button';
 
 import {WhatIsNew} from './WhatIsNew';
 import {getConfig} from '../config.js';
+import {sortJSON} from '../util.js';
+import IndicatorDetail from './IndicatorDetail';
 
 //tab panel function
 function TabPanel(props) {
@@ -99,6 +101,9 @@ function formularProps(index) {
 }
 
 const domain = getConfig().domain;
+const org = getConfig().org;
+const source = getConfig().source;
+
 const ExpandTitle = styled.p`
     margin:0;
     padding:0;
@@ -106,18 +111,8 @@ const ExpandTitle = styled.p`
     color: ${color_palette.SECONDARY_RED};
     font-weight: bold;
 `;
-const ExpandSubTitle = styled.span`
-    margin-left: 1em;
-    font-size: 1em;
-    padding-top: 5px;
-    font-weight: 300;
-`;
 
 
-const ChildList =styled.ul`
-    margin-top:0;
-    padding-top:0;
-`;
 
 
 const useStyles = makeStyles(theme => ({
@@ -307,6 +302,10 @@ const useStyles = makeStyles(theme => ({
      paddingBottom: '1em',
      cursor: 'pointer'
    },
+   indicatorListItemUnclickable:{
+    paddingBottom: '1em',
+    cursor: 'default' 
+  },
    indicatorListItemActive:{
     paddingBottom: '1em',
     cursor: 'pointer',
@@ -326,6 +325,11 @@ const useStyles = makeStyles(theme => ({
     color: "rgba(0, 0, 0, 0.87) !important",
     fontSize: '0.8rem',
     fontWeight: 'normal'
+  },
+  errorMessage:{
+    textAlign: 'center',
+    color: '#FF0000',
+    marginBottom: '0 !important'
   },
   indicatorChanges:{
     padding: '1em',
@@ -403,8 +407,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default function Indicator() {
 
+  export default function Indicator() {
+
+    let location = useLocation();        
     const classes = useStyles();
     
     //initial filter state
@@ -414,15 +420,32 @@ export default function Indicator() {
       type: ""
     });
 
+    const getIndicatorIdFromParam = (pathname) =>{      
+      var indID = "";
+      var pieces = pathname.split('/');
+      if (pieces.length > 2) {
+        indID = pieces.pop()        
+      }       
+      return indID;
+      }
 
+      const INDICATOR_PANEL = 0;
+      const DATA_ELEMENT_PANEL = 1;
+      
     //get indicator and data-elements from context
-    const [{ indicators, data_Elements, indicatorName, currentIndicator, matchDataElements }, dispatch] = useStateValue();
+    const [{ currentIndicator, matchDataElements }, dispatch] = useStateValue();
     
-
     //set initial panel state and panel handle change function
-    const [panel, setPanel] = React.useState(0);
+    const [panel, setPanel] = React.useState(INDICATOR_PANEL);
+
     const handleChange = (event, newPanel) => {
-      setPanel(newPanel);
+      setPanel(newPanel);      
+      if (newPanel === DATA_ELEMENT_PANEL){       
+        // reload data element
+        if (currentIndicator && currentIndicator.id !== '' && matchDataElements.length ===0){
+          updateIndicator(currentIndicator.id, DATA_ELEMENT_PANEL);
+        }        
+      }
     };
 
     const [formularPanel, setFormularPanel] = React.useState(0);
@@ -432,116 +455,94 @@ export default function Indicator() {
       setFormularPanel(newFormularPanel);
     };
 
-    const sortJSON = function (data, key, direction) {    
-      return data.sort(function(a, b) {       
-          var x = a[key]; var y = b[key];         
-          if (direction === 'asc' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-          if (direction === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
-          return true;
-      });    
-    }
-
-
-
     const getIndicatorGroup = function (indicatorData) { 
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
-      var filteredByYearData = indicatorData.filter(function (data) {
-        
-        if (values.frequency !== "" && values.fiscal !== "") { 
-          //console.log("case 1:" + data.periodYear + " " + data.frequency );
+      var filteredByYearData = indicatorData.filter(function (data) {        
+        if (values.frequency !== "" && values.fiscal !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.frequency !== "") {         
-          //console.log("case 2:" + data.periodYear + " " + data.frequency ); 
+        }else if (values.frequency !== "") {                   
           return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
-        }else if (values.periodYear !== "") {    
-             
+        }else if (values.periodYear !== "") {                 
           return data.periodYear === values.fiscal;
-        }
-        
-        //return true;
+        }        
+        return true;
       });
-
-      //console.log(filteredByYearData);
       const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();           
-
-      //// set indicators based on filter
-      ///??setIndicatorsListForUI(filteredByYearData);
-      var valueObj = {};
-      valueObj.indGroup = distinctGroup;
-      valueObj.indicatorsFiltered = filteredByYearData;
-      return distinctGroup;
-      //return valueObj;
+      return distinctGroup;      
     }
 
-    const getFilteredIndicator = function (indicatorData) { 
-      console.log( "filter value: " + values.fiscal + " freq:" + values.frequency + " periodYear:" + values.periodYear);
-      var filteredByYearData = indicatorData.filter(function (data) {
-        
+    const getFilteredIndicator = function (indicatorData) {  
+      console.log( "filter value: " + values.fiscal + " freq: " + values.frequency );     
+      var filteredByYearData = indicatorData.filter(function (data) {        
         if (values.frequency !== "" && values.fiscal !== "") {           
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
         }else if (values.frequency !== "") {                   
           return data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
         }else if (values.periodYear !== "") {                
           return data.periodYear === values.fiscal;
-        }
-        
-        //return true;
+        }        
+        return true;
       });
-
-      //console.log(filteredByYearData);
       return filteredByYearData;
     }
 
-   const createIndicatorListForUI = function(indicatorsDataOCL) {
-     var indicatorList = indicatorsDataOCL.map(function (indicator) {        
-        var indicatorItem = {};        
-        indicatorItem.id = indicator.id;
-        indicatorItem.name = indicator.display_name ? indicator.display_name : "";
-        indicatorItem.description = (indicator.descriptions && indicator.descriptions.length > 0) ? indicator.descriptions[0].description : "";        
-        indicatorItem.created_on = indicator.created_on ? indicator.created_on : "";
-        indicatorItem.updated_on = indicator.updated_on ? indicator.updated_on : "";        
-        indicatorItem.group = indicator.extras && indicator.extras["Indicator Group"] ? indicator.extras["Indicator Group"]: "";
-        indicatorItem.level = indicator.extras && indicator.extras["Reporting level"] ? indicator.extras["Reporting level"]: "";
-        indicatorItem.frequency = indicator.extras && indicator.extras["Reporting frequency"] ? indicator.extras["Reporting frequency"]: "";
-        indicatorItem.period = indicator.extras && indicator.extras["Period"] ? indicator.extras["Period"]: "";
-        indicatorItem.periodYear = (indicatorItem.period !== "") ? "20" + indicatorItem.period.trim().substring(2,4) : "";
-        indicatorItem.numerator = indicator.extras && indicator.extras["Numerator"] ? indicator.extras["Numerator"]: "";   
-        indicatorItem.numerator_description = indicator.extras && indicator.extras["Numerator Description"] ? indicator.extras["Numerator Description"]: "";               
-        indicatorItem.numerator_disaggregation_groups = indicator.extras && indicator.extras["Numerator Disaggregation Groups"] ? indicator.extras["Numerator Disaggregation Groups"]: "";       
-        indicatorItem.disaggregate_descriptions_and_definitions = indicator.extras && indicator.extras["Disaggregate descriptions and definitions"] ? indicator.extras["Disaggregate descriptions and definitions"]: "";           
-        indicatorItem.denominator = indicator.extras && indicator.extras["Denominator"] ? indicator.extras["Denominator"]: "";
-        indicatorItem.denominator_disaggregation_groups = indicator.extras && indicator.extras["Denominator Disaggregation Groups"] ? indicator.extras["Denominator Disaggregation Groups"]: "";    
 
-        indicatorItem.changeFromPreviousVersion = indicator.extras && indicator.extras["Change from previous version"] ? indicator.extras["Change from previous version"] : "";
-        indicatorItem.how_to_use = indicator.extras && indicator.extras["How to use"] ? indicator.extras["How to use"]: "";
-        indicatorItem.how_to_collect = indicator.extras && indicator.extras["How to collect"] ? indicator.extras["How to collect"]: "";
-        indicatorItem.how_to_review = indicator.extras && indicator.extras["How to review for data quality"] ? indicator.extras["How to review for data quality"] : "";
-        indicatorItem.how_to_calculate_annual_total = indicator.extras && indicator.extras["How to calculate annual total"] ? indicator.extras["How to calculate annual total"] : "";
-        indicatorItem.PEPFAR_support_definition = (indicator.extras && indicator.extras["PEPFAR-support definition"] ) ? indicator.extras["PEPFAR-support definition"] : "";
-        indicatorItem.guiding_narrative_questions = indicator.extras && indicator.extras["Guiding narrative questions"] ? indicator.extras["Guiding narrative questions"]: "";
-        indicatorItem.guidance_version = indicator.extras && indicator.extras["Guidance Version"] ? indicator.extras["Guidance Version"]: "";
-        //console.log(indicatorItem);        
-        return indicatorItem;
-      });      
-     return indicatorList;
+   const createIndicatorDetailForUI = function(indicatorOCL) {            
+      var indicatorItem = {};        
+      indicatorItem.id = indicatorOCL.id;
+      indicatorItem.name = indicatorOCL.display_name ? indicatorOCL.display_name : "";
+      indicatorItem.description = (indicatorOCL.descriptions && indicatorOCL.descriptions.length > 0) ? indicatorOCL.descriptions[0].description : "";        
+      indicatorItem.created_on = indicatorOCL.created_on ? indicatorOCL.created_on : "";
+      indicatorItem.updated_on = indicatorOCL.updated_on ? indicatorOCL.updated_on : "";        
+      indicatorItem.group = indicatorOCL.extras && indicatorOCL.extras["Indicator Group"] ? indicatorOCL.extras["Indicator Group"]: "";
+      indicatorItem.level = indicatorOCL.extras && indicatorOCL.extras["Reporting level"] ? indicatorOCL.extras["Reporting level"]: "";
+      indicatorItem.frequency = indicatorOCL.extras && indicatorOCL.extras["Reporting frequency"] ? indicatorOCL.extras["Reporting frequency"]: "";
+      indicatorItem.period = indicatorOCL.extras && indicatorOCL.extras["Period"] ? indicatorOCL.extras["Period"]: "";
+      indicatorItem.periodYear = (indicatorItem.period !== "") ? "20" + indicatorItem.period.trim().substring(2,4) : "";
+      indicatorItem.numerator = indicatorOCL.extras && indicatorOCL.extras["Numerator"] ? indicatorOCL.extras["Numerator"]: "";   
+      indicatorItem.numerator_description = indicatorOCL.extras && indicatorOCL.extras["Numerator Description"] ? indicatorOCL.extras["Numerator Description"]: "";               
+      indicatorItem.numerator_disaggregation_groups = indicatorOCL.extras && indicatorOCL.extras["Numerator Disaggregation Groups"] ? indicatorOCL.extras["Numerator Disaggregation Groups"]: "";       
+      indicatorItem.disaggregate_descriptions_and_definitions = indicatorOCL.extras && indicatorOCL.extras["Disaggregate descriptions and definitions"] ? indicatorOCL.extras["Disaggregate descriptions and definitions"]: "";           
+      indicatorItem.denominator = indicatorOCL.extras && indicatorOCL.extras["Denominator"] ? indicatorOCL.extras["Denominator"]: "";
+      indicatorItem.denominator_disaggregation_groups = indicatorOCL.extras && indicatorOCL.extras["Denominator Disaggregation Groups"] ? indicatorOCL.extras["Denominator Disaggregation Groups"]: "";    
+      indicatorItem.changeFromPreviousVersion = indicatorOCL.extras && indicatorOCL.extras["Change from previous version"] ? indicatorOCL.extras["Change from previous version"] : "";
+      indicatorItem.how_to_use = indicatorOCL.extras && indicatorOCL.extras["How to use"] ? indicatorOCL.extras["How to use"]: "";
+      indicatorItem.how_to_collect = indicatorOCL.extras && indicatorOCL.extras["How to collect"] ? indicatorOCL.extras["How to collect"]: "";
+      indicatorItem.how_to_review = indicatorOCL.extras && indicatorOCL.extras["How to review for data quality"] ? indicatorOCL.extras["How to review for data quality"] : "";
+      indicatorItem.how_to_calculate_annual_total = indicatorOCL.extras && indicatorOCL.extras["How to calculate annual total"] ? indicatorOCL.extras["How to calculate annual total"] : "";
+      indicatorItem.PEPFAR_support_definition = (indicatorOCL.extras && indicatorOCL.extras["PEPFAR-support definition"] ) ? indicatorOCL.extras["PEPFAR-support definition"] : "";
+      indicatorItem.guiding_narrative_questions = indicatorOCL.extras && indicatorOCL.extras["Guiding narrative questions"] ? indicatorOCL.extras["Guiding narrative questions"]: "";
+      indicatorItem.guidance_version = indicatorOCL.extras && indicatorOCL.extras["Guidance Version"] ? indicatorOCL.extras["Guidance Version"]: "";
+             
+      return indicatorItem;     
    }
+
+   const createIndicatorListForUI = function(indicatorsDataOCL) {
+    var indicatorList = indicatorsDataOCL.map(function (indicator) {  
+      return createIndicatorDetailForUI(indicator);             
+     });      
+    return indicatorList;
+  }
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
-    var queryIndicators = "https://api." + domain + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
-    
-    const [indicatorsData, setIndicatorsData] = useState([] );
-    const [dataElementsData, setDataElementsData] = useState([] ); 
-    const [error, setError] = useState(null)
+    var queryIndicators = "https://" + domain + "/orgs/" + org + "/sources/" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
+
+    const [error, setError] = useState(null);
+    const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
+    const [errorLoadIndicatorDetail, setErrorLoadIndicatorDetail] = useState(null);
     const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
     const [filteredIndicatorsListForUI, setFilteredIndicatorsListForUI] = useState([] );
     const [indicatorGroups, setIndicatorGroups] = useState([] );
     const [indGrouploading, setIndGroupLoading] = useState(false);
-    const [deloading, setDELoading] = useState(false);
+    const [deloading, setDELoading] = useState(false);    
+    const [indicatorDetailLoading, setIndicatorDetailLoading] = useState(false);    
+    
  
+    // used to populate indicator groups and indicators under the filters
     const loadIndicatorData = async ()=> {
-      //console.log("loadIndicatorData - queryIndicators :"+queryIndicators);
+      console.log("loadIndicatorData - queryIndicators : " + queryIndicators);
       setIndGroupLoading(true);
       try {
         const response = await fetch(queryIndicators);
@@ -558,13 +559,15 @@ export default function Indicator() {
           throw new Error(
             `Warning indicators data is emtpy from OCL `
           );
-        }
-        setIndicatorsData(jsonData); 
+        }        
+        
         console.log("indicators: " + jsonData.length);
+        console.log(jsonData);
         var d = createIndicatorListForUI(jsonData);
         var sortedData = sortJSON(d, 'name', 'asc');
         setIndicatorsListForUI (sortedData);
         setFilteredIndicatorsListForUI(sortedData);
+       
         var indGroupTemp = getIndicatorGroup(d);        
         setIndicatorGroups(indGroupTemp);        
         setIndGroupLoading(false);
@@ -574,12 +577,14 @@ export default function Indicator() {
       }
     }
 
+    // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {
-      console.log("loadDataElementsByIndicator: " + indicatorID);      
-      var query = "https://api." + domain + "/orgs/PEPFAR-Test2/sources/MER-Test2/concepts/?limit=0&verbose=true&conceptClass=\"Data+Element\"&includeMappings=ture&q=" + indicatorID;
-
-      //console.log("query data eleemnts by indicator : " + query );
+          
+      var query = "https://" + domain + "/orgs/" + org + "/sources/" + source +  "/concepts/?limit=0&verbose=true&includeMappings=ture&q=" + indicatorID + "&conceptClass=\"Data+Element\"";
+      console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query); 
+     
       setDELoading(true);
+      setErrorLoadDataElement(null);
       try {
         const response = await fetch(query);
         if (!response.ok) {
@@ -598,6 +603,7 @@ export default function Indicator() {
           );
         }
         console.log("data elements : " + jsonData.length);
+        console.log(jsonData);
         setDELoading(false);
         var mappedDataElements = [];
         if (jsonData && Array.isArray(jsonData)){          
@@ -623,65 +629,108 @@ export default function Indicator() {
             dataElementItem.disags = sortedMappings;
             return dataElementItem;
           })
-        }
-                
-        var sortedData = sortJSON(mappedDataElements, 'name', 'asc');
-        setDataElementsData(mappedDataElements);
+        }                
+        var sortedData = sortJSON(mappedDataElements, 'name', 'asc');        
         dispatch({
           type: 'changeMatchDataElements',
           matchDataElements: sortedData
         })
         
       }catch (e){
-        console.log("error:" + e.message);
-        setError(e.message);
+        console.log("error:" + e.message);        
+        setDELoading(false);
+        setErrorLoadDataElement("Error when get data elements for " + indicatorID + ". " + e.message);
+        // clear data elements
+        dispatch({
+          type: 'changeMatchDataElements',
+          matchDataElements: []
+        })
       }
     }
 
-    useEffect(() => {
-      console.log("loadIndicator from useEffect");
-      loadIndicatorData();      
+    var indicatorId = getIndicatorIdFromParam(location.pathname); // indicatorId from URL param
+    
+    useEffect(() => {      
+      loadIndicatorData(); 
       setInit(true);
     }, [queryIndicators]);
 
-   
-  //update the indicator details and matched data-element when select indicator
-  function updateIndicator(indicator_name){
-     //match indicator name
-    //  setIndicatorName(indicator_name);
-    dispatch({
-      type: 'changeIndicatorName',
-      indicatorName: indicator_name
-    })
-     //match indicator details
+    // update indicator each time indicatorId changes
+    useEffect(() => {
+      //console.log("*** useEffect - updateIndicator: " +  indicatorId);                    
+        if ( init  && indicatorId && indicatorId !== '' ) {          
+          //console.log("UPDATE INDIATGOR");
+          updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                    
+        }            
+    }, [indicatorId]);
 
-     //indicators.map(indicator => {
-     indicatorsListForUI.map(indicator => {
-       if(indicator.name.trim().toLowerCase() === indicator_name.trim().toLowerCase()){
-      //  setCurrentIndicator(indicator);
-      dispatch({
-        type: 'changeCurrentIndicator',
-        currentIndicator: indicator
-      })
-       }
-      return true;
-     });
+    
+    const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
+      console.log("loadIndicatorDetail: " + indicatorID);      
+      var query = "https://" + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID;      
+      console.log("query indicator detail : " + query );
+      setIndicatorDetailLoading(true);
+      try {
+        const response = await fetch(query);
+        if (!response.ok) {
+          console.log(response);
+          setIndicatorDetailLoading(false);
+          throw new Error(
+            `Error when retrieve indicator data. ${response.status} ${response.statusText}`
+          );
+        }else {
+          const jsonData = await response.json();                
+          if (!jsonData) {
+            console.log("jsonData is empty");
+            setIndicatorDetailLoading(false);
+            throw new Error(
+              `Warning indicator detail data is emtpy from OCL  ` + indicatorID
+            );
+          }        
+          console.log(jsonData);
+          setIndicatorDetailLoading(false);
+          var data = createIndicatorDetailForUI(jsonData);
+          dispatch({
+            type: 'changeIndicatorName',
+            indicatorName: indicatorID
+          });
+          dispatch({
+            type: 'changeCurrentIndicator',
+            currentIndicator: data
+          })
+        }                
+      }catch (e){
+        console.log("error:" + e.message);
+        setIndicatorDetailLoading(false);
+        setErrorLoadIndicatorDetail(e.message);        
+      }
+    }
 
-     //match data element of this indicator     
-     loadDataElementsDataByIndicator(indicator_name);
-     
-     const match = [];
-     data_Elements.map(data_Element => {
-     if((data_Element.name).includes(indicator_name)){
-       match.push(data_Element);
-     }
-     return true;
-   });
-  
-}
+  //update indicator details and matched data-element for selected indicator
+  function updateIndicator(indicatorId, panel){     
+    
+    //console.log("updateIndicator - indicatorID:" + indicatorId );    
+    if (indicatorId === '' || !isValidIndicatorID(indicatorId) ) {      
+      setErrorLoadIndicatorDetail("Invalid Indicator ID.");
+      backtoDefault();
+    }else {
+      setErrorLoadIndicatorDetail(null);              
+      loadIndicatorDetailByIndicator(indicatorId);                    
+      if (panel && panel === DATA_ELEMENT_PANEL) {
+        loadDataElementsDataByIndicator(indicatorId);
+      }else {// clear data elements
+        dispatch({
+          type: 'changeMatchDataElements',
+          matchDataElements: []
+        })
+      }
+          
+    }         
+  }
 
   //realize the function of "key update" to back to the default status
   function backtoDefault(){
+    //console.log(currentIndicator);
     dispatch({
       type: 'changeIndicatorName',
       indicatorName: ''
@@ -696,12 +745,21 @@ export default function Indicator() {
     })
   }
 
-  function convertMarkdown(text) {
+  /*function convertMarkdown(text) {
     var md = new Remarkable();    
     return md.render(text) ;
-  }
+  }*/
     
-//implement filtering function by set Values first
+  function isValidIndicatorID(indicatorID) {   
+    //allow only alphanumeric, hyphen, underscore    
+    if (!indicatorID.match(/^[0-9a-zA-Z-_]+$/)){
+      return false;
+    }else {
+      return true;
+    }    
+  } 
+
+  //implement filtering function by set Values first
   const handleFilterChange = event => {
     event.persist();
       setValues(oldValues => ({
@@ -713,18 +771,29 @@ export default function Indicator() {
   //when value has changed, call useEffect function
   useEffect(() => {
     //if it's not the first time the app mounted
+    //console.log("**** useEffect - filter value change");
     if(init){
-      console.log("indicatorListForUI:" + indicatorsListForUI.length);
+      //console.log("indicatorListForUI:" + indicatorsListForUI.length);
       var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
       setIndicatorGroups(indGroupTemp);
       var filteredInd = getFilteredIndicator(indicatorsListForUI);      
-      setFilteredIndicatorsListForUI(filteredInd);
-
-    }
+      setFilteredIndicatorsListForUI(filteredInd);      
+    }    
   }, [values]);
+
+  // when init change, to load indicator from URL param
+  useEffect(() => {
+    //if it's not the first time the app mounted
+    //console.log("***** useEffect, run only when init change to true. init: " + init);
+    if(init && indicatorId !== ''){     
+      updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                     
+    }    
+  }, [init]);
+
 
   //indicator group display
   var groupExpansionPanelList = []; 
+  
   indicatorGroups.map(function(indGroup, index) {
     //console.log(indGroup + " - " + index);
     groupExpansionPanelList.push(
@@ -739,8 +808,10 @@ export default function Indicator() {
               .map(indicator =>{
                 //console.log(indicator.id);
               return(
-                <div key={"group_" + index + indicator.id } onClick={() => updateIndicator(indicator.id)} className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : classes.indicatorListItem}>
-                {indicator.name} 
+                <div key={"group_" + index + indicator.id }  className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
+                 {currentIndicator.name===indicator.name || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
+                  <NavLink  to={"/indicator" }><span style={{color: '#000000'}} onClick={() => updateIndicator(indicator.id, panel)}>{indicator.name}</span></NavLink>  
+                 }                                                
                 </div>
               )                 
             })
@@ -751,15 +822,15 @@ export default function Indicator() {
     return true;
   }, this);
 
-//console.log(currentIndicator);
 
 
   //layout
 return (
-         
+  
  <div className={classes.container}>
   <Breadcrumb></Breadcrumb>
-
+    {errorLoadIndicatorDetail!== null ? <div className={classes.errorMessage}>{errorLoadIndicatorDetail}</div> : null}
+    {errorLoadDataElement!== null ? <div className={classes.errorMessage}>{errorLoadDataElement}</div> : null}
   <Grid container>
   {/* sidebar */}
   <Grid item xs={12} md={3}>
@@ -826,160 +897,35 @@ return (
 <Grid item xs={12} md={9}>
 
 {/* if there is no indicator selected display default what's new, otherwise display the indicator details and data elements related */}
+      
   {
-    indicatorName === '' ? <WhatIsNew/> : 
+    currentIndicator && currentIndicator.length === 0  ? <WhatIsNew/> : 
     <div>
       <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
-      <headings.H1>{indicatorName}</headings.H1>
+      <headings.H1>{currentIndicator.name}</headings.H1>
       
-      {/* indicator tabs */}     
+      {/* indicator tabs */}    
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
         <Tab label="INDICATOR DETAILS" {...a11yProps(0)} />
         <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
       </Tabs>
 
+     
       {/* indicator details */}
-      <TabPanel value={panel} index={0} className={classes.tabPanel}>
-      
-      {/* Indicator description */}        
-      <ExpansionPanel defaultExpanded={true}>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-            <ExpandTitle>Description</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <div>
-            <p className={classes.childContent}>
-              {currentIndicator.description}
-            </p>
-            <p>
-              <strong>Reporting level</strong>: {currentIndicator.level} <br/>
-              <strong>Reporting frequency</strong>: {currentIndicator.frequency} <br/>
-              <strong>How to calculate annual total</strong>:  {currentIndicator.how_to_calculate_annual_total} 
-            </p>
-          </div>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-
-  {/* Indicator changes */}
-  <ExpansionPanel defaultExpanded={true}>
-       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-        <ExpandTitle>Indicator changes</ExpandTitle>
-        <ExpandSubTitle> Guidance Version: {currentIndicator.guidance_version}</ExpandSubTitle>
-       </ExpansionPanelSummary>
-       <ExpansionPanelDetails>                        
-          <div><strong>Change from previous version</strong>: {currentIndicator.changeFromPreviousVersion}</div>                        
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-   {/* Indicator numerator */}   
-       <ExpansionPanel defaultExpanded={true}>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header" >
-          <ExpandTitle>Numerator</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.panelDetails}>
-              <p className={classes.childContent}><strong>Numerator</strong>: {currentIndicator.numerator}</p>
-              <p className={classes.childContent}><strong>Numerator Description</strong>: {currentIndicator.numerator_description}</p>
-              <p className={classes.childContent}><strong>Disaggregate Groups</strong></p>              
-              <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.numerator_disaggregation_groups)}} />                                           
-        </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-  {/* Indicator denominator */}
-       <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" >
-          <ExpandTitle>Denominator</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.panelDetails}>
-              <p className={classes.childContent}><strong>Denominator</strong>: {currentIndicator.denominator}</p>
-              <p className={classes.childContent}><strong>Denominator Description</strong>: {currentIndicator.numerator_description}</p>
-              <p className={classes.childContent}><strong>Disaggregate Groups</strong>:                
-                <span dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.denominator_disaggregation_groups)}} />
-              </p>
-        </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-  {/* Indicator disaggregate */}
-  {currentIndicator.disaggregate_descriptions_and_definitions.trim() !== "" ? 
-       <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-          <ExpandTitle>Disaggregate descriptions & definitions</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>                                    
-             <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.disaggregate_descriptions_and_definitions)}} />                         
-        </ExpansionPanelDetails>
-       </ExpansionPanel>
-      : null }
-
-  {/* Indicator pepfar definition */}
-  {currentIndicator.PEPFAR_support_definition.trim() !== "" ?  
-      <ExpansionPanel>
-        <ExpansionPanelSummary  expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
-          <ExpandTitle>PEPFAR-support definition</ExpandTitle>
-              {/*<ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>*/}
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>                          
-          <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.PEPFAR_support_definition)}}/>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-  : null }
-  {/* Indicator how to use */}
-  {currentIndicator.how_to_use.trim() !== "" ?  
-      <ExpansionPanel>
-       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-        <ExpandTitle>How to use</ExpandTitle>
-       </ExpansionPanelSummary>
-       <ExpansionPanelDetails>
-       <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_use)}} />
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-  : null }
-  {/* Indicator how to collect */}
-  {currentIndicator.how_to_collect.trim() !== "" ?  
-       <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-          <ExpandTitle>How to collect</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_collect)}}/>
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-  : null }
-  {/* Indicator how to review quality */}
-  {currentIndicator.how_to_review.trim() !== "" ?  
-      <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-          <ExpandTitle>How to review data quality</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-        <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.how_to_review)}} />
-       </ExpansionPanelDetails>
-      </ExpansionPanel>
-    : null }
-  {/* Indicator guiding narrative questions */}
-  {currentIndicator.guiding_narrative_questions.trim() !== "" ?  
-      <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-          <ExpandTitle>Guiding narrative questions</ExpandTitle>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-        <div dangerouslySetInnerHTML={{__html: convertMarkdown(currentIndicator.guiding_narrative_questions)}}/>
-       </ExpansionPanelDetails>
-      </ExpansionPanel>
-  : null }
-    </TabPanel>
+      <TabPanel value={panel} index={INDICATOR_PANEL} className={classes.tabPanel}>    
+        <IndicatorDetail currentIndicator={currentIndicator} classes={classes}  indicatorDetailLoading={indicatorDetailLoading}  />           
+      </TabPanel>
 
 
    {/* data elements */}
-    <TabPanel value={panel} index={1} className={classes.tabPanel}>
+    {deloading ?<div><LinearProgress mode="indeterminate" /><p>Loading data elements. Please wait ...</p></div> :
+     matchDataElements.length === 0 ? 
+     <div><p>No data elements found </p></div> :  
+    <TabPanel value={panel} index={DATA_ELEMENT_PANEL} className={classes.tabPanel}>
       {/* <div className={classes.tabDashboard}>
       <Button variant="contained" color="primary" className={classes.button} onClick={toggleDrawer('bottom', true)}>Comparison</Button>
       </div> */}      
-      {deloading ? 
-        <div><LinearProgress mode="indeterminate" /></div> : 
-        matchDataElements.length === 0 ? 
-          <div>No data elements found </div> : null        
-        
-      }
+      
       
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
@@ -1058,10 +1004,7 @@ return (
               <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>
                 <Table className={classes.table} aria-label="simple table">
                 <TableBody>
-                  <TableRow key={Math.random()}>
-                    <TableCell component="th" scope="row">
-                    Numerator
-                    </TableCell> 
+                  <TableRow key={Math.random()}>                   
                     {(dataElement && dataElement.disags )? 
                       <TableCell component="th" scope="row">                               
                       {
@@ -1074,22 +1017,8 @@ return (
                       }                        
                       </TableCell> 
                       : null
-                  }
-                    
-                  </TableRow>
-                  <TableRow key={Math.random()}>
-                      <TableCell component="th" scope="row">
-                      Denominator
-                      </TableCell> 
-                      <TableCell component="th" scope="row">
-                      N/A
-                      </TableCell> 
-                  </TableRow>
-                  <TableRow> 
-                  
-                      <TableCell colSpan={2}><div style={{color: '#808080'}}>[NOTE: The formula need to be updated once finalized in OCL.]</div></TableCell>  
-                  </TableRow>
-                   
+                  }                    
+                  </TableRow>                 
                   </TableBody>
                 </Table>
               </FormularPanel>
@@ -1097,9 +1026,7 @@ return (
                 <Table className={classes.table} aria-label="simple table">
                 <TableBody>
                   <TableRow key={Math.random()}>
-                    <TableCell component="th" scope="row">
-                    Numerator
-                    </TableCell> 
+                   
                     {(dataElement && dataElement.disags )? 
 
                     <TableCell component="th" scope="row">                               
@@ -1116,18 +1043,7 @@ return (
                     : null}
                     </TableRow>
 
-                    <TableRow key={Math.random()}>
-                    <TableCell component="th" scope="row">
-                    Denominator
-                    </TableCell> 
-                    <TableCell component="th" scope="row">
-                    {dataElement.uidDenominator}
-                    </TableCell> 
-                    </TableRow>
-
-                    <TableRow> 
-                      <TableCell colSpan={2}><div style={{color: '#808080'}}>[NOTE: The formula need to be updated once finalized in OCL.]</div></TableCell>  
-                    </TableRow>
+                  
                   </TableBody>
                 </Table>
               </FormularPanel>
@@ -1146,6 +1062,7 @@ return (
 
       </TabPanel>
       
+    }
       </div>
         }
       </Grid>

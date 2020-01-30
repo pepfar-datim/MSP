@@ -135,7 +135,7 @@ export default function Header() {
          
             <Title className={classes.title} > 
            <a href="/">
-            <img src="./assets/logo.png" className={classes.logo} alt="DATIM logo"/>
+            <img src='https://www.icfcreative.com/2019/datim/images/logo.png' className={classes.logo} alt="DATIM logo"/>
             </a>  
             </Title>
          

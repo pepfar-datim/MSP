@@ -14,11 +14,12 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {useStateValue} from '../ContextSetup';
+import { NavLink } from 'react-router-dom';
 
 
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     button:{
         backgroundColor: '#C1A783',
         color: '#000000',
@@ -103,36 +104,23 @@ function a11yProps(index) {
 }
 
 
-
-
-
-
-
 //get global variables from context
 export const WhatIsNew =() =>{
+  
     const classes = useStyles();
-    const [{ indicators, data_Elements, newIndicators, newDisaggregations, reportFrequencyChanges,  modifyExistIndicators, modifyExistDisaggregations, retiredIndicators, retiredDisaggregations }, dispatch] = useStateValue();
+    const [{ data_Elements, newIndicators, newDisaggregations, reportFrequencyChanges,  modifyExistIndicators, modifyExistDisaggregations, retiredIndicators, retiredDisaggregations }, dispatch] = useStateValue();
 
+    //console.log(props)
+    
 //update the indicator details and matched data-element when select indicator
-const updateIndicator = indicator_name =>event =>{
-  //match indicator name
- //  setIndicatorName(indicator_name);
+const updateIndicator = indicator_name =>() =>{
+ 
  dispatch({
    type: 'changeIndicatorName',
    indicatorName: indicator_name
  })
   //match indicator details
-
-  indicators.map(indicator => {
-    if(indicator.name===indicator_name){
-   //  setCurrentIndicator(indicator);
-   dispatch({
-     type: 'changeCurrentIndicator',
-     currentIndicator: indicator
-   })
-    }
-  return true;
-  });
+ 
 
   //match data element of this indicator
   const match = [];
@@ -148,6 +136,7 @@ dispatch({
  matchDataElements: match
 })
 }
+
 
 
      //set initial panel state and panel handle change function
@@ -200,8 +189,9 @@ dispatch({
 
                 {newIndicators.map(newIndicator =>{
                   return(
-                <div className={classes.itemContainer}  key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{newIndicator.name}</Button>
+                <div className={classes.itemContainer}  key={newIndicator.name + Math.random()}>               
+                    <NavLink className={classes.itemTitle}  to={"/indicator/" + newIndicator.name} href={`/indicator/${newIndicator.name}`}>{newIndicator.name}</NavLink>
+
                 {Object.keys(Object(newIndicator.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(newIndicator.content)[key]}</p>
                 )}
@@ -209,8 +199,6 @@ dispatch({
                   )
                 })}
 
-                
-            
        </ExpansionPanelDetails>
        </ExpansionPanel>
 
@@ -230,7 +218,7 @@ dispatch({
                 {newDisaggregations.map(newDisaggregation =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{newDisaggregation.name}</Button>
+                <Button onClick={updateIndicator(newDisaggregation.name)} className={classes.itemTitle}>{newDisaggregation.name}</Button>
                 {Object.keys(Object(newDisaggregation.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(newDisaggregation.content)[key]}</p>
                 )}
@@ -263,7 +251,7 @@ dispatch({
                 {reportFrequencyChanges.map(reportFrequencyChange =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{reportFrequencyChange.name}</Button>
+                <Button onClick={updateIndicator(reportFrequencyChange.name)} className={classes.itemTitle}>{reportFrequencyChange.name}</Button>
                 {Object.keys(Object(reportFrequencyChange.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(reportFrequencyChange.content)[key]}</p>
                 )}
