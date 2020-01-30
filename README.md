@@ -19,7 +19,6 @@ MSP is currently work-in-progress and being managed by the Regenstrief Institute
 The current release of MSP is v1.0.0. Updates and release notes are available here.
 -->
 
-
 ## Production Build
 
 ```
