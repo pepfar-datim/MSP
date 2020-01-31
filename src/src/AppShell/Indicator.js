@@ -667,7 +667,7 @@ const useStyles = makeStyles(theme => ({
     
     const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
       console.log("loadIndicatorDetail: " + indicatorID);      
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID;      
+      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID + "/";      
       console.log("query indicator detail : " + query );
       setIndicatorDetailLoading(true);
       try {
