@@ -250,6 +250,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '50px'
 
   },
+  errorMessage:{
+    textAlign: 'center',
+    color: '#FF0000',
+    marginBottom: '0 !important'
+  },
   closeComparePanel: {
     float: 'right',
     margin: '1em',
@@ -490,7 +495,7 @@ export default function Codelist() {
   const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
  
   const [collection, setCollection] = useState("");
-  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
+  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
  
   let emptyMap = {};
 
@@ -502,6 +507,7 @@ export default function Codelist() {
   var [dataElements, setDataElementsData] = useState([]);
   var [count, setCountOfValues] = useState(0);
   const [error, setError] = useState(null)
+  //const [errorDisplay, setErrorDisplay] = useState(null)
 
 
   const loadDataElementsByPeriod = async () => {
@@ -515,6 +521,7 @@ export default function Codelist() {
         console.log(response);
         setDataElementsData([]);
         setCountOfValues(0);
+        //setErrorDisplay("Failed to fetch");
         throw new Error(
           `Error when retrieving data elements ${response.status} ${response.statusText}`
         );
@@ -529,6 +536,7 @@ export default function Codelist() {
         );
       }
      // setDataElementsInitialData(jsonData);
+      //setErrorDisplay(null);
       var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
 
       //filter by default filters
@@ -557,6 +565,7 @@ export default function Codelist() {
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
+      //setErrorDisplay(e.message);
     }
   }
   }
@@ -576,6 +585,7 @@ export default function Codelist() {
         console.log(response);
         setDataElementsData([]);
         setCountOfValues(0);
+        //setErrorDisplay("Failed to fetch")
         throw new Error(
           `Error when retrieving data elements ${response.status} ${response.statusText}`
         );
@@ -589,6 +599,7 @@ export default function Codelist() {
           `Warning data elements data from OCL is emtpy. `
         );
       }
+      //setErrorDisplay(null);
       var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
       setDataElementsData(sortedData);
       setCountOfValues(parseInt(response.headers.get('num_found')));
@@ -598,6 +609,7 @@ export default function Codelist() {
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
+      //setErrorDisplay(e.message);
     }
   }
   }
@@ -725,6 +737,7 @@ export default function Codelist() {
       const response = await fetch(queryMapping);
       if (!response.ok) {
         console.log(response);
+        //setErrorDisplay("Failed to fetch")
         throw new Error(
           `Error when retrieving data element mappings ${response.status} ${response.statusText}`
         );
@@ -737,6 +750,8 @@ export default function Codelist() {
       //     `Warning data elements mapping data from OCL is emtpy. `
       //   );
       //}
+
+      //setErrorDisplay(null);
       if (!deMappings[id]) {
         deMappings[id] = jsonData;
       }
@@ -744,6 +759,7 @@ export default function Codelist() {
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
+      //setErrorDisplay(e.message);
     }
 
 
@@ -899,7 +915,7 @@ export default function Codelist() {
       <div className={classes.heroContainer}>
         <div className={classes.container}>
           <Breadcrumb></Breadcrumb>
-
+          {/* {errorDisplay !== null ? <div className={classes.errorMessage}>{errorDisplay}</div> : null} */}
           {/* hero section */}
           <Grid container alignItems="center" >
             <Grid item xs={12} md={7} >
