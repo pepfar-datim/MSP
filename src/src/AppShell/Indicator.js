@@ -911,7 +911,7 @@ return (
 
    {/* data elements */}
     {deloading ?<div><LinearProgress mode="indeterminate" /><p>Loading data elements. Please wait ...</p></div> :
-     matchDataElements.length === 0 ? 
+     matchDataElements.length === 0 && panel === DATA_ELEMENT_PANEL ? 
      <div><p>No data elements found </p></div> :  
     <TabPanel value={panel} index={DATA_ELEMENT_PANEL} className={classes.tabPanel}>
       {/* <div className={classes.tabDashboard}>
