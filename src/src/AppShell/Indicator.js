@@ -103,6 +103,7 @@ function formularProps(index) {
 const domain = getConfig().domain;
 const org = getConfig().org;
 const source = getConfig().source;
+const defaultYear = getConfig().defaultYear;
 
 const ExpandTitle = styled.p`
     margin:0;
@@ -172,13 +173,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     backgroundColor:'#ffffff'
   },
-  cssOutlinedInput: {
-    '&$cssFocused $notchedOutline': {
-      borderColor: `'#D55804' !important`,
-      borderWidth: '2px',
-    }
-
-  },
+  
   popOver:{
       padding: '20px',
       minWidth: '200px'
@@ -197,11 +192,7 @@ const useStyles = makeStyles(theme => ({
     borderWidth: '2px',
     borderColor: '#D55804 !important'
   },
-  floatingLabelFocusStyle:{
-    '&$focused': {
-    color:'#D55804 !important'
-    }
-  },
+  
   iconButton:{
     padding: '10px',
     borderRadius: '5px',
@@ -410,13 +401,15 @@ const useStyles = makeStyles(theme => ({
 
   export default function Indicator() {
 
+    
+    
     let location = useLocation();        
     const classes = useStyles();
     
     //initial filter state
     const [values, setValues] = React.useState({
       frequency: "",
-      fiscal: "2020", 
+      fiscal: defaultYear, 
       type: ""
     });
 
@@ -529,7 +522,7 @@ const useStyles = makeStyles(theme => ({
     const [init, setInit]= React.useState(false);
     var queryIndicators = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
 
-    const [error, setError] = useState(null);
+    const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
     const [errorLoadIndicatorDetail, setErrorLoadIndicatorDetail] = useState(null);
     const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
@@ -650,17 +643,16 @@ const useStyles = makeStyles(theme => ({
 
     var indicatorId = getIndicatorIdFromParam(location.pathname); // indicatorId from URL param
     
-    useEffect(() => {      
+    useEffect(() => {            
       loadIndicatorData(); 
       setInit(true);
     }, [queryIndicators]);
 
     // update indicator each time indicatorId changes
-    useEffect(() => {
-      //console.log("*** useEffect - updateIndicator: " +  indicatorId);                    
+    useEffect(() => {                        
         if ( init  && indicatorId && indicatorId !== '' ) {          
           //console.log("UPDATE INDIATGOR");
-          updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                    
+          updateIndicator(indicatorId, panel);                    
         }            
     }, [indicatorId]);
 
@@ -687,7 +679,7 @@ const useStyles = makeStyles(theme => ({
               `Warning indicator detail data is emtpy from OCL  ` + indicatorID
             );
           }        
-          console.log(jsonData);
+          //console.log(jsonData);
           setIndicatorDetailLoading(false);
           var data = createIndicatorDetailForUI(jsonData);
           dispatch({
@@ -810,7 +802,7 @@ const useStyles = makeStyles(theme => ({
               return(
                 <div key={"group_" + index + indicator.id }  className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
                  {currentIndicator.name===indicator.name || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
-                  <NavLink  to={"/indicator" }><span style={{color: '#000000'}} onClick={() => updateIndicator(indicator.id, panel)}>{indicator.name}</span></NavLink>  
+                  <NavLink  to={"/indicator/" + indicator.id} ><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
                  }                                                
                 </div>
               )                 
@@ -853,7 +845,7 @@ return (
             >
               <option value={'2020'}>2020</option>
               <option value={'2019'}>2019</option>
-              <option value={'2018'}>2018</option>
+              <option value={'2018'}>2018</option>              
             </Select>
         </FormControl>
       </Grid>
