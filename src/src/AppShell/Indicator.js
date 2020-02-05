@@ -38,6 +38,7 @@ import Button from '@material-ui/core/Button';
 import {WhatIsNew} from './WhatIsNew';
 import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
+import {getCodeListMap} from '../currentCodelist.js'
 import IndicatorDetail from './IndicatorDetail';
 
 //tab panel function
@@ -104,6 +105,7 @@ const domain = getConfig().domain;
 const org = getConfig().org;
 const source = getConfig().source;
 const defaultYear = getConfig().defaultYear;
+const codeListMap = getCodeListMap();
 
 const ExpandTitle = styled.p`
     margin:0;
@@ -843,9 +845,11 @@ return (
               }
               }}
             >
-              <option value={'2020'}>2020</option>
-              <option value={'2019'}>2019</option>
-              <option value={'2018'}>2018</option>              
+              {
+                Object.keys(codeListMap).reverse().map(
+                    key => <option key={key} >{key}</option>
+                )
+              }                           
             </Select>
         </FormControl>
       </Grid>
