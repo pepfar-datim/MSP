@@ -27,7 +27,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import { Route } from 'react-router-dom';
+import { Route, NavLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -40,9 +40,11 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
-import {getConfig} from '../config.js';
-import {getCodeListMap} from '../currentCodelist.js'
-import {getCodeList} from '../currentCodelist.js'
+import { getConfig } from '../config.js';
+import { getCodeListMap } from '../currentCodelist.js'
+import { getCodeList } from '../currentCodelist.js'
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -78,6 +80,7 @@ function a11yProps(index) {
 const domain = getConfig().domain;
 const org = getConfig().org;
 const source = getConfig().source;
+const currentYear = getConfig().defaultYear
 const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 
@@ -152,6 +155,7 @@ const useStyles = makeStyles(theme => ({
 
   },
   select: {
+    //width: '300px',
     '&:before': {
       borderColor: '#D55804',
       borderWidth: '2px'
@@ -219,6 +223,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '10px'
   },
   sidebar: {
+    //width: '350px',
     margin: '0em',
     marginRight: '2em',
     paddingBottom: '2em'
@@ -249,6 +254,11 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: '1em',
     paddingBottom: '50px'
 
+  },
+  errorMessage: {
+    textAlign: 'center',
+    color: '#FF0000',
+    marginBottom: '0 !important'
   },
   closeComparePanel: {
     float: 'right',
@@ -486,12 +496,13 @@ export default function Codelist() {
     });
   }
 
-  const [period, setPeriod] = useState(["FY" + (new Date().getFullYear() + "").substring(2, 4)]);
-  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period +  '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
- 
+  const [period, setPeriod] = useState(["FY" + currentYear.substring(2, 4)]);
+  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+
   const [collection, setCollection] = useState("");
-  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?verbose=true&limit=' + rowsPerPage + '&page=' + (page+1);
- 
+  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
+  const [deloading, setDELoading] = useState(false); 
+
   let emptyMap = {};
 
   //get data-elements from context
@@ -502,63 +513,71 @@ export default function Codelist() {
   var [dataElements, setDataElementsData] = useState([]);
   var [count, setCountOfValues] = useState(0);
   const [error, setError] = useState(null)
+  const [errorDisplay, setErrorDisplay] = useState(null)
 
 
   const loadDataElementsByPeriod = async () => {
-    if(values.dataSet === "All"){
-    console.log(" queryDataElementsByPeriod " + queryDataElementsByPeriod)
-    //setDataElementsData([]);
-    //setCountOfValues(0);
-    try {
-      const response = await fetch(queryDataElementsByPeriod);
-      if (!response.ok) {
-        console.log(response);
-        setDataElementsData([]);
-        setCountOfValues(0);
-        throw new Error(
-          `Error when retrieving data elements ${response.status} ${response.statusText}`
-        );
-      }
-      const jsonData = await response.json();
-      if (!jsonData.length || jsonData.length === 0) {
-        console.log("jsonData is empty");
-        setDataElementsData([]);
-        setCountOfValues(0);
-        throw new Error(
-          `Warning data elements data from OCL is emtpy. `
-        );
-      }
-     // setDataElementsInitialData(jsonData);
-      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+    setDELoading(true)
+    if (values.type === "All") {
+      console.log(" queryDataElementsByPeriod " + queryDataElementsByPeriod)
+      //setDataElementsData([]);
+      //setCountOfValues(0);
+      try {
+        const response = await fetch(queryDataElementsByPeriod);
+        if (!response.ok) {
+          console.log(response);
+          setDataElementsData([]);
+          setCountOfValues(0);
+          setErrorDisplay("Failed to fetch");
+          setDELoading(false)
+          throw new Error(
+            `Error when retrieving data elements ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();
+        if (!jsonData.length || jsonData.length === 0) {
+          console.log("jsonData is empty");
+          setDataElementsData([]);
+          setCountOfValues(0);
+          setDELoading(false)
+          throw new Error(
+            `Warning data elements data from OCL is emtpy. `
+          );
+        }
+        setDELoading(false)
+        setErrorDisplay(null);
+        var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
 
-      //filter by default filters
+        //filter by default filters
 
-      const temp = [];
-      //getCodeListMap(codeList);
-      //sortedData.map(data_Element => {
-      //   const fy = data_Element.extras["Applicable Periods"].map(period =>
-      //     "20" + period.substring(2, 4)
-      //   );
-      //   const ds = data_Element.extras["dataSets"].map(dataSet =>
-      //     dataSet.name.split(": ")[1].includes(codeListMap[values.fiscal][0]) ? codeListMap[values.fiscal] : ""
-      //   );
-      //   if (
-      //     fy.includes(values.fiscal) &&
-      //     ds.includes(codeListMap[values.fiscal][0])
-      //   ) {
-      //    temp.push(data_Element);
-      //   }
-      //});
-      setDataElementsData(sortedData);
-      setCountOfValues(parseInt(response.headers.get('num_found')));
-      console.log(dataElements.length + " dataElements.length ")
-      console.log(response.headers.get('num_found') + " results found ")
-      console.log(response.headers.get('num_returned') + " results returned ")
-    } catch (e) {
-      console.log("error:" + e.message);
-      setError(e.message);
+        const temp = [];
+        //getCodeListMap(codeList);
+        //sortedData.map(data_Element => {
+        //   const fy = data_Element.extras["Applicable Periods"].map(period =>
+        //     "20" + period.substring(2, 4)
+        //   );
+        //   const ds = data_Element.extras["dataSets"].map(dataSet =>
+        //     dataSet.name.split(": ")[1].includes(codeListMap[values.fiscal][0]) ? codeListMap[values.fiscal] : ""
+        //   );
+        //   if (
+        //     fy.includes(values.fiscal) &&
+        //     ds.includes(codeListMap[values.fiscal][0])
+        //   ) {
+        //    temp.push(data_Element);
+        //   }
+        //});
+        setDataElementsData(sortedData);
+        setCountOfValues(parseInt(response.headers.get('num_found')));
+        console.log(dataElements.length + " dataElements.length ")
+        console.log(response.headers.get('num_found') + " results found ")
+        console.log(response.headers.get('num_returned') + " results returned ")
+      } catch (e) {
+        setDELoading(false)
+        console.log("error:" + e.message);
+        setError(e.message);
+        setErrorDisplay(e.message);
+      }
     }
-  }
   }
 
   useEffect(() => {
@@ -566,40 +585,48 @@ export default function Codelist() {
   }, [queryDataElementsByPeriod]);
 
   const loadDataElementsData = async () => {
-    if(collection !== "" && values.dataSet !== "All"){
-    console.log(" queryByCodeList " + queryByCodeList)
-    //setDataElementsData([]);
-    //setCountOfValues(0);
-    try {
-      const response = await fetch(queryByCodeList);
-      if (!response.ok) {
-        console.log(response);
-        setDataElementsData([]);
-        setCountOfValues(0);
-        throw new Error(
-          `Error when retrieving data elements ${response.status} ${response.statusText}`
-        );
-      }
-      const jsonData = await response.json();
-      if (!jsonData.length || jsonData.length === 0) {
-        console.log("jsonData is empty");
-        setDataElementsData([]);
-        setCountOfValues(0);
-        throw new Error(
-          `Warning data elements data from OCL is emtpy. `
-        );
-      }
-      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
-      setDataElementsData(sortedData);
-      setCountOfValues(parseInt(response.headers.get('num_found')));
-      console.log(dataElements.length + " results returned ")
-      console.log(response.headers.get('num_found') + " results found ")
+    if (collection !== "" && values.dataSet !== "All") {
+      console.log(" queryByCodeList " + queryByCodeList)
+      //setDataElementsData([]);
+      //setCountOfValues(0);
+      setDELoading(true)
+      try {
+        const response = await fetch(queryByCodeList);
+        if (!response.ok) {
+          console.log(response);
+          setDataElementsData([]);
+          setCountOfValues(0);
+          setDELoading(false)
+          setErrorDisplay("Failed to fetch")
+          throw new Error(
+            `Error when retrieving data elements ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();
+        if (!jsonData.length || jsonData.length === 0) {
+          console.log("jsonData is empty");
+          setDataElementsData([]);
+          setCountOfValues(0);
+          setDELoading(false)
+          throw new Error(
+            `Warning data elements data from OCL is emtpy. `
+          );
+        }
+        setErrorDisplay(null);
+        setDELoading(false)
+        var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+        setDataElementsData(sortedData);
+        setCountOfValues(parseInt(response.headers.get('num_found')));
+        console.log(dataElements.length + " results returned ")
+        console.log(response.headers.get('num_found') + " results found ")
 
-    } catch (e) {
-      console.log("error:" + e.message);
-      setError(e.message);
+      } catch (e) {
+        setDELoading(false)
+        console.log("error:" + e.message);
+        setError(e.message);
+        setErrorDisplay(e.message);
+      }
     }
-  }
   }
   useEffect(() => {
     loadDataElementsData();
@@ -620,9 +647,9 @@ export default function Codelist() {
 
   //initial filter state
   const [values, setValues] = React.useState({
-    fiscal: new Date().getFullYear(),
-    type: "",
-    dataSet:  "All",
+    fiscal: currentYear,
+    type: "All",
+    dataSet: "All",
     source: "",
     frequency: ""
   });
@@ -661,16 +688,37 @@ export default function Codelist() {
 
   };
 
+  const handleTableClick = e => {
+    console.log("inside handleTableClick")
+    let ds = e.target.value;
+    codeListJson.codeList.map(cl => {
+      if (ds === cl.full_name) {
+        console.log(" dataset changed ")
+        setCollection(cl.id)
+      }
+    })
+  }
 
   //when value has changed, call useEffect function
   useEffect(() => {
+    setDataElementsData([])
+    setCountOfValues(0)
+
+    let year = values.fiscal
+      setValues({
+        fiscal: year,
+        type: "All",
+        dataSet: "All",
+        source: "",
+        frequency: ""
+      })
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
     setPeriod("FY" + (values.fiscal + "").substring(2, 4));
     setExpanded(false);
     //dataElements = dataElementsInitial;
-     //dataElementsInitial.map(data_Element => {
+    //dataElementsInitial.map(data_Element => {
     //   const fy = data_Element.extras["Applicable Periods"].map(period =>
     //     "20" + period.substring(2, 4)
     //   );
@@ -698,23 +746,59 @@ export default function Codelist() {
   }, [values.fiscal]);
 
   useEffect(() => {
-    console.log(" values.fiscal " + values.fiscal)
+    setDataElementsData([])
+    setCountOfValues(0)
+
+    console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
-    console.log(" values.dataSet === All " + (values.dataSet === "All"))
+    console.log(" values.type " + values.type)
 
     if(values.dataSet === "All"){
       loadDataElementsByPeriod()
     }
     else{
-      codeListJson.codeList.map(cl => {
-        if(values.dataSet === cl.full_name){
-          console.log(" dataset changed ")
-          setCollection(cl.id)
-        }
-      })
+    codeListJson.codeList.map(cl => {
+      if (values.dataSet === cl.full_name) {
+        console.log(" dataset changed ")
+        setCollection(cl.id)
+      }
+    })
     console.log(" displaying " + dataElements.length + " results")
     }
   }, [values.dataSet]);
+
+  useEffect(() => {
+    setDataElementsData([])
+    setCountOfValues(0)
+    console.log("Inside [values.type]  values.fiscal " + values.fiscal)
+    console.log(" values.dataSet " + values.dataSet)
+    console.log(" values.type " + values.type)
+
+    let year = values.fiscal
+    let t = values.type;
+    if (values.type === "All") {
+      setValues({
+        fiscal: year,
+        type: t,
+        dataSet: "All",
+        source: "",
+        frequency: ""
+      })
+      console.log(" values.dataSet " + values.dataSet)    }
+    else {
+      let element = document.getElementById("dataSet");
+      let dataType = element.options[element.selectedIndex].text;
+      setValues({
+        fiscal: year,
+        type: t,
+        dataSet: dataType,
+        source: "",
+        frequency: ""
+      })
+      console.log(" values.dataSet " + values.dataSet)
+    }
+  }, [values.type]);
+
 
   async function getMappings(id) {
     setExpanded(true);
@@ -725,6 +809,7 @@ export default function Codelist() {
       const response = await fetch(queryMapping);
       if (!response.ok) {
         console.log(response);
+        setErrorDisplay("Failed to fetch")
         throw new Error(
           `Error when retrieving data element mappings ${response.status} ${response.statusText}`
         );
@@ -737,6 +822,8 @@ export default function Codelist() {
       //     `Warning data elements mapping data from OCL is emtpy. `
       //   );
       //}
+
+      //setErrorDisplay(null);
       if (!deMappings[id]) {
         deMappings[id] = jsonData;
       }
@@ -744,6 +831,7 @@ export default function Codelist() {
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
+      //setErrorDisplay(e.message);
     }
 
 
@@ -874,9 +962,9 @@ export default function Codelist() {
     setPanel(newPanel);
   };
 
-//  useEffect(() => {
-//     setExpanded(false);
-// }, [dataElements])
+  //  useEffect(() => {
+  //     setExpanded(false);
+  // }, [dataElements])
 
 
   //layout below
@@ -899,12 +987,12 @@ export default function Codelist() {
       <div className={classes.heroContainer}>
         <div className={classes.container}>
           <Breadcrumb></Breadcrumb>
-
+          {errorDisplay !== null ? <div className={classes.errorMessage}>{errorDisplay}</div> : null}
           {/* hero section */}
           <Grid container alignItems="center" >
-            <Grid item xs={12} md={7} >
+            {/* <Grid item xs={12} md={7} >
               <headings.H1>Data Elements</headings.H1>
-            </Grid>
+            </Grid> */}
 
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
@@ -1049,7 +1137,7 @@ export default function Codelist() {
 
                           Object.keys(codeListMap).reverse().map(
 
-                              key => <option key={Math.random()} >{key}</option>
+                            key => <option key={Math.random()} >{key}</option>
                           )
                         }
                         {/* <option value={'2020'}>2020</option>
@@ -1062,30 +1150,30 @@ export default function Codelist() {
 
 
                   {/* type filter */}
-                  {/* <Grid item xs={12} className={classes.filter}  >
-<FormControl className={classes.formControl}>
-  <InputLabel htmlFor="type">Type</InputLabel>
-  <Select
-    native
-    value={values.type}
-    onChange={handleFilterChange}
-    className={classes.select}
-    inputProps={{
-      name: 'type',
-      id: 'type',
-      classes: {
-        icon: classes.selectIcon
-      }
-    }}
-   
-  >
-    <option value={""} />
-    <option value={'Results'}>Results</option>
-    <option value={'Target'}>Target</option>
-    <option value={'SIMS'}>SIMS</option>
-  </Select>
-</FormControl>
-</Grid> */}
+                  <Grid item xs={12} className={classes.filter}  >
+                    <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor="type">Type</InputLabel>
+                      <Select size="3"
+                        native
+                        value={values.type}
+                        onChange={handleFilterChange}
+                        className={classes.select}
+                        inputProps={{
+                          name: 'type',
+                          id: 'type',
+                          classes: {
+                            icon: classes.selectIcon
+                          }
+                        }}
+
+                      >
+                        <option value={'All'}>All</option>
+                        <option value={'Results'}>Results</option>
+                        <option value={'Targets'}>Targets</option>
+                        {/* <option value={'SIMS'}>SIMS</option> */}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
 
 
@@ -1096,6 +1184,7 @@ export default function Codelist() {
                     <FormControl className={classes.formControl}>
                       <InputLabel htmlFor="dataSet">Code List</InputLabel>
                       <Select
+                        //size={Object.values(codeListMap[values.fiscal]).length +""}
                         native
                         value={values.dataSet}
                         onChange={handleFilterChange}
@@ -1109,16 +1198,51 @@ export default function Codelist() {
                         }}
 
                       >
-                        {<option value={'All'}>All</option>}
-                        {/* <option value={""} /> */}
+                        {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                        {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
+
+                          key => <option key={Math.random()} >{key}</option>)) : ([])}
                         {Object.values(codeListMap[values.fiscal]).map(
 
-                          key => <option key={Math.random()} >{key}</option>
+                          key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
                         )
                         }
                         {/* <option value={'facility'}>Facility Based Code List</option>
                         <option value={'community'}>Community Based Code List</option> */}
                       </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} className={classes.filter}>
+                    <FormControl className={classes.formControl}>
+
+                      {/* <Table className={classes.table} aria-label="simple table">
+                        <TableBody>
+                          {(values.type === 'All') ? (<TableRow key={Math.random()}>
+                            <TableCell component="th" scope="row">
+                              All
+                                      </TableCell>
+                          </TableRow>) : ([])}
+                          {Object.values(codeListMap[values.fiscal]).map(
+
+                            key => key.includes(values.type) ? (
+                              <TableRow key={Math.random()} >
+                                <TableCell component="th" scope="row" onClick={handleTableClick}>
+                                {key} 
+                                </TableCell>
+                              </TableRow>
+                            ) : ([])
+                          )}
+
+                        </TableBody>
+                      </Table> */}
+
+                      {/* {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                        {Object.values(codeListMap[values.fiscal]).map(
+
+                          key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
+                        )
+                        } */}
+
                     </FormControl>
                   </Grid>
 
@@ -1270,12 +1394,17 @@ Compare selected data elements
 
 
             </div>
-            {/* <Parent> */}
-
+            {/* Loading */}
+{ deloading ? 
+            <div>
+              <LinearProgress mode="indeterminate" />
+              <div style={{paddingTop: '1rem', paddingLeft: '1rem'}}>Loading data elements ...</div>
+          </div> : ([])
+}
             {/* data elements */}
             {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
-            {dataElements.map(dataElement => ( 
+            {dataElements.map(dataElement => (
               <div key={dataElement.display_name}>
                 <ExpansionPanel className={classes.dataelementContainer}
                   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
@@ -1283,7 +1412,7 @@ Compare selected data elements
 
                 // defaultExpanded=false
 
-                
+
                 >
                   {/* data elements summary */}
                   <ExpansionPanelSummary
@@ -1343,8 +1472,8 @@ Compare selected data elements
                   <ExpansionPanel className={classes.dataElementContainer}
                     TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
                     onClick={() => getMappings(dataElement.id)}
-                    //expanded={expanded}
-                    >
+                  //expanded={expanded}
+                  >
                     <ExpansionPanelSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -1376,14 +1505,14 @@ Compare selected data elements
                                   (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id].mappings)).map(
 
                                     key =>
-                                     <TableRow key={Math.random()}>
-                                      <TableCell component="th" scope="row">
-                                        {Object(deMappings[dataElement.id].mappings)[key].to_concept_name}
-                                      </TableCell>
-                                      <TableCell component="th" scope="row">
-                                        {Object(deMappings[dataElement.id].mappings)[key].to_concept_code}
-                                      </TableCell>
-                                    </TableRow>
+                                      <TableRow key={Math.random()}>
+                                        <TableCell component="th" scope="row">
+                                          {Object(deMappings[dataElement.id].mappings)[key].to_concept_name}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row">
+                                          {Object(deMappings[dataElement.id].mappings)[key].to_concept_code}
+                                        </TableCell>
+                                      </TableRow>
 
                                   ) : (Object.keys(emptyMap).map(
 
@@ -1579,7 +1708,7 @@ Compare selected data elements
                                   </div>)}></Route>
                               </ExpansionPanelDetails>
                             </ExpansionPanel>
-                          
+
                           </div>
 
 
