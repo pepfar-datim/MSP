@@ -150,7 +150,7 @@ dispatch({
         <div>
            <Grid container alignItems="center" >
           <Grid item xs={12} md={8}>
-          <headings.H1>KEY UPDATES AND CHANGES</headings.H1>
+          <headings.H1>Select an indicator to view details</headings.H1>
           <div className={classes.divider}></div>
           </Grid>
           <Grid item xs={12} md={4}>

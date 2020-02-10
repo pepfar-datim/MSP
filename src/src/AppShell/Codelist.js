@@ -1301,9 +1301,8 @@ export default function Codelist() {
             {/* dashboard, including download, compare, select all buttons */}
             <div className={classes.tabDashboard}>
               <div>
-                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton">
-                  {/* Download selected data elements */} Download Full Code List
-</Button>
+                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"> */}
+                  {/* Download selected data elements Download Full Code List </Button> */}
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 Compare selected data elements
 </Button> */}
