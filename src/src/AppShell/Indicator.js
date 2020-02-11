@@ -897,7 +897,7 @@ return (
   {
     currentIndicator && currentIndicator.length === 0  ? <WhatIsNew/> : 
     <div>
-      <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
+      
       <headings.H1>{currentIndicator.name}</headings.H1>
       
       {/* indicator tabs */}    
