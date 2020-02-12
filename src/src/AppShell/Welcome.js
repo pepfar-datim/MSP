@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 
 import { Route, Link, BrowserRouter as Router, Switch, NavLink } from 'react-router-dom';
 
-
+import { WhatIsNewHome } from './WhatIsNewHome';
 
 
 const useStyles = makeStyles(theme => ({
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
   heroContainer:{
-    height: '90vh',
+    height: '80vh',
     display: 'flex',
     position: 'relative',
     alignItems: 'flex-start',
@@ -87,6 +87,7 @@ const useStyles = makeStyles(theme => ({
   },
   heroContentContainer:{
     maxWidth: '1200px',
+    marginLeft:'50px',
     margin: '0 auto',
     paddingTop: '80px',
     paddingLeft: '15px',
@@ -357,7 +358,7 @@ export default function Welcome(){
 
 
     </div> */}
-
+    <WhatIsNewHome />
      </div>
     );
   

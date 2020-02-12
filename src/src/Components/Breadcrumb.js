@@ -7,7 +7,7 @@ const routes = {
   '/basic': 'Basic',
   '/inputs': 'Inputs',
   '/codelist': 'Codelist',
-  '/indicator': 'Indicator',
+  '/indicator': 'Indicators',
   '/about': 'About',
   '/codelist/indicator': 'Indicator'
 };
