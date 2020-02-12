@@ -1435,7 +1435,7 @@ Compare selected data elements
 
                       <Grid item xs={12} md={9} >
                         <Typography className={classes.heading}>
-                          <strong>{dataElement.display_name}</strong>: {dataElement.category}
+                          <strong>{dataElement.display_name}</strong>
                         </Typography>
                       </Grid>
 
