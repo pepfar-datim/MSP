@@ -16,10 +16,7 @@ COPY package.json ./
 COPY yarn.lock ./
 
 # Install the project dependencies and silence the npm output
-RUN npm install --silent
-
-# Install react-scripts and silence the npm output
-RUN npm install react-scripts@1.1.1 -g --silent
+RUN yarn install --frozen-lockfile
 
 # Copy everything to the working directory
 COPY . /usr/src/app
