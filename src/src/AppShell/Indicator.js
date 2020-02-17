@@ -40,6 +40,8 @@ import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
 import {getCodeListMap} from '../currentCodelist.js'
 import IndicatorDetail from './IndicatorDetail';
+import Shortcut from './Shortcut';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -402,10 +404,8 @@ const useStyles = makeStyles(theme => ({
 
 
   export default function Indicator() {
-
     
-    
-    let location = useLocation();        
+    let location = useLocation();          
     const classes = useStyles();
     
     //initial filter state
@@ -827,7 +827,8 @@ return (
     {errorLoadDataElement!== null ? <div className={classes.errorMessage}>{errorLoadDataElement}</div> : null}
   <Grid container>
   {/* sidebar */}
-  <Grid item xs={12} md={3}>
+  <Grid item xs={12} md={3}>      
+    <Shortcut ></Shortcut>
     <Paper className={classes.sidebar}>
     <h4 className={classes.sidebarTitle}>INDICATOR FILTERS</h4>
     {/* filters */}

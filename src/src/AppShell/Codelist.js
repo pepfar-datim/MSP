@@ -27,7 +27,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import { Route, NavLink } from 'react-router-dom';
+import { Route, NavLink, useLocation } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -44,6 +44,7 @@ import { getConfig } from '../config.js';
 import { getCodeListMap } from '../currentCodelist.js'
 import { getCodeList } from '../currentCodelist.js'
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Shortcut from './Shortcut';
 
 
 //tab panel function
@@ -1072,6 +1073,8 @@ export default function Codelist() {
 
           {/* filters */}
           <Grid item xs={12} md={3}>
+
+          <Shortcut ></Shortcut>
             <Paper className={classes.sidebar}>
               <div className={`${classes.container} ${classes.sidebarContainer}`}>
 
