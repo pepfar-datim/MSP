@@ -501,7 +501,7 @@ export default function Codelist() {
 
   const [collection, setCollection] = useState("");
   const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
-  const [deloading, setDELoading] = useState(false); 
+  const [deloading, setDELoading] = useState(false);
 
   let emptyMap = {};
 
@@ -650,8 +650,8 @@ export default function Codelist() {
     fiscal: currentYear,
     type: "All",
     dataSet: "All",
-    source: "",
-    frequency: ""
+    source: "All",
+    frequency: "All"
   });
 
   //clear all filter values
@@ -705,13 +705,13 @@ export default function Codelist() {
     setCountOfValues(0)
 
     let year = values.fiscal
-      setValues({
-        fiscal: year,
-        type: "All",
-        dataSet: "All",
-        source: "",
-        frequency: ""
-      })
+    setValues({
+      fiscal: year,
+      type: "All",
+      dataSet: "All",
+      source: "All",
+      frequency: "All"
+    })
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
@@ -753,17 +753,17 @@ export default function Codelist() {
     console.log(" values.dataSet " + values.dataSet)
     console.log(" values.type " + values.type)
 
-    if(values.dataSet === "All"){
+    if (values.dataSet === "All") {
       loadDataElementsByPeriod()
     }
-    else{
-    codeListJson.codeList.map(cl => {
-      if (values.dataSet === cl.full_name) {
-        console.log(" dataset changed ")
-        setCollection(cl.id)
-      }
-    })
-    console.log(" displaying " + dataElements.length + " results")
+    else {
+      codeListJson.codeList.map(cl => {
+        if (values.dataSet === cl.full_name) {
+          console.log(" dataset changed ")
+          setCollection(cl.id)
+        }
+      })
+      console.log(" displaying " + dataElements.length + " results")
     }
   }, [values.dataSet]);
 
@@ -781,10 +781,11 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: "All",
-        source: "",
-        frequency: ""
+        source: "All",
+        frequency: "All"
       })
-      console.log(" values.dataSet " + values.dataSet)    }
+      console.log(" values.dataSet " + values.dataSet)
+    }
     else {
       let element = document.getElementById("dataSet");
       let dataType = element.options[element.selectedIndex].text;
@@ -792,8 +793,8 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: dataType,
-        source: "",
-        frequency: ""
+        source: "All",
+        frequency: "All"
       })
       console.log(" values.dataSet " + values.dataSet)
     }
@@ -1086,32 +1087,32 @@ export default function Codelist() {
                   {/* source filter */}
 
 
-                  {/* <Grid item xs={12} className={classes.filter} >
-<FormControl className={classes.formControl}>
+                  <Grid item xs={12} className={classes.filter} >
+                    <FormControl className={classes.formControl}>
 
 
-  <InputLabel htmlFor="source">Source</InputLabel>
-  <Select
-    native
-    value={values.source}
-    onChange={handleFilterChange}
-    className={classes.select}
-    inputProps={{
-      name: 'source',
-      id: 'source',
-      classes: {
-        icon: classes.selectIcon
-      }
-    }}
-  
-  >
-    <option value={""} />
+                      <InputLabel htmlFor="source">Source</InputLabel>
+                      <Select
+                        native
+                        value={values.source}
+                        onChange={handleFilterChange}
+                        className={classes.select}
+                        inputProps={{
+                          name: 'source',
+                          id: 'source',
+                          classes: {
+                            icon: classes.selectIcon
+                          }
+                        }}
+
+                      >
+                        <option value={'All'}>All</option> />
     <option value={'DATIM'}>DATIM</option>
-    <option value={'PDH'} disabled>PDH</option>
-    <option value={'MOH'} disabled>MOH</option>
-  </Select>
-</FormControl>
-</Grid> */}
+                        <option value={'PDH'} >PDH</option>
+                        {/* <option value={'MOH'} disabled>MOH</option> */}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
 
                   {/* fiscal year filter */}
@@ -1212,10 +1213,10 @@ export default function Codelist() {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} className={classes.filter}>
+                  {/* <Grid item xs={12} className={classes.filter}>
                     <FormControl className={classes.formControl}>
 
-                      {/* <Table className={classes.table} aria-label="simple table">
+                      <Table className={classes.table} aria-label="simple table">
                         <TableBody>
                           {(values.type === 'All') ? (<TableRow key={Math.random()}>
                             <TableCell component="th" scope="row">
@@ -1234,45 +1235,47 @@ export default function Codelist() {
                           )}
 
                         </TableBody>
-                      </Table> */}
+                      </Table>
 
-                      {/* {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                      {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
                         {Object.values(codeListMap[values.fiscal]).map(
 
                           key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
                         )
-                        } */}
+                        }
 
                     </FormControl>
-                  </Grid>
+                  </Grid> */}
 
 
 
                   {/* frequency filter */}
-                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} >
-<FormControl className={classes.formControl}>
-  <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
-  <Select
-    native
-    value={values.frequency}
-    onChange={handleFilterChange}
-    className={classes.select}
-    inputProps={{
-      name: 'frequency',
-      id: 'frequency',
-      classes: {
-        icon: classes.selectIcon
-      }
-    }}
-   
-  >
-    <option value={""} />
-    <option value={'quarterly'}>Quarterly</option>
-    <option value={'semiAnnual'}>Semi-Annual</option>
-    <option value={'annual'}>Annual</option>
-  </Select>
-</FormControl>
-</Grid> */}
+                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                  <Grid item xs={12} className={classes.filter} >
+                    <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
+                      <Select
+                        native
+                        value={values.frequency}
+                        onChange={handleFilterChange}
+                        className={classes.select}
+                        inputProps={{
+                          name: 'frequency',
+                          id: 'frequency',
+                          classes: {
+                            icon: classes.selectIcon
+                          }
+                        }}
+
+                      >
+                        <option value={"All"}>All</option>
+                        <option value={'annual'}>Annually</option>
+                        <option value={'semiAnnual'}>Semi-Annually</option>
+                        <option value={'quarterly'}>Quarterly</option>
+
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
 
                 </form>
@@ -1302,7 +1305,7 @@ export default function Codelist() {
             <div className={classes.tabDashboard}>
               <div>
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"> */}
-                  {/* Download selected data elements Download Full Code List </Button> */}
+                {/* Download selected data elements Download Full Code List </Button> */}
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 Compare selected data elements
 </Button> */}
@@ -1394,12 +1397,12 @@ Compare selected data elements
 
             </div>
             {/* Loading */}
-{ deloading ? 
-            <div>
-              <LinearProgress mode="indeterminate" />
-              <div style={{paddingTop: '1rem', paddingLeft: '1rem'}}>Loading data elements ...</div>
-          </div> : ([])
-}
+            {deloading ?
+              <div>
+                <LinearProgress mode="indeterminate" />
+                <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data elements ...</div>
+              </div> : ([])
+            }
             {/* data elements */}
             {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
