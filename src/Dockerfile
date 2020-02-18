@@ -11,15 +11,12 @@ WORKDIR /usr/src/app
 # Create an enviroment variable for the node_modules
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
-# Copy the package.json and the package-lock.json to the working directory
+# Copy the package.json and the yarn.lock to the working directory
 COPY package.json ./
-COPY package-lock.json ./
+COPY yarn.lock ./
 
 # Install the project dependencies and silence the npm output
-RUN npm install --silent
-
-# Install react-scripts and silence the npm output
-RUN npm install react-scripts@1.1.1 -g --silent
+RUN yarn install --frozen-lockfile
 
 # Copy everything to the working directory
 COPY . /usr/src/app
