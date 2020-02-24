@@ -113,7 +113,7 @@ function a11yProps(index) {
 export const WhatIsNewHome =() =>{
   
     const classes = useStyles();
-    const [{ data_Elements, newIndicators, newDisaggregations, reportFrequencyChanges,  modifyExistIndicators, modifyExistDisaggregations, retiredIndicators, retiredDisaggregations }, dispatch] = useStateValue();
+    const [{ data_Elements, newIndicators, newDisaggregations, siteAndSNUattributes, reportFrequencyChanges,  modifyExistIndicators, indicatorDefinitionClarifications, modifyExistDisaggregations, retiredIndicators, retiredDisaggregations }, dispatch] = useStateValue();
 
     //console.log(props)
     
@@ -164,7 +164,7 @@ dispatch({
           </Button>
           </Grid>
           
-       <headings.H4 className={classes.subtitle}>MER 2.2 to MER 2.3</headings.H4>
+       <headings.H4 className={classes.subtitle}>MER 2.3 to MER 2.4</headings.H4>
        
         <p>Through the past 3 years of quarterly, site-level monitoring, PEPFAR programs have used data to improve 
           implementation. Changes to the MER highlight key program areas (e.g., index testing services) that should 
@@ -172,9 +172,9 @@ dispatch({
 
          {/* indicator tabs */}
          <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-          <Tab label="NEW ADDITIONS TO MER 2.3" {...a11yProps(0)} />
-          <Tab label="ADJUSTMENTS FROM MER 2.2" {...a11yProps(1)} />
-          <Tab label="REMOVALS FROM MER 2.2" {...a11yProps(2)} />
+          <Tab label="NEW ADDITIONS TO MER 2.4" {...a11yProps(0)} />
+          <Tab label="ADJUSTMENTS FROM MER 2.3" {...a11yProps(1)} />
+          <Tab label="REMOVALS FROM MER 2.3" {...a11yProps(2)} />
         </Tabs>
 
          {/* NEW ADDITIONS TO MER 2.3 */}
@@ -223,9 +223,37 @@ dispatch({
                 {newDisaggregations.map(newDisaggregation =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator(newDisaggregation.name)} className={classes.itemTitle}>{newDisaggregation.name}</Button>
+                    <NavLink className={classes.itemTitle}  to={"/indicator/" + newDisaggregation.name} href={`/indicator/${newDisaggregation.name}`}>{newDisaggregation.name}</NavLink>
+                {/* <Button onClick={updateIndicator(newDisaggregation.name)} className={classes.itemTitle}>{newDisaggregation.name}</Button> */}
                 {Object.keys(Object(newDisaggregation.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(newDisaggregation.content)[key]}</p>
+                )}
+                </div>
+                  )
+                })}
+
+                
+            
+       </ExpansionPanelDetails>
+       </ExpansionPanel>
+
+
+        {/* Site and SNU Attributes */}
+        <ExpansionPanel className={classes.expandPanel}>
+       <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1b-content"
+                id="panel1b-header"
+               
+              > Site and SNU Attributes
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails className={classes.panelDetail}>
+
+                {siteAndSNUattributes.map(siteAndSNUattribute =>{
+                  return(
+                <div className={classes.itemContainer} key={Math.random()}>
+                {Object.keys(Object(siteAndSNUattribute.content)).map(
+                  key => <p className={classes.itemContent} key={Math.random()}>{Object(siteAndSNUattribute.content)[key]}</p>
                 )}
                 </div>
                   )
@@ -256,7 +284,8 @@ dispatch({
                 {reportFrequencyChanges.map(reportFrequencyChange =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator(reportFrequencyChange.name)} className={classes.itemTitle}>{reportFrequencyChange.name}</Button>
+                    <NavLink className={classes.itemTitle}  to={"/indicator/" + reportFrequencyChange.name} href={`/indicator/${reportFrequencyChange.name}`}>{reportFrequencyChange.name}</NavLink>
+                {/* <Button onClick={updateIndicator(reportFrequencyChange.name)} className={classes.itemTitle}>{reportFrequencyChange.name}</Button> */}
                 {Object.keys(Object(reportFrequencyChange.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(reportFrequencyChange.content)[key]}</p>
                 )}
@@ -284,7 +313,8 @@ dispatch({
                 {modifyExistIndicators.map(modifyExistIndicator =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistIndicator.name}</Button>
+                <NavLink className={classes.itemTitle}  to={"/indicator/" + modifyExistIndicator.name} href={`/indicator/${modifyExistIndicator.name}`}>{modifyExistIndicator.name}</NavLink>
+                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistIndicator.name}</Button> */}
                 {Object.keys(Object(modifyExistIndicator.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(modifyExistIndicator.content)[key]}</p>
                 )}
@@ -312,9 +342,39 @@ dispatch({
                 {modifyExistDisaggregations.map(modifyExistDisaggregation =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistDisaggregation.name}</Button>
+                <NavLink className={classes.itemTitle}  to={"/indicator/" + modifyExistDisaggregation.name} href={`/indicator/${modifyExistDisaggregation.name}`}>{modifyExistDisaggregation.name}</NavLink>
+                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistDisaggregation.name}</Button> */}
                 {Object.keys(Object(modifyExistDisaggregation.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(modifyExistDisaggregation.content)[key]}</p>
+                )}
+                </div>
+                  )
+                })}
+
+                
+            
+       </ExpansionPanelDetails>
+       </ExpansionPanel>
+
+       {/* Indicator Definition Clarifications */}
+       <ExpansionPanel defaultExpanded className={classes.expandPanel}>
+       <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel2c-content"
+                id="panel2c-header"
+               
+              >
+               Indicator Definition Clarifications
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails className={classes.panelDetail}>
+
+                {indicatorDefinitionClarifications.map(indicatorDefinitionClarification =>{
+                  return(
+                <div className={classes.itemContainer} key={Math.random()}>
+                <NavLink className={classes.itemTitle}  to={"/indicator/" + indicatorDefinitionClarification.name} href={`/indicator/${indicatorDefinitionClarification.name}`}>{indicatorDefinitionClarification.name}</NavLink>
+                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{indicatorDefinitionClarification.name}</Button> */}
+                {Object.keys(Object(indicatorDefinitionClarification.content)).map(
+                  key => <p className={classes.itemContent} key={Math.random()}>{Object(indicatorDefinitionClarification.content)[key]}</p>
                 )}
                 </div>
                   )
@@ -345,7 +405,8 @@ dispatch({
                 {retiredIndicators.map(retiredIndicator =>{
                   return(
                 <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{retiredIndicator.name}</Button>
+                <NavLink className={classes.itemTitle}  to={"/indicator/" + retiredIndicator.name} href={`/indicator/${retiredIndicator.name}`}>{retiredIndicator.name}</NavLink>
+                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{retiredIndicator.name}</Button> */}
                 {Object.keys(Object(retiredIndicator.content)).map(
                   key => <p className={classes.itemContent} key={Math.random()}>{Object(retiredIndicator.content)[key]}</p>
                 )}
@@ -360,7 +421,7 @@ dispatch({
 
 
         {/* RETIRED DISAGGREGATIONS */}
-       <ExpansionPanel defaultExpanded className={classes.expandPanel}>
+       {/* <ExpansionPanel defaultExpanded className={classes.expandPanel}>
        <ExpansionPanelSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel3b-content"
@@ -385,7 +446,7 @@ dispatch({
                 
             
        </ExpansionPanelDetails>
-       </ExpansionPanel>
+       </ExpansionPanel> */}
 
       </TabPanel>
 

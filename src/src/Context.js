@@ -1488,120 +1488,178 @@ export const initialState = {
     ],
     newIndicators:[
       {
-        name: 'AGYW_PREV',
-        content:['AGYW_PREV is a semi-annual indicator introduced for reporting beginning in FY19. AGYW_PREV is a DREAMS-specific indicator to measure how many adolescent girls and young women (AGYW) are being served in the DREAMS program and whether all AGYW in DREAMS have received the intended layered services and interventions to ensure that they remain HIV-free.']
+        name: 'SC_ARVDISP',
+        content:['SC_ARVDISP is a semi-annual indicator introduced for reporting beginning in Q2 of FY20. SC_ARVDISP measures the dispensing of ARV bottles at the facility level. In addition, SC_ARVDISP measures the uptake, transition, and maintenance of patients on optimized ARV regimens as well as the phasing out of non-optimal regimens.']
       },
       {
-        name:'CXCA_SCRN',
-        content:['CXCA_SCRN is a semi-annual indicator introduced for reporting beginning in Q4 of FY18. CXCA measures the percentage of HIV-positive women on ART screened for cervical cancer.']
+        name:'SC_CURR',
+        content:['SC_CURR is a semi-annual indicator introduced for reporting beginning in Q2 of FY20. SC_CURR measures the quantity of ARV stock available at the time of reporting to provide insight into the on-the-shelf availability of each ARV used for HIV treatment at the facility level. Data from SC_CURR can be coupled with data from SC_ARVDISP to determine how long the quantity of stock will last based on dispensing.']
       },
       {
-        name:'CXCA_TX',
-        content:['CXCA_TX is a semi-annual indicator introduced for reporting beginning in Q4 of FY18. CXCA_TX measures the percentage of cervical cancer screen-positive women who are also HIV-positive and on ART that were eligible for and received cryotherapy, thermocoagulation or LEEP.']
-      },
-      {
-        name:'HTS_INDEX',
-        content:['HTS_INDEX is now a standalone indicator to monitor and help guide PEPFAR programming for index testing services. Reporting for HTS_INDEX will begin in Q1 of FY19. HTS_INDEX is the first MER indicator to monitor PEPFAR programming related to HIV index testing services (often referred to as partner notification or contact tracing services). This indicator includes a cascade that will help to better understand the scale and fidelity of the index testing services provided by PEPFAR-supported programs.']
-      },
-      {
-        name: 'HTS_RECENT',
-        content:['HTS_RECENT is a quarterly indicator introduced for reporting beginning in Q1 of FY19. Testing individuals that are newly diagnosed with HIV-1 for recent infection is an emerging programmatic area of emphasis for PEPFAR. HTS_RECENT measures the percentage of newly diagnosed HIV-positive persons aged ≥15 years with a test for recent infection result of ‘recent infection’ during the reporting period.',
-        'As countries progress toward epidemic control, surveillance of newly diagnosed persons will ensure that interventions target those at highest risk of acquiring or transmitting HIV infection. One approach is to identify recent HIV infections, defined as those acquired within approximately the last one year. Incorporation of rapid tests for recent HIV-1 infection into routine HIV testing services will enable the establishment of a surveillance system to quickly detect, monitor, characterize, and intervene on recent infections among newly diagnosed HIV cases. Data collected from a recent infection surveillance system can also be used to fine-tune a country’s programmatic response through prioritized programming and resource allocation.']
-      },
-      {
-        name:'PREP_CURR',
-        content:['PrEP_CURR is a semi-annual indicator introduced for reporting beginning in FY19. PrEP_CURR measures the number of individuals receiving oral PrEP during the reporting period and is an important addition to the MER to help PEPFAR programs understand how many clients are being sustained on PrEP after initiation.']
-      },
-      {
-        name: 'TX_ML',
-        content:['TX_ML is a semi-annual indicator introduced for reporting beginning in FY19. TX_ML is intended to drive improved tracing of patients to ensure patient outcomes are accurately documented. It is the first PEPFAR indicator to collect information on mortality among patients on ART and in care. The indicator also strives to better understand the magnitude of previously undocumented patient transfers.']
+        name:'TX_RTT',
+        content:['TX_RTT is a quarterly indicator introduced for reporting beginning in Q1 of FY20. TX_RTT counts those patients who are lost to TX_CURR for more than 28 days past the last expected clinical contact who return to treatment and restart ARVs in the reporting period. This indicator counts those previously ART experienced individuals who reinitiate ARVs after being off treatment for ≥28 days (and therefore LTFU).']
       }
+      // {
+      //   name: 'AGYW_PREV',
+      //   content:['AGYW_PREV is a semi-annual indicator introduced for reporting beginning in FY19. AGYW_PREV is a DREAMS-specific indicator to measure how many adolescent girls and young women (AGYW) are being served in the DREAMS program and whether all AGYW in DREAMS have received the intended layered services and interventions to ensure that they remain HIV-free.']
+      // },
+      // {
+      //   name:'CXCA_SCRN',
+      //   content:['CXCA_SCRN is a semi-annual indicator introduced for reporting beginning in Q4 of FY18. CXCA measures the percentage of HIV-positive women on ART screened for cervical cancer.']
+      // },
+      // {
+      //   name:'CXCA_TX',
+      //   content:['CXCA_TX is a semi-annual indicator introduced for reporting beginning in Q4 of FY18. CXCA_TX measures the percentage of cervical cancer screen-positive women who are also HIV-positive and on ART that were eligible for and received cryotherapy, thermocoagulation or LEEP.']
+      // },
+      // {
+      //   name:'HTS_INDEX',
+      //   content:['HTS_INDEX is now a standalone indicator to monitor and help guide PEPFAR programming for index testing services. Reporting for HTS_INDEX will begin in Q1 of FY19. HTS_INDEX is the first MER indicator to monitor PEPFAR programming related to HIV index testing services (often referred to as partner notification or contact tracing services). This indicator includes a cascade that will help to better understand the scale and fidelity of the index testing services provided by PEPFAR-supported programs.']
+      // },
+      // {
+      //   name: 'HTS_RECENT',
+      //   content:['HTS_RECENT is a quarterly indicator introduced for reporting beginning in Q1 of FY19. Testing individuals that are newly diagnosed with HIV-1 for recent infection is an emerging programmatic area of emphasis for PEPFAR. HTS_RECENT measures the percentage of newly diagnosed HIV-positive persons aged ≥15 years with a test for recent infection result of ‘recent infection’ during the reporting period.',
+      //   'As countries progress toward epidemic control, surveillance of newly diagnosed persons will ensure that interventions target those at highest risk of acquiring or transmitting HIV infection. One approach is to identify recent HIV infections, defined as those acquired within approximately the last one year. Incorporation of rapid tests for recent HIV-1 infection into routine HIV testing services will enable the establishment of a surveillance system to quickly detect, monitor, characterize, and intervene on recent infections among newly diagnosed HIV cases. Data collected from a recent infection surveillance system can also be used to fine-tune a country’s programmatic response through prioritized programming and resource allocation.']
+      // },
+      // {
+      //   name:'PREP_CURR',
+      //   content:['PrEP_CURR is a semi-annual indicator introduced for reporting beginning in FY19. PrEP_CURR measures the number of individuals receiving oral PrEP during the reporting period and is an important addition to the MER to help PEPFAR programs understand how many clients are being sustained on PrEP after initiation.']
+      // },
+      // {
+      //   name: 'TX_ML',
+      //   content:['TX_ML is a semi-annual indicator introduced for reporting beginning in FY19. TX_ML is intended to drive improved tracing of patients to ensure patient outcomes are accurately documented. It is the first PEPFAR indicator to collect information on mortality among patients on ART and in care. The indicator also strives to better understand the magnitude of previously undocumented patient transfers.']
+      // }
     ],
     newDisaggregations:[
       {
-        name: 'HTS_TST',
-        content:['A new facility-based testing modality has been introduced: Post ANC1: Pregnancy/L&D/BF. Please refer to the HTS_TST indicator reference sheet for additional details.']
+        name: 'TX_CURR',
+        content:['Two new disaggregations have been introduced for quarterly TX_CURR reporting beginning in FY20: (1) reporting TX_CURR results by KP type and (2) reporting TX_CURR by the months of ARVs dispensed to each patient to assess the uptake of multi-month dispensing (MMD) in PEPFAR-supported sites.As a reminder, the definition of TX_CURR was modified beginning in FY 2019 based on a new definition of lost-to-follow-up (LTFU). Patients who have not received ARVs within four weeks (i.e., 28 days) of their last missed drug pick-up should not be counted in TX_CURR.']
       },
       {
-        name: 'PP_PREV',
-        content:['A new, optional priority populations type disaggregate was added to this indicator to capture the specific priority populations accessing prevention services. Age/sex-specific priority populations were not added to this disaggregate group (e.g., AGYW) because these can be calculated using the mandatory age/sex disaggregates collected within the indicator.']
-      },
-      {
-        name: 'TX_TB',
-        content:['The denominator has been updated to include a new disaggregate for “positive result returned."']
+        name: 'TX_PVLS',
+        content:['KP disaggregations have been added to both the numerator and denominator.']
       }
+      // {
+      //   name: 'HTS_TST',
+      //   content:['A new facility-based testing modality has been introduced: Post ANC1: Pregnancy/L&D/BF. Please refer to the HTS_TST indicator reference sheet for additional details.']
+      // },
+      // {
+      //   name: 'PP_PREV',
+      //   content:['A new, optional priority populations type disaggregate was added to this indicator to capture the specific priority populations accessing prevention services. Age/sex-specific priority populations were not added to this disaggregate group (e.g., AGYW) because these can be calculated using the mandatory age/sex disaggregates collected within the indicator.']
+      // },
+      // {
+      //   name: 'TX_TB',
+      //   content:['The denominator has been updated to include a new disaggregate for “positive result returned."']
+      // }
     ],
+    siteAndSNUattributes: [
+      {
+      content: ['PEPFAR collects administrative, epidemiologic, and service-related data about PEPFAR-supported facilities and subnational units (SNUs) that helps to better illuminate where services should be provided, where services are actually are provided, who is delivering these services, and what is the service capacity. Some of these attributes are routinely collected in form of MER indicators (e.g., HRH_CURR, EMR_SITE), others are collected at the time a facility is added to a master facility list and subsequently DATIM (e.g., facility name, geographic coordinates), and others are collected during the annual PEPFAR planning cycle']
+      }],
     reportFrequencyChanges:[
       {
-        name: 'PREP_NEW',
-        content:['The reporting frequency moves from quarterly to semi-annually in FY19 to align the prevention indicators.']
-      },
-      {
-        name:'TB_ART',
-        content:['The reporting frequency moves from semi-annually to quarterly in FY19 to align with the ART-related indicators and TB_STAT.']
-      },
-      {
-        name:'TB_STAT',
-        content:['The reporting frequency moves from semi-annually to quarterly in FY19 to align with HTS_TST.']
-      },
-      {
-        name:'TX_PVLS',
-        content:['The reporting frequency moves from annually to quarterly in FY19 to ensure that the treatment cascade can be reviewed quarterly and to emphasize the importance of regularly monitoring viral load coverage and suppression.']
+        name: 'TX_ML',
+        content:['The reporting frequency moves from semi-annually to quarterly in FY20 to align with other treatment indicators and improve triangulation with TX_NEW, TX_NET_NEW, TX_CURR, and TX_RTT.']
       }
+      // {
+      //   name:'TB_ART',
+      //   content:['The reporting frequency moves from semi-annually to quarterly in FY19 to align with the ART-related indicators and TB_STAT.']
+      // },
+      // {
+      //   name:'TB_STAT',
+      //   content:['The reporting frequency moves from semi-annually to quarterly in FY19 to align with HTS_TST.']
+      // },
+      // {
+      //   name:'TX_PVLS',
+      //   content:['The reporting frequency moves from annually to quarterly in FY19 to ensure that the treatment cascade can be reviewed quarterly and to emphasize the importance of regularly monitoring viral load coverage and suppression.']
+      // }
     ],
     modifyExistIndicators:[
       {
-        name: 'HRH_CURR',
-        content:['The reporting of HRH_CURR by the number of full-time equivalents is no longer required. HRH_CURR has been simplified to collect the total number of staff (regardless of FTE). In addition, a new data element has been added to capture the amount of funding spent on health care workers by cadre and support type.']
+        name: 'AGYW_PREV',
+        content:['Indicator reporting shifted in FY19 from being cumulative for the entire DREAMS programs to a to snapshot, reflecting AGYW service completion as of the past 6 months at Q2 and the past 12 months at Q4. For FY20, the numerator and denominator disaggregates have been reorganized and a denominator disaggregate has been added to capture AGYW enrolled in DREAMS that have started but not yet completed a DREAMS service/intervention in the reporting period. These changes will provide the ability to better assess completion coverage.']
       },
       {
-        name:'PMTCT_EID',
-        content:['The denominator has been updated to include HIV+ pregnant women identified after ANC1, including those women who test positives later in pregnancy, at labor and delivery, and throughout the breastfeeding period. The positive results for these women will be captured under the newly added HTS modality, Post ANC1: Pregnancy/L&D/BF and will be summed with the positives (new and known) from ANC1 (i.e., PMTCT_STAT_POS) to obtain the total denominator.']
-      }
-    ],
-    modifyExistDisaggregations:[
-      {
-        name:'OVC_HIVSTAT',
-        content:['The status type disaggregates have been modified. The sub-disaggregate under “No status reported” formerly called “Test not indicated” will now be “Test not required based on risk assessment” to simplify the language.']
-      },
-      {
-        name:'OVC_SERV',
-        content:['Age/sex and program status (i.e., active or graduated) disaggregations have been combined.']
-      },
-      {
-        name:'PMTCT_ART',
-        content:['Age disaggregations were added to the “maternal regimen type” disaggregate to align with PMTCT_STAT. Age disaggregations were not previously collected for PMTCT_ART.']
-      },
-      {
-        name:'PREP_NEW',
-        content:['The KP type disaggregation for this indicator has been updated. “Other key population” has been removed and replaced with “people who inject drugs” and “people in prisons and other closed settings” so that all key population disaggregate group options align between HTS_TST, TX_NEW, PrEP_CURR, and PrEP_NEW .']
-      },
-      {
-        name:'TB_ART',
-        content:['Age/sex and “ART status” disaggregations have been combined.']
+        name:'HTS_RECENT',
+        content:['HTS_RECENT has been restructured to combine the previous numerator and denominator into a single numerator to mirror HTS_TST. As such the previous indication disaggregation (assay, RITA, and not documented) was redefined to align better with reported results and recency testing algorithms. All assay results will be reported under rapid test for recent infection (RTRI) and confirmed results through viral load testing as part of the RITA will be reported as a subset, where available']
       },
       {
         name:'TB_PREV',
-        content:['Age/sex and “Type of TB preventive therapy by ART Start” disaggregations have been combined for both the numerator and the denominator.']
+        content:['The denominator was changed from the number of ART patients who “are expected to complete a course of TPT” to those who were initiated on any course of TPT during the previous reporting period. The therapy type (regimen) disaggregates for the numerator and denominator were moved from the indicator to the guiding narrative questions. The APR calculation for TB_PREV was changed from a snapshot indicator, to being summed over time (i.e., previous calculation: APR=Q4, new calculation: APR=Q2+Q4).']
       },
       {
-        name:'TB_STAT',
-        content:['Age/sex disaggregations were updated from coarse-only to fine age bands to allow TB_STAT to auto-populate HTS_TST via the TB modality and to align with the age bands for TB_ART.']
+        name:'TX_ML',
+        content:['The outcome disaggregations have been simplified to the following categories: died, lost to follow-up, transferred out, and refused (stopped) treatment. Sub-disaggregations were added to the lost to follow-up outcome for patients LTFU after being on treatment for >3 months vs. patients LTFU after being on treatment <3 months. This distinction was added to highlight the critical nature of early retention for successful longer-term retention among those persons newly initiating ART, especially otherwise healthy or younger adults.']
+      }
+      // {
+      //   name:'PMTCT_EID',
+      //   content:['The denominator has been updated to include HIV+ pregnant women identified after ANC1, including those women who test positives later in pregnancy, at labor and delivery, and throughout the breastfeeding period. The positive results for these women will be captured under the newly added HTS modality, Post ANC1: Pregnancy/L&D/BF and will be summed with the positives (new and known) from ANC1 (i.e., PMTCT_STAT_POS) to obtain the total denominator.']
+      // }
+    ],
+    modifyExistDisaggregations:[
+      {
+        name:'LAB_PTCQI',
+        content:['Laboratory and point-of-care testing site categories have been updated to include “rapid test for recent infection” and remove “other”.']
       },
       {
-        name:'TX_TB',
-        content:['Age/sex and “ART Status” disaggregations have been combined for the numerator. Age/sex and “Start of ART by Screen Results” disaggregations have been combined for the denominator.']
+        name:'PP_PREV',
+        content:['A new disaggregate has been added to the “Testing Services” disaggregate group for “Test not required based on risk assessment” for those priority populations not eligible for HTS based on HTS screening.']       
       },
       {
-        name:'VMMC_CIRC',
-        content:['Age disaggregations were added to the “HIV Status and Outcome” disaggregate in order for VMMC HTS results to auto-populate into the HTS_TST indicator. Note that the age disaggregations align with HTS_TST to allow for auto-population. This means the <4 disaggregations differ slightly from the indicator itself.']
+        name:'TX_PVLS',
+        content:['“Not documented” testing indication removed as efforts should have been initiated since this indicator was introduced as described in the previous releases of the MER guidance, to move results to either “routine” or “targeted.”']
+      },
+      // {
+      //   name:'OVC_HIVSTAT',
+      //   content:['The status type disaggregates have been modified. The sub-disaggregate under “No status reported” formerly called “Test not indicated” will now be “Test not required based on risk assessment” to simplify the language.']
+      // },
+      // {
+      //   name:'OVC_SERV',
+      //   content:['Age/sex and program status (i.e., active or graduated) disaggregations have been combined.']
+      // },
+      // {
+      //   name:'PMTCT_ART',
+      //   content:['Age disaggregations were added to the “maternal regimen type” disaggregate to align with PMTCT_STAT. Age disaggregations were not previously collected for PMTCT_ART.']
+      // },
+      // {
+      //   name:'PREP_NEW',
+      //   content:['The KP type disaggregation for this indicator has been updated. “Other key population” has been removed and replaced with “people who inject drugs” and “people in prisons and other closed settings” so that all key population disaggregate group options align between HTS_TST, TX_NEW, PrEP_CURR, and PrEP_NEW .']
+      // },
+      // {
+      //   name:'TB_ART',
+      //   content:['Age/sex and “ART status” disaggregations have been combined.']
+      // },
+      // {
+      //   name:'TB_PREV',
+      //   content:['Age/sex and “Type of TB preventive therapy by ART Start” disaggregations have been combined for both the numerator and the denominator.']
+      // },
+      // {
+      //   name:'TB_STAT',
+      //   content:['Age/sex disaggregations were updated from coarse-only to fine age bands to allow TB_STAT to auto-populate HTS_TST via the TB modality and to align with the age bands for TB_ART.']
+      // },
+      // {
+      //   name:'TX_TB',
+      //   content:['Age/sex and “ART Status” disaggregations have been combined for the numerator. Age/sex and “Start of ART by Screen Results” disaggregations have been combined for the denominator.']
+      // },
+      // {
+      //   name:'VMMC_CIRC',
+      //   content:['Age disaggregations were added to the “HIV Status and Outcome” disaggregate in order for VMMC HTS results to auto-populate into the HTS_TST indicator. Note that the age disaggregations align with HTS_TST to allow for auto-population. This means the <4 disaggregations differ slightly from the indicator itself.']
+      // }
+    ],
+    indicatorDefinitionClarifications:[
+      {
+        name:'OVC_SERV',
+        content:['Clarifying language was added to OVC_SERV explaining exited, transferred, and graduation disaggregates should be reported cumulatively at Q4. In addition, there is an expanded definition of “child” OVC beneficiary to include children aged 18 to 20 still completing secondary education or an approved economic intervention intended to secure the livelihood of an OVC aging out of the program. Language was also added regarding counting active DREAMS beneficiaries who are not otherwise actively enrolled in the OVC program under OVC_SERV. Lastly, there is clarifying language added regarding the definition and number of caregivers per household.']
       }
     ],
     retiredIndicators:[
       {
-        name:'TX_RET',
-        content:['Indicator has been removed in order to incorporate the new TX_ML indicator and strengthen reporting on TX_PVLS.']
-      }
+        name:'SC_STOCK',
+        content:['Indicator has been removed in order to introduce improvements to the supply chain indicators, including SC_ARVDISP and SC_CURR, which allows for more proactive action to address bottlenecks in the supply chain.']
+      },
+      // {
+      //   name:'TX_RET',
+      //   content:['Indicator has been removed in order to incorporate the new TX_ML indicator and strengthen reporting on TX_PVLS.']
+      // }
     ],
     retiredDisaggregations:[
       {
