@@ -45,7 +45,12 @@ import { getCodeListMap } from '../currentCodelist.js'
 import { getCodeList } from '../currentCodelist.js'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Shortcut from './Shortcut';
-
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 
 //tab panel function
 function TabPanel(props) {
@@ -365,6 +370,18 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: '#eeeeee'
     }
   },
+  compareColumn: {
+    width: '100%',
+    display: 'flex',
+    paddingTop: '1em',
+    borderBottom: '1px solid #062133',
+    flexDirection: 'column',
+    backgroundColor: '#f8f8f8',
+
+    '&:nth-child(even)': {
+      backgroundColor: '#eeeeee'
+    }
+  },
   compareRowColumn: {
     flex: 1,
     margin: '1em'
@@ -644,6 +661,51 @@ export default function Codelist() {
   });
   const [dropDownName, setDropDownName] = React.useState("");
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const styles = theme => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(4),
+    },
+    closeButton: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+      color: theme.palette.grey[500],
+    },
+  });
+  const DialogTitle = withStyles(styles)(props => {
+    const { children, classes, onClose, ...other } = props;
+    return (
+      <MuiDialogTitle disableTypography className={classes.root} {...other}>
+        <Typography variant="h6">{children}</Typography>
+        {onClose ? (
+          <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </MuiDialogTitle>
+    );
+  });
+
+  const DialogContent = withStyles(theme => ({
+    root: {
+      padding: theme.spacing(4),
+    },
+  }))(MuiDialogContent);
+
+  const DialogActions = withStyles(theme => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(2),
+    },
+  }))(MuiDialogActions);
+
 
 
   //initial filter state
@@ -651,7 +713,7 @@ export default function Codelist() {
     fiscal: currentYear,
     type: "All",
     dataSet: "All",
-    source: "All",
+    source: "MER",
     frequency: "All"
   });
 
@@ -710,7 +772,7 @@ export default function Codelist() {
       fiscal: year,
       type: "All",
       dataSet: "All",
-      source: "All",
+      source: "MER",
       frequency: "All"
     })
     values.dataSet = "All";
@@ -782,7 +844,7 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: "All",
-        source: "All",
+        source: "MER",
         frequency: "All"
       })
       console.log(" values.dataSet " + values.dataSet)
@@ -794,13 +856,34 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: dataType,
-        source: "All",
+        source: "MER",
         frequency: "All"
       })
       console.log(" values.dataSet " + values.dataSet)
     }
   }, [values.type]);
 
+  useEffect(() => {
+    setDataElementsData([])
+    setCountOfValues(0)
+
+    console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
+    console.log(" values.dataSet " + values.dataSet)
+    console.log(" values.type " + values.type)
+
+    if (values.source === "MER") {
+      loadDataElementsByPeriod()
+    }
+    else {
+      codeListJson.codeList.map(cl => {
+        if (values.dataSet === cl.full_name) {
+          console.log(" dataset changed ")
+          setCollection(cl.id)
+        }
+      })
+      console.log(" displaying " + dataElements.length + " results")
+    }
+  }, [values.source]);
 
   async function getMappings(id) {
     setExpanded(true);
@@ -853,6 +936,7 @@ export default function Codelist() {
       setSelectedDataElement(newSelectedDataElement);
     } else {
       //add the element from the selected data element when click
+      !deMappings[dataElement.id] ? getMappings(dataElement.id) : '';
       const newSelectedDataElement = [...selectedDataElement, dataElement.display_name];
       setSelectedDataElement(newSelectedDataElement);
     }
@@ -933,7 +1017,11 @@ export default function Codelist() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
+    if (selectedDataElement.length > 3) {
+      setOpen(true);
+    }
+    else{
+    setCompare({ ...comparePanel, [DATIM]: true });
     setComparePanel({ ...comparePanel, [side]: open });
 
     const selectDataTemp = [];
@@ -944,17 +1032,20 @@ export default function Codelist() {
     console.log("toggleDrawer dataElements")
     console.log(dataElements)
     dataElements.map(dataElement => {
-      console.log(dataElement)
       if (selectedDataElement.includes(dataElement.display_name)) {
         selectDataTemp.push(dataElement);
+        if (!deMappings[dataElement.id]) {
+          getMappings(dataElement.id)
+        }
       }
 
     }
 
     )
     setSelectedDatim(selectDataTemp);
+    console.log("!!setSelectedDatim.length " + setSelectedDatim.length)
 
-
+  }
   };
 
 
@@ -986,7 +1077,7 @@ export default function Codelist() {
 
 
 
-      <div className={classes.heroContainer}>
+      <div className={classes.container}>
         <div className={classes.container}>
           <Breadcrumb></Breadcrumb>
           {errorDisplay !== null ? <div className={classes.errorMessage}>{errorDisplay}</div> : null}
@@ -1075,7 +1166,7 @@ export default function Codelist() {
           {/* filters */}
           <Grid item xs={12} md={3}>
 
-          <Shortcut ></Shortcut>
+            <Shortcut ></Shortcut>
             <Paper className={classes.sidebar}>
               <div className={`${classes.container} ${classes.sidebarContainer}`}>
 
@@ -1109,7 +1200,7 @@ export default function Codelist() {
                         }}
 
                       >
-                        <option value={'All'}>All</option> />
+                        <option value={'MER'}>All</option> />
     <option value={'DATIM'}>DATIM</option>
                         <option value={'PDH'} >PDH</option>
                         {/* <option value={'MOH'} disabled>MOH</option> */}
@@ -1312,6 +1403,26 @@ export default function Codelist() {
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 Compare selected data elements
 </Button> */}
+                <Button variant="outlined" className={classes.actionButton} onClick={toggleDrawer('bottom', true)} id="comparisonButton">
+                  Compare selected data elements
+</Button>
+              </div>
+
+              <div>
+                <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+                  <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                  </DialogTitle>
+                  <DialogContent >
+                    <Typography gutterBottom>
+                      You cannot compare more than 3 data elements at a time
+          </Typography>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button autoFocus onClick={handleClose} color="primary">
+                      OK
+          </Button>
+                  </DialogActions>
+                </Dialog>
               </div>
 
               {/* <Button variant="outlined" className={classes.actionButton} onClick={selectAll} id="downloadButton">
@@ -1413,7 +1524,8 @@ Compare selected data elements
               <div key={dataElement.display_name}>
                 <ExpansionPanel className={classes.dataelementContainer}
                   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                  onClick={() => getMappings(dataElement.id)}
+                  onClick={() => !deMappings[dataElement.id] ?
+                    getMappings(dataElement.id) : ''}
 
                 // defaultExpanded=false
 
@@ -1476,7 +1588,8 @@ Compare selected data elements
                   </ExpansionPanelDetails>
                   <ExpansionPanel className={classes.dataElementContainer}
                     TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                    onClick={() => getMappings(dataElement.id)}
+                    onClick={() => !deMappings[dataElement.id] ?
+                      getMappings(dataElement.id) : ''}
                   //expanded={expanded}
                   >
                     <ExpansionPanelSummary
@@ -1660,24 +1773,58 @@ Compare selected data elements
 
 
                   {/* datim row */}
-                  {
-                    selectedDatim.map(datim => {
-                      return (
-                        <div className={classes.compareRow} key={Math.random()}>
-                          <div className={classes.compareRowColumn}>
 
-                            <ExpansionPanel defaultExpanded className={classes.expandPanel}>
+                  <div className={classes.compareRow} >
+                    {
+                      selectedDatim.map(datim => {
+                        !deMappings[datim.id] ? getMappings(datim.id) : ''
+                        return (
+                          <div className={classes.compareRowColumn} key={Math.random()}>
+                            <div className={classes.fixedTop}>
+                              {/* <div className={classes.compareCardSummary}> */}
+                              <div className={classes.compareTitle}>
+                                {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
+                                <div className={classes.compareTitleColumn}>{datim.display_name}</div>
+                                {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
+                              </div>
+                            </div>
+                            <ExpansionPanel className={classes.expandPanel}>
                               <ExpansionPanelSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel3b-content"
                                 id="panel3b-header"
-
+                                onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
                               >
-                                <div className={classes.compareCardSummary}>
-                                  <div className={classes.compareCardText}>DATIM Data Element: </div>
-                                  <div className={classes.compareCardName}>{datim.name}</div>
-                                  <div className={classes.compareCardText}>DATIM UID: <strong>{datim.uid}</strong></div>
-                                </div>
+
+                                <Table className={classes.table} aria-label="simple table">
+                                  <TableBody>
+                                    <TableRow>
+                                      <TableCell>Indicator</TableCell>
+                                      <TableCell>{datim.extras.indicator}</TableCell>
+                                    </TableRow>
+                                    <TableRow >
+                                      <TableCell>Description</TableCell>
+                                      <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>UID</TableCell>
+                                      <TableCell>{datim.external_id}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Source</TableCell>
+                                      <TableCell>{datim.source}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell>Result/Target</TableCell>
+                                      <TableCell>{datim.extras.resultTarget}</TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+
+                                {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
+                                Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
+
+                              </div> */}
                               </ExpansionPanelSummary>
                               <ExpansionPanelDetails className={classes.panelDetail}>
 
@@ -1690,37 +1837,42 @@ Compare selected data elements
                                     <Table className={classes.table} aria-label="simple table">
                                       <TableHead>
                                         <TableRow>
-                                          <TableCell>Disaggregations Name</TableCell>
-                                          <TableCell>Disaggregations Code</TableCell>
+                                          <TableCell>Name</TableCell>
+                                          <TableCell>Code</TableCell>
                                         </TableRow>
                                       </TableHead>
-                                      <TableBody>
+                                      <TableBody >
                                         {
-                                          Object.keys(Object(datim.combos)).map(
-                                            key => <TableRow key={Math.random()}>
-                                              <TableCell component="th" scope="row">
-                                                {Object(datim.combos)[key].name}
-                                              </TableCell>
-                                              <TableCell component="th" scope="row">
-                                                {Object(datim.combos)[key].code}
-                                              </TableCell>
-                                            </TableRow>
+                                          (deMappings[datim.id]) ? Object.keys(Object(deMappings[datim.id].mappings)).map(
 
-                                          )
+                                            key =>
+                                              <TableRow key={Math.random()}>
+                                                <TableCell component="th" scope="row">
+                                                  {Object(deMappings[datim.id].mappings)[key].to_concept_name}
+                                                </TableCell>
+                                                <TableCell component="th" scope="row">
+                                                  {Object(deMappings[datim.id].mappings)[key].to_concept_code}
+                                                </TableCell>
+                                              </TableRow>
+
+                                          ) : (Object.keys(emptyMap).map(
+
+                                          ))
                                         }
                                       </TableBody>
                                     </Table>
-                                  </div>)}></Route>
+                                  </div>
+                                )}></Route>
                               </ExpansionPanelDetails>
                             </ExpansionPanel>
 
-                          </div>
+                            {/* </div> */}
 
 
 
 
-                          {/* PDH row */}
-
+                            {/* PDH row */}
+                            {/* 
                           <div className={PDH ? classes.compareRowColumn : classes.hide}>
 
 
@@ -1733,8 +1885,8 @@ Compare selected data elements
                                       aria-controls="panel3b-content"
                                       id="panel3b-header"
 
-                                    >
-                                      <div className={classes.compareCardSummary}>
+                                    > */}
+                            {/* <div className={classes.compareCardSummary}>
                                         <div className={classes.compareCardText}>PDH Data Element: </div>
                                         <div className={classes.compareCardName}>{pdhDataElement.name}</div>
                                         <div className={classes.compareCardText}>PDH Data Element UID: <strong>{pdhDataElement.uid}</strong></div>
@@ -1747,10 +1899,10 @@ Compare selected data elements
                                       <Route render={({ history }) => (
                                         <div className={classes.tableContainer}>
                                           {/* data element Disaggregations */}
-                                          <strong>PDH Disaggregations</strong>:<br />
+                            {/* <strong>PDH Disaggregations</strong>:<br />
 
-                                          <Table className={classes.table} aria-label="simple table">
-                                            <TableHead>
+                                          <Table className={classes.table} aria-label="simple table"> */}
+                            {/* <TableHead>
                                               <TableRow>
                                                 <TableCell>Disaggregations Name</TableCell>
                                                 <TableCell>Disaggregations Code</TableCell>
@@ -1781,12 +1933,11 @@ Compare selected data elements
                               return true;
                             })
                             }
-                          </div>
+                          </div> */}
 
 
-
-                          {/* MOH row */}
-                          <div className={MOH ? classes.compareRowColumn : classes.hide}>
+                            {/* MOH row */}
+                            {/* <div className={MOH ? classes.compareRowColumn : classes.hide}>
 
                             {datim.moh.length === 0 ? 'No matching MOH data element' : mohDataElements.map(mohDataElement => {
                               if ((datim.moh).includes(mohDataElement.uid)) {
@@ -1811,7 +1962,7 @@ Compare selected data elements
                                       <Route render={({ history }) => (
                                         <div className={classes.tableContainer}>
                                           {/* data element Disaggregations */}
-                                          <strong>MOH Disaggregations</strong>:<br />
+                            {/* <strong>MOH Disaggregations</strong>:<br />
 
                                           <Table className={classes.table} aria-label="simple table">
                                             <TableHead>
@@ -1844,14 +1995,15 @@ Compare selected data elements
 
                               return true;
                             })
-                            }
+                            }*/}
                           </div>
-                        </div>
 
-                      )
-                    })
+                        )
 
-                  }
+                      })
+
+                    }
+                  </div>
 
 
 
