@@ -52,6 +52,8 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 //import Alert from '@material-ui/lab/Alert';
+import InputBase from '@material-ui/core/InputBase';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -401,6 +403,24 @@ const useStyles = makeStyles(theme => ({
   },
 
 
+
+  search: {
+    padding: '6px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    border: '2px solid #D55804',
+    /*borderColor: `'#D55804' !important`,
+    borderWidth: '2px',*/
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  searchButton: {
+    padding: 10,
+  },
+
   [theme.breakpoints.down('md')]: {
     actionButton: {
       fontSize: '0.7em'
@@ -518,11 +538,19 @@ export default function Codelist() {
   // const [period, setPeriod] = useState(["FY" + currentYear.substring(2, 4)]);
   const [period, setPeriod] = useState([""]);
   const [source, setSource] = useState(["MER"]);
-  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+  const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
+  const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
+  
+  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
 
   const [collection, setCollection] = useState("");
-  const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
+  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
   const [deloading, setDELoading] = useState(false);
+
+  if (search && search !== "") {
+    queryDataElementsByPeriod = queryDataElementsByPeriod  + "&q=" + search;
+    queryByCodeList = queryByCodeList +  "&q=" + search;
+  }
 
   let emptyMap = {};
 
@@ -654,7 +682,7 @@ export default function Codelist() {
   }, [queryByCodeList]);
   ///////////
 
-  const [search, setSearch] = React.useState("");
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [comparePanel, setComparePanel] = React.useState({
     top: false,
@@ -735,6 +763,24 @@ export default function Codelist() {
   //   setDataElements(data);
   // }
 
+
+  const handleSearchInputChange = () =>{
+    setSearchInputText(document.getElementById("inputSearch").value);	      	
+  };
+
+  const performSearch = event => {       
+    var searchText = document.getElementById("inputSearch").value;
+     // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
+    setSearch("*" + searchText + "*");        
+   }
+  
+  const handleKeyPress = (event) => {            
+    if (event.keyCode === 13) { // the enter/return key       
+      event.preventDefault();       
+      performSearch();     
+    }
+  };
+
   //advanced search filters
   const [advanced, setAdvanced] = React.useState(false);
   const displayAdvanced = event => {
@@ -752,6 +798,8 @@ export default function Codelist() {
       [event.target.name]: event.target.value,
     }));
     setPage(0);
+    setSearchInputText(""); // reset search text
+    setSearch("");
     setExpanded(false);
 
   };
@@ -1131,66 +1179,30 @@ export default function Codelist() {
           : null}
           {/* hero section */}
           <Grid container alignItems="center" >
-            {/* <Grid item xs={12} md={7} >
+            { <Grid item xs={12} md={7} >
               <headings.H1>Data Elements</headings.H1>
-            </Grid> */}
+            </Grid> }
 
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
 
               {/* search bar */}
-              {/* <form 
-       className={classes.searchForm}
-       onSubmit={e => {
-          e.preventDefault();
-          const filteredDataElements = data_Elements.filter(dataElement => {
-            if(search!==''){
-            return (
-              Object.values(dataElement).indexOf(search)>-1
-            )}else{
-              return(
-                Object.values(dataElement)
-              )
-            }
-          });
-
-          setDataElements(filteredDataElements);
-         
-        }}>
-       
-      <TextField
-       
-        type="text"
-        value={search}
-        label="Search"
-        variant="outlined"
-        onChange={e =>{
-          setSearch(e.target.value);
-        }}
-        InputLabelProps={{
-          className: classes.floatingLabelFocusStyle
-          }}
-        className={classes.inputField}
-        InputProps={{
-            classes: {
-              root: classes.cssOutlinedInput,
-              focused: classes.cssFocused,
-              notchedOutline: classes.notchedOutline,
-            },
-            endAdornment: (
-            <InputAdornment position="end">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-       
-      >
-      
-      
-      </TextField>
-       
-     
-      </form> */}
+              <Paper component="form" className={classes.search}>     
+              <InputBase
+                className={classes.input}
+                placeholder="Search Data Elements"
+                inputProps={{ 'aria-label': 'search data elements' }}
+                id="inputSearch"
+                key="inputSearch"                             
+                onKeyDown={ handleKeyPress } 
+                onChange={handleSearchInputChange}
+                value={searchInputText}                
+              />
+                          
+              <IconButton type="button" className={classes.searchButton} aria-label="search"  id="searchButton"  onClick={performSearch}  >
+                <SearchIcon />
+              </IconButton>
+            </Paper>  
 
             </Grid>
           </Grid>
