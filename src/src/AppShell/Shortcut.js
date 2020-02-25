@@ -28,10 +28,9 @@ export default function  Shortcut(props) {
 
     let location = useLocation();        
     const classes = useStyles();
-
     return (
         <div>
-        {location.pathname && location.pathname === "/indicator" ?
+        {location.pathname && location.pathname.includes("/indicator")  ?
             <Paper className={classes.sidebar}>
                 <Grid container>   
                     <Grid item xs={12} md={12}  className={classes.buttonContainer}>
@@ -44,7 +43,7 @@ export default function  Shortcut(props) {
                 </Grid>
             </Paper>
         : null }  
-        {location.pathname && location.pathname === "/codelist" ?           
+        {location.pathname && location.pathname.includes("/codelist") ?           
             <Paper className={classes.sidebar}>
             <Grid container>   
                 <Grid item xs={12} md={12}  className={classes.buttonContainer}>

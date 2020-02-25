@@ -1395,6 +1395,7 @@ export function getCodeListMap() {
             codeLists[year] = codeListArray;
           }
         });
+        codeLists['All'] = [];
         return codeLists;
       }
       );
