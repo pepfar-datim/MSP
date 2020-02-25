@@ -51,6 +51,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+//import Alert from '@material-ui/lab/Alert';
 
 //tab panel function
 function TabPanel(props) {
@@ -85,7 +86,7 @@ function a11yProps(index) {
 
 const domain = getConfig().domain;
 const org = getConfig().org;
-const source = getConfig().source;
+//const source = getConfig().source;
 const currentYear = getConfig().defaultYear
 const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
@@ -514,8 +515,10 @@ export default function Codelist() {
     });
   }
 
-  const [period, setPeriod] = useState(["FY" + currentYear.substring(2, 4)]);
-  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+  // const [period, setPeriod] = useState(["FY" + currentYear.substring(2, 4)]);
+  const [period, setPeriod] = useState([""]);
+  const [source, setSource] = useState(["MER"]);
+  const queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
 
   const [collection, setCollection] = useState("");
   const queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
@@ -549,7 +552,7 @@ export default function Codelist() {
           setErrorDisplay("Failed to fetch");
           setDELoading(false)
           throw new Error(
-            `Error when retrieving data elements ${response.status} ${response.statusText}`
+            `Error when retrieving data elements: ${response.status} ${response.statusText}`
           );
         }
         const jsonData = await response.json();
@@ -661,10 +664,11 @@ export default function Codelist() {
   });
   const [dropDownName, setDropDownName] = React.useState("");
 
-  const [open, setOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [dialogMessage, setDialogMessage] = React.useState('');
 
   const handleClose = () => {
-    setOpen(false);
+    setDialogOpen(false);
   };
 
   const styles = theme => ({
@@ -710,13 +714,14 @@ export default function Codelist() {
 
   //initial filter state
   const [values, setValues] = React.useState({
-    fiscal: currentYear,
+    fiscal: "All",
     type: "All",
     dataSet: "All",
     source: "MER",
     frequency: "All"
   });
 
+  const type = ["All", "Results", "Target"];
   //clear all filter values
   // const clearValues = event => {
   //   setValues(()=>({
@@ -767,18 +772,51 @@ export default function Codelist() {
     setDataElementsData([])
     setCountOfValues(0)
 
-    let year = values.fiscal
+    let s = values.source
     setValues({
-      fiscal: year,
+      source: s,
+      fiscal: "All",
       type: "All",
       dataSet: "All",
-      source: "MER",
       frequency: "All"
     })
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
-    setPeriod("FY" + (values.fiscal + "").substring(2, 4));
+    setSource(s);
+    if(values.fiscal === "All"){
+      setPeriod("")
+    }
+    else {
+      setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
+  }
+    setExpanded(false);
+    console.log(" displaying " + dataElements.length + " results")
+  }, [values.source]);
+
+  //when value has changed, call useEffect function
+  useEffect(() => {
+    setDataElementsData([])
+    setCountOfValues(0)
+
+    let s = values.source
+    let year = values.fiscal
+    setValues({
+      fiscal: year,
+      type: "All",
+      dataSet: "All",
+      source: s,
+      frequency: "All"
+    })
+    values.dataSet = "All";
+    console.log(" values.fiscal " + values.fiscal)
+    console.log(" values.dataSet " + values.dataSet)
+    if(values.fiscal === "All"){
+      setPeriod("")
+    }
+    else {
+      setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
+  }
     setExpanded(false);
     //dataElements = dataElementsInitial;
     //dataElementsInitial.map(data_Element => {
@@ -837,6 +875,7 @@ export default function Codelist() {
     console.log(" values.dataSet " + values.dataSet)
     console.log(" values.type " + values.type)
 
+    let s = values.source
     let year = values.fiscal
     let t = values.type;
     if (values.type === "All") {
@@ -844,7 +883,7 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: "All",
-        source: "MER",
+        source: s,
         frequency: "All"
       })
       console.log(" values.dataSet " + values.dataSet)
@@ -856,34 +895,34 @@ export default function Codelist() {
         fiscal: year,
         type: t,
         dataSet: dataType,
-        source: "MER",
+        source: s,
         frequency: "All"
       })
       console.log(" values.dataSet " + values.dataSet)
     }
   }, [values.type]);
 
-  useEffect(() => {
-    setDataElementsData([])
-    setCountOfValues(0)
+  // useEffect(() => {
+  //   setDataElementsData([])
+  //   setCountOfValues(0)
 
-    console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
-    console.log(" values.dataSet " + values.dataSet)
-    console.log(" values.type " + values.type)
+  //   console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
+  //   console.log(" values.dataSet " + values.dataSet)
+  //   console.log(" values.type " + values.type)
 
-    if (values.source === "MER") {
-      loadDataElementsByPeriod()
-    }
-    else {
-      codeListJson.codeList.map(cl => {
-        if (values.dataSet === cl.full_name) {
-          console.log(" dataset changed ")
-          setCollection(cl.id)
-        }
-      })
-      console.log(" displaying " + dataElements.length + " results")
-    }
-  }, [values.source]);
+  //   if (values.source === "MER") {
+  //     loadDataElementsByPeriod()
+  //   }
+  //   else {
+  //     codeListJson.codeList.map(cl => {
+  //       if (values.dataSet === cl.full_name) {
+  //         console.log(" dataset changed ")
+  //         setCollection(cl.id)
+  //       }
+  //     })
+  //     console.log(" displaying " + dataElements.length + " results")
+  //   }
+  // }, [values.source]);
 
   async function getMappings(id) {
     setExpanded(true);
@@ -1017,9 +1056,15 @@ export default function Codelist() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    if (selectedDataElement.length > 3) {
-      setOpen(true);
+    if (selectedDataElement.length > 3 ) {
+      setDialogOpen(true);
+      setDialogMessage("You cannot compare more than 3 data elements at a time")
+    } 
+    else if(selectedDataElement.length < 2 ){
+      setDialogOpen(true);
+      setDialogMessage("Please select 2-3 data elements")
     }
+
     else{
     setCompare({ ...comparePanel, [DATIM]: true });
     setComparePanel({ ...comparePanel, [side]: open });
@@ -1080,7 +1125,10 @@ export default function Codelist() {
       <div className={classes.container}>
         <div className={classes.container}>
           <Breadcrumb></Breadcrumb>
-          {errorDisplay !== null ? <div className={classes.errorMessage}>{errorDisplay}</div> : null}
+          {errorDisplay !== null ? 
+          <div className={classes.errorMessage}>{errorDisplay}</div> 
+          // <Alert severity="error">{errorDisplay}</Alert>
+          : null}
           {/* hero section */}
           <Grid container alignItems="center" >
             {/* <Grid item xs={12} md={7} >
@@ -1201,7 +1249,7 @@ export default function Codelist() {
 
                       >
                         <option value={'MER'}>All</option> />
-    <option value={'DATIM'}>DATIM</option>
+                        <option value={'DATIM'}>DATIM</option>
                         <option value={'PDH'} >PDH</option>
                         {/* <option value={'MOH'} disabled>MOH</option> */}
                       </Select>
@@ -1227,7 +1275,7 @@ export default function Codelist() {
                         }}
 
                       >
-                        {/* <option value={""} /> */}
+                        {/* <option value={"All"} /> */}
                         {
 
                           Object.keys(codeListMap).reverse().map(
@@ -1258,13 +1306,16 @@ export default function Codelist() {
                           id: 'type',
                           classes: {
                             icon: classes.selectIcon
-                          }
+                          },
+                          disabled: values.source === 'PDH'
                         }}
+                        //state={{disabled: true}}
 
                       >
-                        <option value={'All'}>All</option>
-                        <option value={'Results'}>Results</option>
-                        <option value={'Targets'}>Targets</option>
+                        {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) : 
+                        type.map(key => <option key={Math.random()} >{key}</option>)
+                      }
+
                         {/* <option value={'SIMS'}>SIMS</option> */}
                       </Select>
                     </FormControl>
@@ -1289,7 +1340,8 @@ export default function Codelist() {
                           id: 'dataSet',
                           classes: {
                             icon: classes.selectIcon
-                          }
+                          },
+                          disabled: values.source === 'PDH'
                         }}
 
                       >
@@ -1409,12 +1461,12 @@ Compare selected data elements
               </div>
 
               <div>
-                <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+                <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
                   <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                   </DialogTitle>
                   <DialogContent >
                     <Typography gutterBottom>
-                      You cannot compare more than 3 data elements at a time
+                      {dialogMessage}
           </Typography>
                   </DialogContent>
                   <DialogActions>
@@ -1760,7 +1812,8 @@ Compare selected data elements
               <Grid container className={classes.comparePanelContainer}>
                 <Grid item xs={12}>
 
-                  <div className={classes.fixedTop}>
+                  {/* <div className={classes.fixedTop}> */}
+                  <div >
                     <CloseIcon onClick={toggleDrawer('bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
                     <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
                     {/* comparison panel title */}
