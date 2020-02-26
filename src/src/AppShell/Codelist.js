@@ -145,7 +145,11 @@ const useStyles = makeStyles(theme => ({
     padding: '20px',
     minWidth: '200px'
   },
-
+fieldset:{
+  borderRadius: '25px',
+  borderColor: '#f0eee9',
+  borderStyle: 'dotted'
+},
   cssFocused: {},
 
   notchedOutline: {
@@ -540,16 +544,19 @@ export default function Codelist() {
   const [source, setSource] = useState(["MER"]);
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
-  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("")
+  const [hiddenDataSet, setHiddenDataSet] = useState(true)
+  const [hiddenIndicator, setHiddenIndicator] = useState(true)
 
-  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
-  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
+  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
+  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
 
   const [collection, setCollection] = useState("");
-  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
+  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {
@@ -579,21 +586,15 @@ export default function Codelist() {
         const response = [];
         let queryToRun = ""
         if(values.fiscal ==='All'){
-          if(indicatorQuery !== ""){
-            queryToRun = queryDataElementsAllPeriods + indicatorQuery
-          }
-          else{
-            queryToRun = queryDataElementsAllPeriods
-          }
+            if(values.source === 'MER'){
+              queryToRun =  queryDataElementsAllPeriodsMER
+            }else{
+              queryToRun = queryDataElementsAllPeriods
+             }        
           console.log(" queryDataElementsAllPeriods " + queryToRun)
         }
         else{
-          if(indicatorQuery !== ""){
-            queryToRun = queryDataElementsByPeriod + indicatorQuery
-          }
-          else{
-            queryToRun = queryDataElementsAllPeriods
-          }
+            queryToRun = queryDataElementsByPeriod
           console.log(" queryDataElementsByPeriod " + queryToRun)
         }
         response = await fetch(queryToRun);
@@ -614,7 +615,7 @@ export default function Codelist() {
           setCountOfValues(0);
           setDELoading(false)
           throw new Error(
-            `Warning: There is no data for this selection. `
+            `There is no data for this selection. `
           );
         }
         setDELoading(false)
@@ -655,23 +656,16 @@ export default function Codelist() {
 
   useEffect(() => {
     loadDataElementsByPeriod();
-  }, [queryDataElementsByPeriod, queryDataElementsAllPeriods]);
+  }, [queryDataElementsByPeriod, queryDataElementsAllPeriods, queryDataElementsAllPeriodsMER]);
 
   const loadDataElementsData = async () => {
     if (collection !== "" && values.dataSet !== "All") {
-      let queryToRun = ""
-      if(indicatorQuery !== ""){
-        queryToRun = queryByCodeList + indicatorQuery
-      }
-      else{
-        queryToRun = queryByCodeList
-      }
-      console.log(" queryByCodeList " + queryToRun)
+      console.log(" queryByCodeList " + queryByCodeList)
       //setDataElementsData([]);
       //setCountOfValues(0);
       setDELoading(true)
       try {
-        const response = await fetch(queryToRun);
+        const response = await fetch(queryByCodeList);
         if (!response.ok) {
           console.log(response);
           setDataElementsData([]);
@@ -726,7 +720,7 @@ export default function Codelist() {
       if (!jsonData.length || jsonData.length === 0) {
         console.log("jsonData is empty");
         throw new Error(
-          `Warning: There is no data for this selection. `
+          `There is no data for this selection. `
         );
       }        
       
@@ -879,7 +873,7 @@ export default function Codelist() {
     })
   }
 
-  //when value has changed, call useEffect function
+  //when source changes
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
@@ -899,6 +893,12 @@ export default function Codelist() {
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
     setSource(s);
+    if(s === "PDH"){
+      setHiddenDataSet(true)
+    }
+    else{
+      setHiddenDataSet(false)
+    }
     if(values.fiscal === "All"){
       setPeriod("")
     }
@@ -909,7 +909,7 @@ export default function Codelist() {
     console.log(" displaying " + dataElements.length + " results")
   }, [values.source]);
 
-  //when value has changed, call useEffect function
+  //when fiscal changes
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
@@ -931,9 +931,15 @@ export default function Codelist() {
     console.log(" values.dataSet " + values.dataSet)
     if(values.fiscal === "All"){
       setPeriod("")
+      setHiddenDataSet(true)
     }
     else {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
+      if(values.source === 'PDH'){
+        setHiddenDataSet(true)
+      }
+      else setHiddenDataSet(false)
+      
   }
     setExpanded(false);
     //dataElements = dataElementsInitial;
@@ -964,6 +970,7 @@ export default function Codelist() {
     console.log(" displaying " + dataElements.length + " results")
   }, [values.fiscal]);
 
+  //when data set changes
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
@@ -986,6 +993,7 @@ export default function Codelist() {
     }
   }, [values.dataSet]);
 
+  //when type changes
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
@@ -1024,6 +1032,7 @@ export default function Codelist() {
     }
   }, [values.type]);
 
+  //when frequency changes
   useEffect(() => {
     // setDataElementsData([])
     // setCountOfValues(0)
@@ -1046,13 +1055,11 @@ export default function Codelist() {
     }
   }, [values.frequency]);
 
+  //when indicator changes
   useEffect(() => {
     // setDataElementsData([])
     // setCountOfValues(0)
-
     console.log("Inside [values.indicator] values.indicator " + values.indicator)
-
-
     if (values.indicator === "All") {
       setIndicatorQuery("")
     }
@@ -1392,10 +1399,12 @@ export default function Codelist() {
                   </Grid>
 
 
-
+<fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}>
                   {/* type filter */}
                   <Grid item xs={12} className={classes.filter}  >
-                    <FormControl className={classes.formControl}>
+                    <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                    {/* <FormControl className={classes.formControl}> */}
+
                       <InputLabel htmlFor="type">Type</InputLabel>
                       <Select size="3"
                         native
@@ -1407,10 +1416,9 @@ export default function Codelist() {
                           id: 'type',
                           classes: {
                             icon: classes.selectIcon
-                          },
-                          disabled: values.source === 'PDH'
+                          }
+                          
                         }}
-                        //state={{disabled: true}}
 
                       >
                         {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) : 
@@ -1428,7 +1436,7 @@ export default function Codelist() {
                   {/* data set filter */}
                   {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
                   <Grid item xs={12} className={classes.filter}>
-                    <FormControl className={classes.formControl}>
+                    <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
                       <InputLabel htmlFor="dataSet">Code List</InputLabel>
                       <Select
                         //size={Object.values(codeListMap[values.fiscal]).length +""}
@@ -1460,6 +1468,7 @@ export default function Codelist() {
                       </Select>
                     </FormControl>
                   </Grid>
+                  </fieldset>
                   {/* <Grid item xs={12} className={classes.filter}>
                     <FormControl className={classes.formControl}>
 
@@ -1494,7 +1503,7 @@ export default function Codelist() {
                     </FormControl>
                   </Grid> */}
 
-
+<fieldset className={classes.fieldset}>
 
                   {/* frequency filter */}
                   {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
@@ -1550,7 +1559,7 @@ export default function Codelist() {
                       </Select>
                     </FormControl>
                   </Grid>
-
+                  </fieldset>
                 </form>
 
                 {/* filter functions */}
