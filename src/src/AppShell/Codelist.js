@@ -88,7 +88,7 @@ function a11yProps(index) {
 
 const domain = getConfig().domain;
 const org = getConfig().org;
-//const source = getConfig().source;
+const version = getConfig().source;
 const currentYear = getConfig().defaultYear
 const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
@@ -540,8 +540,13 @@ export default function Codelist() {
   const [source, setSource] = useState(["MER"]);
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
-  
-  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/' + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
+  const [indicators, setIndicators] = useState([""]);
+  const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
+  const [indicatorQuery, setIndicatorQuery] = useState("")
+
+  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
+  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1);
 
   const [collection, setCollection] = useState("");
   let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1);
@@ -568,11 +573,30 @@ export default function Codelist() {
   const loadDataElementsByPeriod = async () => {
     setDELoading(true)
     if (values.type === "All") {
-      console.log(" queryDataElementsByPeriod " + queryDataElementsByPeriod)
       //setDataElementsData([]);
       //setCountOfValues(0);
       try {
-        const response = await fetch(queryDataElementsByPeriod);
+        const response = [];
+        let queryToRun = ""
+        if(values.fiscal ==='All'){
+          if(indicatorQuery !== ""){
+            queryToRun = queryDataElementsAllPeriods + indicatorQuery
+          }
+          else{
+            queryToRun = queryDataElementsAllPeriods
+          }
+          console.log(" queryDataElementsAllPeriods " + queryToRun)
+        }
+        else{
+          if(indicatorQuery !== ""){
+            queryToRun = queryDataElementsByPeriod + indicatorQuery
+          }
+          else{
+            queryToRun = queryDataElementsAllPeriods
+          }
+          console.log(" queryDataElementsByPeriod " + queryToRun)
+        }
+        response = await fetch(queryToRun);
         if (!response.ok) {
           console.log(response);
           setDataElementsData([]);
@@ -590,7 +614,7 @@ export default function Codelist() {
           setCountOfValues(0);
           setDELoading(false)
           throw new Error(
-            `Warning data elements data from OCL is emtpy. `
+            `Warning: There is no data for this selection. `
           );
         }
         setDELoading(false)
@@ -631,16 +655,23 @@ export default function Codelist() {
 
   useEffect(() => {
     loadDataElementsByPeriod();
-  }, [queryDataElementsByPeriod]);
+  }, [queryDataElementsByPeriod, queryDataElementsAllPeriods]);
 
   const loadDataElementsData = async () => {
     if (collection !== "" && values.dataSet !== "All") {
-      console.log(" queryByCodeList " + queryByCodeList)
+      let queryToRun = ""
+      if(indicatorQuery !== ""){
+        queryToRun = queryByCodeList + indicatorQuery
+      }
+      else{
+        queryToRun = queryByCodeList
+      }
+      console.log(" queryByCodeList " + queryToRun)
       //setDataElementsData([]);
       //setCountOfValues(0);
       setDELoading(true)
       try {
-        const response = await fetch(queryByCodeList);
+        const response = await fetch(queryToRun);
         if (!response.ok) {
           console.log(response);
           setDataElementsData([]);
@@ -658,7 +689,7 @@ export default function Codelist() {
           setCountOfValues(0);
           setDELoading(false)
           throw new Error(
-            `Warning data elements data from OCL is emtpy. `
+            `Warning: There is no data for this selection.  `
           );
         }
         setErrorDisplay(null);
@@ -680,6 +711,38 @@ export default function Codelist() {
   useEffect(() => {
     loadDataElementsData();
   }, [queryByCodeList]);
+
+  const loadIndicatorsData = async ()=> {
+    console.log("loadIndicatorsData - queryIndicators : " + queryIndicators);
+    try {
+      const response = await fetch(queryIndicators);
+      if (!response.ok) {
+        console.log(response);
+        throw new Error(
+          `Error when retrieving indicators: ${response.status} ${response.statusText}`
+        );
+      }
+      const jsonData = await response.json();
+      if (!jsonData.length || jsonData.length === 0) {
+        console.log("jsonData is empty");
+        throw new Error(
+          `Warning: There is no data for this selection. `
+        );
+      }        
+      
+      console.log("indicators: " + jsonData.length);
+      var sortedData = sortJSON(jsonData, 'display_name', 'asc');
+      setIndicators(sortedData);
+      setIndicatorsTemp(sortedData)
+    }catch (e){
+      console.log("error:" + e.message);
+      setError(e.message);
+    }
+  }
+
+  useEffect(() => {
+    loadIndicatorsData();
+  }, [queryIndicators]);
   ///////////
 
 
@@ -746,7 +809,8 @@ export default function Codelist() {
     type: "All",
     dataSet: "All",
     source: "MER",
-    frequency: "All"
+    frequency: "All",
+    indicator: "All"
   });
 
   const type = ["All", "Results", "Target"];
@@ -821,12 +885,15 @@ export default function Codelist() {
     setCountOfValues(0)
 
     let s = values.source
+    let f = values.frequency
+    let i = values.indicator
     setValues({
       source: s,
       fiscal: "All",
       type: "All",
       dataSet: "All",
-      frequency: "All"
+      frequency: f,
+      indicator: i
     })
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
@@ -849,12 +916,15 @@ export default function Codelist() {
 
     let s = values.source
     let year = values.fiscal
+    let f = values.frequency
+    let i = values. indicator
     setValues({
       fiscal: year,
       type: "All",
       dataSet: "All",
       source: s,
-      frequency: "All"
+      frequency: f,
+      indicator: i
     })
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
@@ -925,14 +995,17 @@ export default function Codelist() {
 
     let s = values.source
     let year = values.fiscal
-    let t = values.type;
+    let t = values.type
+    let f = values.frequency
+    let i = values. indicator
     if (values.type === "All") {
       setValues({
         fiscal: year,
         type: t,
         dataSet: "All",
         source: s,
-        frequency: "All"
+        frequency: f,
+        indicator: i
       })
       console.log(" values.dataSet " + values.dataSet)
     }
@@ -944,37 +1017,53 @@ export default function Codelist() {
         type: t,
         dataSet: dataType,
         source: s,
-        frequency: "All"
+        frequency: f,
+        indicator: i
       })
       console.log(" values.dataSet " + values.dataSet)
     }
   }, [values.type]);
 
-  // useEffect(() => {
-  //   setDataElementsData([])
-  //   setCountOfValues(0)
+  useEffect(() => {
+    // setDataElementsData([])
+    // setCountOfValues(0)
 
-  //   console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
-  //   console.log(" values.dataSet " + values.dataSet)
-  //   console.log(" values.type " + values.type)
+    console.log("Inside [values.frequency] values.frequency " + values.frequency)
 
-  //   if (values.source === "MER") {
-  //     loadDataElementsByPeriod()
-  //   }
-  //   else {
-  //     codeListJson.codeList.map(cl => {
-  //       if (values.dataSet === cl.full_name) {
-  //         console.log(" dataset changed ")
-  //         setCollection(cl.id)
-  //       }
-  //     })
-  //     console.log(" displaying " + dataElements.length + " results")
-  //   }
-  // }, [values.source]);
+
+    if (values.frequency === "All") {
+      setIndicatorsTemp(indicators)
+    }
+    else {
+      setIndicatorsTemp([])
+      let indicatorList = []
+      indicators.map(indicator => {
+        if(indicator.extras["Reporting frequency"] === values.frequency){
+          indicatorList.push(indicator)
+        }
+      })
+      setIndicatorsTemp(indicatorList)
+    }
+  }, [values.frequency]);
+
+  useEffect(() => {
+    // setDataElementsData([])
+    // setCountOfValues(0)
+
+    console.log("Inside [values.indicator] values.indicator " + values.indicator)
+
+
+    if (values.indicator === "All") {
+      setIndicatorQuery("")
+    }
+    else {
+      setIndicatorQuery("&q='" + values.indicator + "'")
+    }
+  }, [values.indicator]);
 
   async function getMappings(id) {
     setExpanded(true);
-    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + '/concepts/' + id + '/?includeMappings=true';
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/' + id + '/?includeMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
     try {
@@ -988,6 +1077,7 @@ export default function Codelist() {
       }
 
       const jsonData = await response.json();
+      let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
       // if (!jsonData.length || jsonData.length === 0) {
       //   console.log("jsonData is empty");
       //   throw new Error(
@@ -997,7 +1087,7 @@ export default function Codelist() {
 
       //setErrorDisplay(null);
       if (!deMappings[id]) {
-        deMappings[id] = jsonData;
+        deMappings[id] = sortedData;
       }
       return deMappings;
     } catch (e) {
@@ -1173,10 +1263,6 @@ export default function Codelist() {
       <div className={classes.container}>
         <div className={classes.container}>
           <Breadcrumb></Breadcrumb>
-          {errorDisplay !== null ? 
-          <div className={classes.errorMessage}>{errorDisplay}</div> 
-          // <Alert severity="error">{errorDisplay}</Alert>
-          : null}
           {/* hero section */}
           <Grid container alignItems="center" >
             { <Grid item xs={12} md={7} >
@@ -1213,7 +1299,10 @@ export default function Codelist() {
 
 
 
-
+      {errorDisplay !== null ? 
+          <div className={classes.errorMessage}>{errorDisplay}</div> 
+          // <Alert severity="error">{errorDisplay}</Alert>
+          : null}
 
 
 
@@ -1427,14 +1516,40 @@ export default function Codelist() {
 
                       >
                         <option value={"All"}>All</option>
-                        <option value={'annual'}>Annually</option>
-                        <option value={'semiAnnual'}>Semi-Annually</option>
-                        <option value={'quarterly'}>Quarterly</option>
+                        <option value={'Annually'}>Annually</option>
+                        <option value={'Semi-Annually'}>Semi-Annually</option>
+                        <option value={'Quarterly'}>Quarterly</option>
 
                       </Select>
                     </FormControl>
                   </Grid>
 
+                  {/* indicator filter */}
+                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                  <Grid item xs={12} className={classes.filter} >
+                    <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
+                      <Select
+                        native
+                        value={values.indicator}
+                        onChange={handleFilterChange}
+                        className={classes.select}
+                        inputProps={{
+                          name: 'indicator',
+                          id: 'indicator',
+                          classes: {
+                            icon: classes.selectIcon
+                          }
+                        }}
+
+                      >
+                        <option value={'All'}>All</option>)
+                        {indicatorsTemp.map(key => <option key={Math.random()} value={key.id} >{key.display_name}</option>)
+                      }
+
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
                 </form>
 
@@ -1684,15 +1799,15 @@ Compare selected data elements
                               </TableHead>
                               <TableBody>
                                 {
-                                  (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id].mappings)).map(
+                                  (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
 
                                     key =>
                                       <TableRow key={Math.random()}>
                                         <TableCell component="th" scope="row">
-                                          {Object(deMappings[dataElement.id].mappings)[key].to_concept_name}
+                                          {Object(deMappings[dataElement.id])[key].to_concept_name}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                          {Object(deMappings[dataElement.id].mappings)[key].to_concept_code}
+                                          {Object(deMappings[dataElement.id])[key].to_concept_code}
                                         </TableCell>
                                       </TableRow>
 
@@ -1908,15 +2023,15 @@ Compare selected data elements
                                       </TableHead>
                                       <TableBody >
                                         {
-                                          (deMappings[datim.id]) ? Object.keys(Object(deMappings[datim.id].mappings)).map(
+                                          (deMappings[datim.id]) ? Object.keys(Object(deMappings[datim.id])).map(
 
                                             key =>
                                               <TableRow key={Math.random()}>
                                                 <TableCell component="th" scope="row">
-                                                  {Object(deMappings[datim.id].mappings)[key].to_concept_name}
+                                                  {Object(deMappings[datim.id])[key].to_concept_name}
                                                 </TableCell>
                                                 <TableCell component="th" scope="row">
-                                                  {Object(deMappings[datim.id].mappings)[key].to_concept_code}
+                                                  {Object(deMappings[datim.id])[key].to_concept_code}
                                                 </TableCell>
                                               </TableRow>
 
