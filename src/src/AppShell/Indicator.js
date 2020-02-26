@@ -32,14 +32,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 
-import Button from '@material-ui/core/Button';
-
-
-import {WhatIsNew} from './WhatIsNew';
 import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
 import {getCodeListMap} from '../currentCodelist.js'
 import IndicatorDetail from './IndicatorDetail';
+import Shortcut from './Shortcut';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -402,10 +400,8 @@ const useStyles = makeStyles(theme => ({
 
 
   export default function Indicator() {
-
     
-    
-    let location = useLocation();        
+    let location = useLocation();          
     const classes = useStyles();
     
     //initial filter state
@@ -827,7 +823,8 @@ return (
     {errorLoadDataElement!== null ? <div className={classes.errorMessage}>{errorLoadDataElement}</div> : null}
   <Grid container>
   {/* sidebar */}
-  <Grid item xs={12} md={3}>
+  <Grid item xs={12} md={3}>      
+    <Shortcut ></Shortcut>
     <Paper className={classes.sidebar}>
     <h4 className={classes.sidebarTitle}>INDICATOR FILTERS</h4>
     {/* filters */}
@@ -895,9 +892,14 @@ return (
 {/* if there is no indicator selected display default what's new, otherwise display the indicator details and data elements related */}
       
   {
-    currentIndicator && currentIndicator.length === 0  ? <WhatIsNew/> : 
-    <div>
-      <Button onClick={backtoDefault}>&lt; KEY UPDATES</Button>
+    currentIndicator && currentIndicator.length === 0  ? 
+        <div>
+           <Grid container alignItems="center" >   
+              <div>Select an indicator to view details.</div>
+          </Grid>
+        </div>
+        : 
+      <div>      
       <headings.H1>{currentIndicator.name}</headings.H1>
       
       {/* indicator tabs */}    
@@ -914,7 +916,7 @@ return (
 
 
    {/* data elements */}
-    {deloading ?<div><LinearProgress mode="indeterminate" /><p>Loading data elements. Please wait ...</p></div> :
+    {deloading && panel === DATA_ELEMENT_PANEL ? <div><LinearProgress mode="indeterminate" /><p>Loading data elements. Please wait ...</p></div> :
      matchDataElements.length === 0 && panel === DATA_ELEMENT_PANEL ? 
      <div><p>No data elements found </p></div> :  
     <TabPanel value={panel} index={DATA_ELEMENT_PANEL} className={classes.tabPanel}>
