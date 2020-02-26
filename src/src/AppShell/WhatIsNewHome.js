@@ -70,7 +70,7 @@ const useStyles = makeStyles(() => ({
     },
     home:{
       marginLeft:"65px",
-      paddingRight:"15px",
+      paddingRight:"5px",
       marginBottom:"40px"
     }
     
@@ -159,9 +159,10 @@ dispatch({
           <div className={classes.divider}></div>
           </Grid>
           <Grid item xs={12} md={4}>
-          <Button variant="outlined" color="primary" className={classes.button}>
-          Download MER Guidance v2.3
+          <Button variant="outlined" href ='https://www.state.gov/wp-content/uploads/2019/10/PEPFAR-MER-Indicator-Reference-Guide-Version-2.4-FY20.pdf'color="primary" className={classes.button}>
+          Download MER Guidance v2.4
           </Button>
+          
           </Grid>
           
        <headings.H4 className={classes.subtitle}>MER 2.3 to MER 2.4</headings.H4>
