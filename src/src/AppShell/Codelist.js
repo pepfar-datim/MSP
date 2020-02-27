@@ -1174,6 +1174,7 @@ export default function Codelist() {
     HTML: true,
     JSON: false,
     CSV: false,
+    XML: false
   });
   const handleDownloadChange = name => event => {
     setDownload({ ...download, [name]: event.target.checked });
@@ -1188,7 +1189,7 @@ export default function Codelist() {
     setCompare({ ...compare, [name]: event.target.checked });
   };
 
-  const { HTML, JSON, CSV } = download;
+  const { HTML, JSON, CSV, XML } = download;
   const { DATIM, PDH, MOH } = compare;
 
 
@@ -1587,9 +1588,11 @@ export default function Codelist() {
             {/* dashboard, including download, compare, select all buttons */}
             <div className={classes.tabDashboard}>
               <div>
-                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"> */}
-                {/* Download selected data elements Download Full Code List </Button> */}
-                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+
+                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"> 
+                  Download selected data elements Download Full Code List </Button> 
+                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+
 Compare selected data elements
 </Button> */}
                 <Button variant="outlined" className={classes.actionButton} onClick={toggleDrawer('bottom', true)} id="comparisonButton">
@@ -1655,6 +1658,12 @@ Compare selected data elements
                             <Checkbox checked={JSON} style={{ color: '#D55804' }} onChange={handleDownloadChange('JSON')} value="JSON" />
                           }
                           label="JSON"
+                        />
+                         <FormControlLabel
+                          control={
+                            <Checkbox checked={XML} style={{ color: '#D55804' }} onChange={handleDownloadChange('XML')} value="XML" />
+                          }
+                          label="XML"
                         />
                         <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={() => console.log(download, dataElements)}>
                           Download DATA
