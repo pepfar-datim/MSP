@@ -901,6 +901,7 @@ export default function Codelist() {
     }
     if(values.fiscal === "All"){
       setPeriod("")
+      setHiddenDataSet(true)
     }
     else {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
