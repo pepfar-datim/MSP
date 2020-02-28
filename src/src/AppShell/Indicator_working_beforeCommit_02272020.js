@@ -671,7 +671,13 @@ const useStyles = makeStyles(theme => ({
     
     useEffect(() => {            
       loadIndicatorData(); 
-      setInit(true);      
+      setInit(true);
+
+      return () => {
+        alert("return in loadIndicatorData: " );
+        loadDataElementsAbortController.abort();           
+      };
+      
     }, [queryIndicators]);
 
     // update indicator each time indicatorId changes
@@ -679,7 +685,11 @@ const useStyles = makeStyles(theme => ({
         if ( init  && indicatorId && indicatorId !== '' ) {          
           //console.log("UPDATE INDIATGOR");
           updateIndicator(indicatorId, panel);                             
-        }                    
+        } 
+        return () => {
+          alert("abort is called for ind: " + indicatorId);
+          loadDataElementsAbortController.abort();            
+        };            
     }, [indicatorId, page, rowsPerPage]);
  
     async function getMappings(id) {          
@@ -697,7 +707,7 @@ const useStyles = makeStyles(theme => ({
         
         const jsonData = await response.json();
         let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');         
-        //console.log(jsonData);   
+        console.log(jsonData);   
         matchDataElements.map(item => {          
           if (item.id === id && (!item.disags || item.disags.length ===0)) {                      
             const deMappings = sortedData
@@ -849,7 +859,12 @@ const useStyles = makeStyles(theme => ({
     //if it's not the first time the app mounted
     //console.log("***** useEffect, run only when init change to true. init: " + init);
     if(init && indicatorId !== ''){     
-      updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                           
+      updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                     
+      return () => {
+        alert("return , abort is called in init");
+        loadDataElementsAbortController.abort();
+        //loadIndicatorAbortController.abort();
+      }; 
     }    
     
   }, [init]);
