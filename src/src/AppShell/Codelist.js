@@ -560,6 +560,8 @@ export default function Codelist() {
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {
+    queryDataElementsAllPeriodsMER = queryDataElementsAllPeriodsMER  + "&q=" + search;
+    queryDataElementsAllPeriods = queryDataElementsAllPeriods + "&q=" + search;
     queryDataElementsByPeriod = queryDataElementsByPeriod  + "&q=" + search;
     queryByCodeList = queryByCodeList +  "&q=" + search;
   }
@@ -830,6 +832,7 @@ export default function Codelist() {
     var searchText = document.getElementById("inputSearch").value;
      // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
     setSearch("*" + searchText + "*");        
+    setPage(0);
    }
   
   const handleKeyPress = (event) => {            
