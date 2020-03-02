@@ -683,7 +683,7 @@ export default function Codelist() {
           setCountOfValues(0);
           setDELoading(false)
           throw new Error(
-            `Warning: There is no data for this selection.  `
+            `There is no data for this selection.  `
           );
         }
         setErrorDisplay(null);
