@@ -672,6 +672,7 @@ const useStyles = makeStyles(theme => ({
     useEffect(() => {            
       loadIndicatorData(); 
       setInit(true);      
+      setPage(0);
     }, [queryIndicators]);
 
     // update indicator each time indicatorId changes
@@ -680,6 +681,7 @@ const useStyles = makeStyles(theme => ({
           //console.log("UPDATE INDIATGOR");
           updateIndicator(indicatorId, panel);                             
         }                    
+        setPage(0);
     }, [indicatorId, page, rowsPerPage]);
  
     async function getMappings(id) {          
@@ -829,18 +831,20 @@ const useStyles = makeStyles(theme => ({
         ...oldValues,
         [event.target.name]: event.target.value,
       }));  
+      setPage(0);
   };
 
   //when value has changed, call useEffect function
   useEffect(() => {
     //if it's not the first time the app mounted
     //console.log("**** useEffect - filter value change");
+    setPage(0);
     if(init){
       //console.log("indicatorListForUI:" + indicatorsListForUI.length);
       var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
       setIndicatorGroups(indGroupTemp);
       var filteredInd = getFilteredIndicator(indicatorsListForUI);      
-      setFilteredIndicatorsListForUI(filteredInd);      
+      setFilteredIndicatorsListForUI(filteredInd);          
     }    
   }, [values]);
 
@@ -849,6 +853,7 @@ const useStyles = makeStyles(theme => ({
     //if it's not the first time the app mounted
     //console.log("***** useEffect, run only when init change to true. init: " + init);
     if(init && indicatorId !== ''){     
+      setPage(0);
       updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                           
     }    
     
@@ -1039,7 +1044,7 @@ return (
             <TableHead>
               <TableRow>
                 <TableCell>Disaggregations Name</TableCell>
-              <TableCell>Disaggregations Code  -- {dataElement.id}  -  </TableCell>
+              <TableCell>Disaggregations Code </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
