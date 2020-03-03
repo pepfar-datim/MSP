@@ -7,14 +7,16 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
 import LocalOfferOutlinedIcon from '@material-ui/icons/LocalOfferOutlined';
-import LinkIcon from '@material-ui/icons/Link';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRibbon } from '@fortawesome/free-solid-svg-icons'
+
 
 
 const useStyles = makeStyles(theme => ({  
     shortcutButton:{        
         color: '#1d5893',        
-        width: '100%',
-        textAlign: 'left',
+        width: '100%',    
         fontSize: '1.0em',        
         '&:hover, &:focus':{
           backgroundColor: '#C1A783',
@@ -25,8 +27,7 @@ const useStyles = makeStyles(theme => ({
       shortcutButtonSelected:{        
         color: '#000000',
         backgroundColor: '#C1A783',       
-        width: '100%',
-        align: 'left',            
+        width: '100%',                 
         cursor: 'pointer',
         fontSize: '1.0em',
         '&:hover, &:focus':{
@@ -52,27 +53,27 @@ export default function  Shortcut(props) {
                 <Grid container>   
                     <Grid item xs={12} md={12}  >                                                                   
                         <NavLink to="/codelist">                                                              
-                            <Button variant="outlined" color="primary" className={classes.shortcutButton} >
-                                <LinkIcon className="material-icons" style={{ color: '#1D5893', marginRight: '5px',  textAlign: 'left' }} />  Data Elements
+                            <Button variant="outlined" color="primary" className={classes.shortcutButton} style={{ color: '#1D5893', paddingLeft: '10px',justifyContent:"left"}} >
+                            <LocalOfferOutlinedIcon style={{ color: '#1D5893', marginRight: '5px' }} />  Data Elements
                             </Button>                            
                         </NavLink>
-                        <Button  color="primary" align="left" className={classes.shortcutButtonSelected} >
-                            <LocalOfferOutlinedIcon style={{ color: '#1D5893', marginRight: '5px' }} />Reference Indicators
+                        <Button  color="primary" align="left" className={classes.shortcutButtonSelected} style={{ color: '#1D5893', paddingLeft: '10px' ,justifyContent:"left"}}>                            
+                            <FontAwesomeIcon icon={faRibbon}  className="material-icons" style={{ color: '#1D5893', marginRight: '5px' }} />Reference Indicators
                         </Button>                       
                     </Grid>                
                 </Grid>
             </Paper>
         : null }  
         {location.pathname && location.pathname.includes("/codelist") ?           
-            <Paper className={classes.sidebar}>
+            <Paper className={classes.sidebar} style={{  textAlign: 'left' }}>
             <Grid container>   
                 <Grid item xs={12} md={12}  className={classes.buttonContainer}>   
-                    <Button  color="primary" align="left" className={classes.shortcutButtonSelected} >
-                        <LocalOfferOutlinedIcon className="material-icons" style={{ color: '#1D5893', marginRight: '5px',  textAlign: 'left' }} />Data Elements
+                    <Button  color="primary"  className={classes.shortcutButtonSelected}  style={{ color: '#1D5893', paddingLeft: '10px' ,justifyContent:"left"}}>
+                        <LocalOfferOutlinedIcon className="material-icons" style={{ color: '#1D5893', marginRight: '5px' }} />Data Elements
                     </Button>                    
                   <NavLink to="/indicator" >       
-                    <Button variant="outlined" color="primary" className={classes.shortcutButton} >
-                        <LinkIcon className="material-icons" style={{ color: '#1D5893', marginRight: '5px',  textAlign: 'left' }} />Reference Indicators
+                    <Button variant="outlined" color="primary" className={classes.shortcutButton} style={{ color: '#1D5893', paddingLeft: '10px' ,justifyContent:"left"}}>                        
+                        <FontAwesomeIcon style={{ color: '#1D5893', marginRight: '5px' }} icon={faRibbon} />Reference Indicators
                     </Button> 
                   </NavLink>
                 </Grid>              
