@@ -560,6 +560,8 @@ export default function Codelist() {
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {
+    queryDataElementsAllPeriodsMER = queryDataElementsAllPeriodsMER  + "&q=" + search;
+    queryDataElementsAllPeriods = queryDataElementsAllPeriods + "&q=" + search;
     queryDataElementsByPeriod = queryDataElementsByPeriod  + "&q=" + search;
     queryByCodeList = queryByCodeList +  "&q=" + search;
   }
@@ -683,7 +685,7 @@ export default function Codelist() {
           setCountOfValues(0);
           setDELoading(false)
           throw new Error(
-            `Warning: There is no data for this selection.  `
+            `There is no data for this selection.  `
           );
         }
         setErrorDisplay(null);
@@ -830,6 +832,7 @@ export default function Codelist() {
     var searchText = document.getElementById("inputSearch").value;
      // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
     setSearch("*" + searchText + "*");        
+    setPage(0);
    }
   
   const handleKeyPress = (event) => {            
@@ -901,6 +904,7 @@ export default function Codelist() {
     }
     if(values.fiscal === "All"){
       setPeriod("")
+      setHiddenDataSet(true)
     }
     else {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
@@ -1252,6 +1256,35 @@ export default function Codelist() {
 
 
   //layout below
+
+//Error handling
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null, errorInfo: null };
+  }
+  
+  componentDidCatch(error, errorInfo) {
+    // Catch errors in any components below and re-render with error message
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    })
+    // You can also log error messages to an error reporting service here
+  }
+  
+  render() {
+    if (this.state.errorInfo) {
+      // Error path
+      return (
+        <div></div> 
+      );
+    }
+    // Normally, just render children
+    return this.props.children;
+  }  
+}
+
 
   return (
     <div>
@@ -1717,8 +1750,10 @@ Compare selected data elements
             {/* data elements */}
             {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
+            <ErrorBoundary>
             {dataElements.map(dataElement => (
               <div key={dataElement.display_name}>
+                
                 <ExpansionPanel className={classes.dataelementContainer}
                   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
                   onClick={() => !deMappings[dataElement.id] ?
@@ -1835,7 +1870,6 @@ Compare selected data elements
                                 }
                               </TableBody>
                             </Table>
-
                             {/* open the formula panel */}
                             {/* <ExpansionPanel>
         <ExpansionPanelSummary
@@ -1928,8 +1962,11 @@ Compare selected data elements
 
 
                 </ExpansionPanel>
+                
               </div>
+              
             ))}
+            </ErrorBoundary>
             {/* </Parent> */}
 
             <table>
