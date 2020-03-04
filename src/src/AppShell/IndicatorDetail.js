@@ -33,7 +33,7 @@ export default function  IndicatorDetail(props) {
           <div><LinearProgress mode="indeterminate" /></div> : null                  
         }
       {/* Indicator description */}        
-        <ExpansionPanel defaultExpanded={true}>
+        <ExpansionPanel defaultExpanded={false}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <ExpandTitle>Description</ExpandTitle>
           </ExpansionPanelSummary>
@@ -52,7 +52,7 @@ export default function  IndicatorDetail(props) {
         </ExpansionPanel>
 
         {/* Indicator changes */}
-        <ExpansionPanel defaultExpanded={true}>
+        <ExpansionPanel defaultExpanded={false}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <ExpandTitle>Indicator changes</ExpandTitle>
               <ExpandSubTitle> Guidance Version: {props.currentIndicator.guidance_version}</ExpandSubTitle>
@@ -63,7 +63,7 @@ export default function  IndicatorDetail(props) {
             </ExpansionPanel>
 
         {/* Indicator numerator */}   
-            <ExpansionPanel defaultExpanded={true}>
+            <ExpansionPanel defaultExpanded={false}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header" >
                 <ExpandTitle>Numerator</ExpandTitle>
               </ExpansionPanelSummary>

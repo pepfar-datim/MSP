@@ -26,6 +26,7 @@ import { Route, BrowserRouter as Router, NavLink, useParams, useLocation, Redire
 import InputLabel from '@material-ui/core/InputLabel';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
+import TablePagination from '@material-ui/core/TablePagination';
 
 
 import FormControl from '@material-ui/core/FormControl';
@@ -401,6 +402,20 @@ const useStyles = makeStyles(theme => ({
 
   export default function Indicator() {
     
+    const [page, setPage] = React.useState(0);    
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    var [count, setCountOfValues] = useState(0);
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = event => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+      //setExpanded(false);
+    };
+
+
     let location = useLocation();          
     const classes = useStyles();
     
@@ -518,7 +533,7 @@ const useStyles = makeStyles(theme => ({
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);
-    var queryIndicators = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
+    var queryIndicators = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
 
     const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
@@ -530,7 +545,9 @@ const useStyles = makeStyles(theme => ({
     const [deloading, setDELoading] = useState(false);    
     const [indicatorDetailLoading, setIndicatorDetailLoading] = useState(false);    
     
- 
+    const loadIndicatorsAbortController = new window.AbortController(); 
+    const loadDataElementsAbortController = new window.AbortController();   
+    
     // used to populate indicator groups and indicators under the filters
     const loadIndicatorData = async ()=> {
       console.log("loadIndicatorData - queryIndicators : " + queryIndicators);
@@ -568,19 +585,22 @@ const useStyles = makeStyles(theme => ({
       }
     }
 
+    
+    
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {
           
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source +  "/concepts/?limit=0&verbose=true&includeMappings=ture&q=" + indicatorID + "&conceptClass=\"Data+Element\"";
+      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query); 
-     
+      
       setDELoading(true);
       setErrorLoadDataElement(null);
       try {
-        const response = await fetch(query);
+        const response = await fetch(query, { signal: loadDataElementsAbortController.signal });
         if (!response.ok) {
           console.log(response);
           setDELoading(false);
+          setCountOfValues(0);
           throw new Error(
             `Error when retrieve indicators ${response.status} ${response.statusText}`
           );
@@ -588,6 +608,7 @@ const useStyles = makeStyles(theme => ({
         const jsonData = await response.json();                
         if (!jsonData) {
           console.log("jsonData is empty");
+          setCountOfValues(0);
           setDELoading(false);
           throw new Error(
             `Warning data element data is emtpy from OCL  ` + indicatorID
@@ -596,6 +617,7 @@ const useStyles = makeStyles(theme => ({
         console.log("data elements : " + jsonData.length);
         console.log(jsonData);
         setDELoading(false);
+       
         var mappedDataElements = [];
         if (jsonData && Array.isArray(jsonData)){          
           mappedDataElements = jsonData.map(item => {
@@ -603,10 +625,12 @@ const useStyles = makeStyles(theme => ({
             dataElementItem.source = item.owner;
             dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
             dataElementItem.uid = item.external_id;
+            dataElementItem.id = item.id;
             dataElementItem.code = item.id;
             dataElementItem.name = item.display_name;   
-            var deMappings = [];            
-            const mappings = item.mappings.filter(mapping => mapping.map_type === "Has Option");
+            var deMappings = []; 
+            const mappings = [];           
+            //const mappings = item.mappings.filter(mapping => mapping.map_type === "Has Option");
             //console.log(mappings);
             deMappings = mappings            
               .map(mapping => {
@@ -621,7 +645,10 @@ const useStyles = makeStyles(theme => ({
             return dataElementItem;
           })
         }                
-        var sortedData = sortJSON(mappedDataElements, 'name', 'asc');        
+        var sortedData = sortJSON(mappedDataElements, 'name', 'asc');  
+        setCountOfValues(parseInt(response.headers.get('num_found')));
+        console.log(response.headers.get('num_found') + " results found ")
+
         dispatch({
           type: 'changeMatchDataElements',
           matchDataElements: sortedData
@@ -637,27 +664,75 @@ const useStyles = makeStyles(theme => ({
           matchDataElements: []
         })
       }
+      
     }
 
     var indicatorId = getIndicatorIdFromParam(location.pathname); // indicatorId from URL param
     
     useEffect(() => {            
       loadIndicatorData(); 
-      setInit(true);
+      setInit(true);      
+      setPage(0);
     }, [queryIndicators]);
 
     // update indicator each time indicatorId changes
-    useEffect(() => {                        
+    useEffect(() => {                      
         if ( init  && indicatorId && indicatorId !== '' ) {          
           //console.log("UPDATE INDIATGOR");
-          updateIndicator(indicatorId, panel);                    
-        }            
-    }, [indicatorId]);
-
+          updateIndicator(indicatorId, panel);                             
+        }                    
+        setPage(0);
+    }, [indicatorId, page, rowsPerPage]);
+ 
+    async function getMappings(id) {          
+      const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source  + '/concepts/' + id + '/?includeMappings=true';
+      console.log("getMappings for " + id + ":" + queryMapping);
+  
+      try {
+        const response = await fetch(queryMapping);
+        if (!response.ok) {
+          console.log(response);        
+          throw new Error(
+            `Error when retrieving data element mappings from indicator page ${response.status} ${response.statusText}`
+          );
+        }
+        
+        const jsonData = await response.json();
+        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');         
+        //console.log(jsonData);   
+        matchDataElements.map(item => {          
+          if (item.id === id && (!item.disags || item.disags.length ===0)) {                      
+            const deMappings = sortedData
+            .filter(mapping => mapping.map_type === "Has Option")            
+            .map(mapping => {
+              var disagItem = {};
+              disagItem.code = mapping.to_concept_code;
+              disagItem.name = mapping.to_concept_name;
+              return disagItem;
+            })
+           
+            var sortedMappings = sortJSON(deMappings, 'name', 'asc');
+            item.disags = sortedMappings;
+          }
+          return item;
+        })       
+        dispatch({
+          type: 'changeMatchDataElements',
+          matchDataElements: matchDataElements
+        })
+      } catch (e) {
+        console.log("error:" + e.message);
+        setError(e.message);
+        //setErrorDisplay(e.message);
+      }
+  
+  
+    };
+  
     
     const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
       console.log("loadIndicatorDetail: " + indicatorID);      
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/" + source + "/concepts/" +  indicatorID + "/";      
+      var query = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/" +  indicatorID + "/";      
       console.log("query indicator detail : " + query );
       setIndicatorDetailLoading(true);
       try {
@@ -756,18 +831,20 @@ const useStyles = makeStyles(theme => ({
         ...oldValues,
         [event.target.name]: event.target.value,
       }));  
+      setPage(0);
   };
 
   //when value has changed, call useEffect function
   useEffect(() => {
     //if it's not the first time the app mounted
     //console.log("**** useEffect - filter value change");
+    setPage(0);
     if(init){
       //console.log("indicatorListForUI:" + indicatorsListForUI.length);
       var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
       setIndicatorGroups(indGroupTemp);
       var filteredInd = getFilteredIndicator(indicatorsListForUI);      
-      setFilteredIndicatorsListForUI(filteredInd);      
+      setFilteredIndicatorsListForUI(filteredInd);          
     }    
   }, [values]);
 
@@ -776,8 +853,10 @@ const useStyles = makeStyles(theme => ({
     //if it's not the first time the app mounted
     //console.log("***** useEffect, run only when init change to true. init: " + init);
     if(init && indicatorId !== ''){     
-      updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                     
+      setPage(0);
+      updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                           
     }    
+    
   }, [init]);
 
 
@@ -787,7 +866,7 @@ const useStyles = makeStyles(theme => ({
   indicatorGroups.map(function(indGroup, index) {
     //console.log(indGroup + " - " + index);
     groupExpansionPanelList.push(
-      <ExpansionPanel key={"panel" + index}>
+      <ExpansionPanel key={"panel" + index}    TransitionProps={{ unmountOnExit: true, mountOnEnter: true }} >
        <ExpansionPanelSummary key={"summary_" + index} expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content" id="panel1a-header" className={classes.sidebarExpansionSummary} >
           <ExpandTitle key={"title_" + index} className={classes.sidebarExpandTitle}>{indGroup}</ExpandTitle>
@@ -811,8 +890,6 @@ const useStyles = makeStyles(theme => ({
     );
     return true;
   }, this);
-
-
 
   //layout
 return (
@@ -928,9 +1005,10 @@ return (
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
         <div key={dataElement.code}>
-          <ExpansionPanel className={classes.expansionPanel}>
+          <ExpansionPanel className={classes.expansionPanel}   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}  
+                          onClick={() => dataElement.disags.length === 0 ? getMappings(dataElement.id) : null}>
 
-            {/* data elements summery */}
+            {/* data elements summary */}
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
               <Grid container alignItems="center" justify="space-between">       
                 <Grid item  xs={11} md={9}>         
@@ -966,7 +1044,7 @@ return (
             <TableHead>
               <TableRow>
                 <TableCell>Disaggregations Name</TableCell>
-                <TableCell>Disaggregations Code</TableCell>
+              <TableCell>Disaggregations Code </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -1058,6 +1136,31 @@ return (
 
       ))}
 
+
+        {/* pagination */}
+        <table>
+              <tbody>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[10, 25, 50, 100, 500]}
+                    labelDisplayedRows={({ from, to, count }) => `Displaying rows ${from}-${to} of ${count}`}
+                    
+                    // page={0}
+                    // rowsPerPage={10}
+                    // count={100}
+                    // onChangePage={() => {}}
+
+                     count={count}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+
+                    
+                  />
+                </TableRow>
+              </tbody></table>
+        {/*pagination */}
       </TabPanel>
       
     }
@@ -1069,6 +1172,5 @@ return (
     );
   
 }
-
 
 
