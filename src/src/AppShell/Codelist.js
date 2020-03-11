@@ -145,11 +145,11 @@ const useStyles = makeStyles(theme => ({
     padding: '20px',
     minWidth: '200px'
   },
-fieldset:{
-  borderRadius: '25px',
-  borderColor: '#f0eee9',
-  borderStyle: 'dotted'
-},
+  fieldset: {
+    borderRadius: '25px',
+    borderColor: '#f0eee9',
+    borderStyle: 'dotted'
+  },
   cssFocused: {},
 
   notchedOutline: {
@@ -560,10 +560,10 @@ export default function Codelist() {
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {
-    queryDataElementsAllPeriodsMER = queryDataElementsAllPeriodsMER  + "&q=" + search;
+    queryDataElementsAllPeriodsMER = queryDataElementsAllPeriodsMER + "&q=" + search;
     queryDataElementsAllPeriods = queryDataElementsAllPeriods + "&q=" + search;
-    queryDataElementsByPeriod = queryDataElementsByPeriod  + "&q=" + search;
-    queryByCodeList = queryByCodeList +  "&q=" + search;
+    queryDataElementsByPeriod = queryDataElementsByPeriod + "&q=" + search;
+    queryByCodeList = queryByCodeList + "&q=" + search;
   }
 
   let emptyMap = {};
@@ -587,16 +587,16 @@ export default function Codelist() {
       try {
         const response = [];
         let queryToRun = ""
-        if(values.fiscal ==='All'){
-            if(values.source === 'MER'){
-              queryToRun =  queryDataElementsAllPeriodsMER
-            }else{
-              queryToRun = queryDataElementsAllPeriods
-             }        
+        if (values.fiscal === 'All') {
+          if (values.source === 'MER') {
+            queryToRun = queryDataElementsAllPeriodsMER
+          } else {
+            queryToRun = queryDataElementsAllPeriods
+          }
           console.log(" queryDataElementsAllPeriods " + queryToRun)
         }
-        else{
-            queryToRun = queryDataElementsByPeriod
+        else {
+          queryToRun = queryDataElementsByPeriod
           console.log(" queryDataElementsByPeriod " + queryToRun)
         }
         response = await fetch(queryToRun);
@@ -708,7 +708,7 @@ export default function Codelist() {
     loadDataElementsData();
   }, [queryByCodeList]);
 
-  const loadIndicatorsData = async ()=> {
+  const loadIndicatorsData = async () => {
     console.log("loadIndicatorsData - queryIndicators : " + queryIndicators);
     try {
       const response = await fetch(queryIndicators);
@@ -724,13 +724,13 @@ export default function Codelist() {
         throw new Error(
           `There is no data for this selection. `
         );
-      }        
-      
+      }
+
       console.log("indicators: " + jsonData.length);
       var sortedData = sortJSON(jsonData, 'display_name', 'asc');
       setIndicators(sortedData);
       setIndicatorsTemp(sortedData)
-    }catch (e){
+    } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
     }
@@ -824,21 +824,21 @@ export default function Codelist() {
   // }
 
 
-  const handleSearchInputChange = () =>{
-    setSearchInputText(document.getElementById("inputSearch").value);	      	
+  const handleSearchInputChange = () => {
+    setSearchInputText(document.getElementById("inputSearch").value);
   };
 
-  const performSearch = event => {       
+  const performSearch = event => {
     var searchText = document.getElementById("inputSearch").value;
-     // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
-    setSearch("*" + searchText + "*");        
+    // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
+    setSearch("*" + searchText + "*");
     setPage(0);
-   }
-  
-  const handleKeyPress = (event) => {            
+  }
+
+  const handleKeyPress = (event) => {
     if (event.keyCode === 13) { // the enter/return key       
-      event.preventDefault();       
-      performSearch();     
+      event.preventDefault();
+      performSearch();
     }
   };
 
@@ -896,19 +896,19 @@ export default function Codelist() {
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
     setSource(s);
-    if(s === "PDH"){
+    if (s === "PDH") {
       setHiddenDataSet(true)
     }
-    else{
+    else {
       setHiddenDataSet(false)
     }
-    if(values.fiscal === "All"){
+    if (values.fiscal === "All") {
       setPeriod("")
       setHiddenDataSet(true)
     }
     else {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
-  }
+    }
     setExpanded(false);
     console.log(" displaying " + dataElements.length + " results")
   }, [values.source]);
@@ -921,7 +921,7 @@ export default function Codelist() {
     let s = values.source
     let year = values.fiscal
     let f = values.frequency
-    let i = values. indicator
+    let i = values.indicator
     setValues({
       fiscal: year,
       type: "All",
@@ -933,18 +933,18 @@ export default function Codelist() {
     values.dataSet = "All";
     console.log(" values.fiscal " + values.fiscal)
     console.log(" values.dataSet " + values.dataSet)
-    if(values.fiscal === "All"){
+    if (values.fiscal === "All") {
       setPeriod("")
       setHiddenDataSet(true)
     }
     else {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
-      if(values.source === 'PDH'){
+      if (values.source === 'PDH') {
         setHiddenDataSet(true)
       }
       else setHiddenDataSet(false)
-      
-  }
+
+    }
     setExpanded(false);
     //dataElements = dataElementsInitial;
     //dataElementsInitial.map(data_Element => {
@@ -1009,7 +1009,7 @@ export default function Codelist() {
     let year = values.fiscal
     let t = values.type
     let f = values.frequency
-    let i = values. indicator
+    let i = values.indicator
     if (values.type === "All") {
       setValues({
         fiscal: year,
@@ -1051,7 +1051,7 @@ export default function Codelist() {
       setIndicatorsTemp([])
       let indicatorList = []
       indicators.map(indicator => {
-        if(indicator.extras["Reporting frequency"] === values.frequency){
+        if (indicator.extras["Reporting frequency"] === values.frequency) {
           indicatorList.push(indicator)
         }
       })
@@ -1206,41 +1206,41 @@ export default function Codelist() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    if (selectedDataElement.length > 3 ) {
+    if (selectedDataElement.length > 3) {
       setDialogOpen(true);
       setDialogMessage("You cannot compare more than 3 data elements at a time")
-    } 
-    else if(selectedDataElement.length < 2 ){
+    }
+    else if (selectedDataElement.length < 2) {
       setDialogOpen(true);
       setDialogMessage("Please select 2-3 data elements")
     }
 
-    else{
-    setCompare({ ...comparePanel, [DATIM]: true });
-    setComparePanel({ ...comparePanel, [side]: open });
+    else {
+      setCompare({ ...comparePanel, [DATIM]: true });
+      setComparePanel({ ...comparePanel, [side]: open });
 
-    const selectDataTemp = [];
+      const selectDataTemp = [];
 
-    //get data element details of the selected data elements
+      //get data element details of the selected data elements
 
-    // eslint-disable-next-line array-callback-return
-    console.log("toggleDrawer dataElements")
-    console.log(dataElements)
-    dataElements.map(dataElement => {
-      if (selectedDataElement.includes(dataElement.display_name)) {
-        selectDataTemp.push(dataElement);
-        if (!deMappings[dataElement.id]) {
-          getMappings(dataElement.id)
+      // eslint-disable-next-line array-callback-return
+      console.log("toggleDrawer dataElements")
+      console.log(dataElements)
+      dataElements.map(dataElement => {
+        if (selectedDataElement.includes(dataElement.display_name)) {
+          selectDataTemp.push(dataElement);
+          if (!deMappings[dataElement.id]) {
+            getMappings(dataElement.id)
+          }
         }
+
       }
 
+      )
+      setSelectedDatim(selectDataTemp);
+      console.log("!!setSelectedDatim.length " + setSelectedDatim.length)
+
     }
-
-    )
-    setSelectedDatim(selectDataTemp);
-    console.log("!!setSelectedDatim.length " + setSelectedDatim.length)
-
-  }
   };
 
 
@@ -1257,33 +1257,33 @@ export default function Codelist() {
 
   //layout below
 
-//Error handling
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null, errorInfo: null };
-  }
-  
-  componentDidCatch(error, errorInfo) {
-    // Catch errors in any components below and re-render with error message
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    })
-    // You can also log error messages to an error reporting service here
-  }
-  
-  render() {
-    if (this.state.errorInfo) {
-      // Error path
-      return (
-        <div></div> 
-      );
+  //Error handling
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { error: null, errorInfo: null };
     }
-    // Normally, just render children
-    return this.props.children;
-  }  
-}
+
+    componentDidCatch(error, errorInfo) {
+      // Catch errors in any components below and re-render with error message
+      this.setState({
+        error: error,
+        errorInfo: errorInfo
+      })
+      // You can also log error messages to an error reporting service here
+    }
+
+    render() {
+      if (this.state.errorInfo) {
+        // Error path
+        return (
+          <div></div>
+        );
+      }
+      // Normally, just render children
+      return this.props.children;
+    }
+  }
 
 
   return (
@@ -1306,30 +1306,30 @@ class ErrorBoundary extends React.Component {
           <Breadcrumb></Breadcrumb>
           {/* hero section */}
           <Grid container alignItems="center" >
-            { <Grid item xs={12} md={7} >
+            {<Grid item xs={12} md={7} >
               <headings.H1>Data Elements</headings.H1>
-            </Grid> }
+            </Grid>}
 
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
 
               {/* search bar */}
-              <Paper component="form" className={classes.search}>     
-              <InputBase
-                className={classes.input}
-                placeholder="Search Data Elements"
-                inputProps={{ 'aria-label': 'search data elements' }}
-                id="inputSearch"
-                key="inputSearch"                             
-                onKeyDown={ handleKeyPress } 
-                onChange={handleSearchInputChange}
-                value={searchInputText}                
-              />
-                          
-              <IconButton type="button" className={classes.searchButton} aria-label="search"  id="searchButton"  onClick={performSearch}  >
-                <SearchIcon />
-              </IconButton>
-            </Paper>  
+              <Paper component="form" className={classes.search}>
+                <InputBase
+                  className={classes.input}
+                  placeholder="Search Data Elements"
+                  inputProps={{ 'aria-label': 'search data elements' }}
+                  id="inputSearch"
+                  key="inputSearch"
+                  onKeyDown={handleKeyPress}
+                  onChange={handleSearchInputChange}
+                  value={searchInputText}
+                />
+
+                <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
+                  <SearchIcon />
+                </IconButton>
+              </Paper>
 
             </Grid>
           </Grid>
@@ -1340,10 +1340,10 @@ class ErrorBoundary extends React.Component {
 
 
 
-      {errorDisplay !== null ? 
-          <div className={classes.errorMessage}>{errorDisplay}</div> 
-          // <Alert severity="error">{errorDisplay}</Alert>
-          : null}
+      {errorDisplay !== null ?
+        <div className={classes.errorMessage}>{errorDisplay}</div>
+        // <Alert severity="error">{errorDisplay}</Alert>
+        : null}
 
 
 
@@ -1433,75 +1433,75 @@ class ErrorBoundary extends React.Component {
                   </Grid>
 
 
-<fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}>
-                  {/* type filter */}
-                  <Grid item xs={12} className={classes.filter}  >
-                    <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
-                    {/* <FormControl className={classes.formControl}> */}
+                  <fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}>
+                    {/* type filter */}
+                    <Grid item xs={12} className={classes.filter}  >
+                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                        {/* <FormControl className={classes.formControl}> */}
 
-                      <InputLabel htmlFor="type">Type</InputLabel>
-                      <Select size="3"
-                        native
-                        value={values.type}
-                        onChange={handleFilterChange}
-                        className={classes.select}
-                        inputProps={{
-                          name: 'type',
-                          id: 'type',
-                          classes: {
-                            icon: classes.selectIcon
+                        <InputLabel htmlFor="type">Type</InputLabel>
+                        <Select size="3"
+                          native
+                          value={values.type}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'type',
+                            id: 'type',
+                            classes: {
+                              icon: classes.selectIcon
+                            }
+
+                          }}
+
+                        >
+                          {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) :
+                            type.map(key => <option key={Math.random()} >{key}</option>)
                           }
-                          
-                        }}
 
-                      >
-                        {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) : 
-                        type.map(key => <option key={Math.random()} >{key}</option>)
-                      }
-
-                        {/* <option value={'SIMS'}>SIMS</option> */}
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                          {/* <option value={'SIMS'}>SIMS</option> */}
+                        </Select>
+                      </FormControl>
+                    </Grid>
 
 
 
 
-                  {/* data set filter */}
-                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
-                  <Grid item xs={12} className={classes.filter}>
-                    <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
-                      <InputLabel htmlFor="dataSet">Code List</InputLabel>
-                      <Select
-                        //size={Object.values(codeListMap[values.fiscal]).length +""}
-                        native
-                        value={values.dataSet}
-                        onChange={handleFilterChange}
-                        className={classes.select}
-                        inputProps={{
-                          name: 'dataSet',
-                          id: 'dataSet',
-                          classes: {
-                            icon: classes.selectIcon
-                          },
-                          disabled: values.source === 'PDH'
-                        }}
+                    {/* data set filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
+                    <Grid item xs={12} className={classes.filter}>
+                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                        <InputLabel htmlFor="dataSet">Code List</InputLabel>
+                        <Select
+                          //size={Object.values(codeListMap[values.fiscal]).length +""}
+                          native
+                          value={values.dataSet}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'dataSet',
+                            id: 'dataSet',
+                            classes: {
+                              icon: classes.selectIcon
+                            },
+                            disabled: values.source === 'PDH'
+                          }}
 
-                      >
-                        {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
-                        {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
+                        >
+                          {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                          {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
 
-                          key => <option key={Math.random()} >{key}</option>)) : ([])}
-                        {Object.values(codeListMap[values.fiscal]).map(
+                            key => <option key={Math.random()} >{key}</option>)) : ([])}
+                          {Object.values(codeListMap[values.fiscal]).map(
 
-                          key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
-                        )
-                        }
-                        {/* <option value={'facility'}>Facility Based Code List</option>
+                            key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
+                          )
+                          }
+                          {/* <option value={'facility'}>Facility Based Code List</option>
                         <option value={'community'}>Community Based Code List</option> */}
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </fieldset>
                   {/* <Grid item xs={12} className={classes.filter}>
                     <FormControl className={classes.formControl}>
@@ -1537,62 +1537,62 @@ class ErrorBoundary extends React.Component {
                     </FormControl>
                   </Grid> */}
 
-<fieldset className={classes.fieldset}>
+                  <fieldset className={classes.fieldset}>
 
-                  {/* frequency filter */}
-                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
-                  <Grid item xs={12} className={classes.filter} >
-                    <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
-                      <Select
-                        native
-                        value={values.frequency}
-                        onChange={handleFilterChange}
-                        className={classes.select}
-                        inputProps={{
-                          name: 'frequency',
-                          id: 'frequency',
-                          classes: {
-                            icon: classes.selectIcon
-                          }
-                        }}
+                    {/* frequency filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    <Grid item xs={12} className={classes.filter} >
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
+                        <Select
+                          native
+                          value={values.frequency}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'frequency',
+                            id: 'frequency',
+                            classes: {
+                              icon: classes.selectIcon
+                            }
+                          }}
 
-                      >
-                        <option value={"All"}>All</option>
-                        <option value={'Annually'}>Annually</option>
-                        <option value={'Semi-Annually'}>Semi-Annually</option>
-                        <option value={'Quarterly'}>Quarterly</option>
+                        >
+                          <option value={"All"}>All</option>
+                          <option value={'Annually'}>Annually</option>
+                          <option value={'Semi-Annually'}>Semi-Annually</option>
+                          <option value={'Quarterly'}>Quarterly</option>
 
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                        </Select>
+                      </FormControl>
+                    </Grid>
 
-                  {/* indicator filter */}
-                  {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
-                  <Grid item xs={12} className={classes.filter} >
-                    <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
-                      <Select
-                        native
-                        value={values.indicator}
-                        onChange={handleFilterChange}
-                        className={classes.select}
-                        inputProps={{
-                          name: 'indicator',
-                          id: 'indicator',
-                          classes: {
-                            icon: classes.selectIcon
-                          }
-                        }}
+                    {/* indicator filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    <Grid item xs={12} className={classes.filter} >
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
+                        <Select
+                          native
+                          value={values.indicator}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'indicator',
+                            id: 'indicator',
+                            classes: {
+                              icon: classes.selectIcon
+                            }
+                          }}
 
-                      >
-                        <option value={'All'}>All</option>)
+                        >
+                          <option value={'All'}>All</option>)
                         {indicatorsTemp.map(key => <option key={Math.random()} value={key.id} >{key.display_name}</option>)
-                      }
+                          }
 
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </fieldset>
                 </form>
 
@@ -1621,9 +1621,9 @@ class ErrorBoundary extends React.Component {
             <div className={classes.tabDashboard}>
               <div>
 
-                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"> 
-                  Download selected data elements Download Full Code List </Button> 
-                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton">
+                  Download selected data elements Download Full Code List </Button>
+                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
 </Button> */}
@@ -1639,7 +1639,7 @@ Compare selected data elements
                   <DialogContent >
                     <Typography gutterBottom>
                       {dialogMessage}
-          </Typography>
+                    </Typography>
                   </DialogContent>
                   <DialogActions>
                     <Button autoFocus onClick={handleClose} color="primary">
@@ -1691,7 +1691,7 @@ Compare selected data elements
                           }
                           label="JSON"
                         />
-                         <FormControlLabel
+                        <FormControlLabel
                           control={
                             <Checkbox checked={XML} style={{ color: '#D55804' }} onChange={handleDownloadChange('XML')} value="XML" />
                           }
@@ -1751,127 +1751,168 @@ Compare selected data elements
             {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
             <ErrorBoundary>
-            {dataElements.map(dataElement => (
-              <div key={dataElement.display_name}>
-                
-                <ExpansionPanel className={classes.dataelementContainer}
-                  TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                  onClick={() => !deMappings[dataElement.id] ?
-                    getMappings(dataElement.id) : ''}
+              {dataElements.map(dataElement => (
+                <div key={dataElement.display_name}>
 
-                // defaultExpanded=false
-
-
-                >
-                  {/* data elements summary */}
-                  <ExpansionPanelSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    className={classes.expansionPanelSummary}
-                  >
-                    <FormControlLabel
-                      aria-label="Acknowledge"
-                      onClick={handleCompareCheckbox(dataElement)}
-                      onFocus={event => event.stopPropagation()}
-                      control={<Checkbox />}
-                      checked={selectedDataElement.includes(dataElement.display_name) ? true : false}
-                    // label="I acknowledge that I should stop the click event propagation"
-                    />
-                    <Grid container alignItems="center" justify="space-between">
-
-
-
-
-                      <Grid item xs={12} md={9} >
-                        <Typography className={classes.heading}>
-                          <strong>{dataElement.display_name}</strong>
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={12} md={3}>
-                        <Typography>
-                          <strong>Data Element UID</strong>: {dataElement.external_id}
-                        </Typography></Grid>
-
-                    </Grid>
-
-                  </ExpansionPanelSummary>
-
-
-
-                  {/* data elements details */}
-                  <ExpansionPanelDetails
-                    className={classes.expansionPanelDetails}
-                  >
-                    <Grid container>
-                      <Grid item xs={12} className={classes.expansionPanelLeft}>
-                        <Typography>
-                          <strong>Description</strong>: {(dataElement.descriptions) ? dataElement.descriptions[0].description : "Not Available"}<br />
-                          {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
-          {dataElement.indicatorCode}
-          </NavLink> */}
-
-
-
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </ExpansionPanelDetails>
-                  <ExpansionPanel className={classes.dataElementContainer}
+                  <ExpansionPanel className={classes.dataelementContainer}
                     TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
                     onClick={() => !deMappings[dataElement.id] ?
                       getMappings(dataElement.id) : ''}
-                  //expanded={expanded}
+
+                  // defaultExpanded=false
+
+
                   >
+                    {/* data elements summary */}
                     <ExpansionPanelSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                       className={classes.expansionPanelSummary}
                     >
-                      <Typography className={classes.heading}><strong>Disaggregations</strong></Typography>
+                      <FormControlLabel
+                        aria-label="Acknowledge"
+                        onClick={handleCompareCheckbox(dataElement)}
+                        onFocus={event => event.stopPropagation()}
+                        control={<Checkbox />}
+                        checked={selectedDataElement.includes(dataElement.display_name) ? true : false}
+                      // label="I acknowledge that I should stop the click event propagation"
+                      />
+                      <Grid container alignItems="center" justify="space-between">
+
+
+
+
+                        <Grid item xs={12} md={9} >
+                          <Typography className={classes.heading}>
+                            <strong>{dataElement.display_name}</strong>
+                          </Typography>
+                        </Grid>
+
+                        <Grid item xs={12} md={3}>
+                          <Typography>
+                            <strong>Data Element UID</strong>: {dataElement.external_id}
+                          </Typography></Grid>
+
+                      </Grid>
+
                     </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-
-                      <div className={classes.tableContainer} ></div>
-                      <Grid item xs={12} className={classes.comboTable}>
 
 
-                        <Route render={() => (
-                          <div className={classes.tableContainer}>
-                            {/* data element Disaggregations */}
-                            {/* <strong>Disaggregations</strong>:<br /> */}
 
-                            <Table className={classes.table} aria-label="simple table">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Disaggregations Name</TableCell>
-                                  <TableCell>Disaggregations Code</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {
-                                  (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
+                    {/* data elements details */}
+                    <ExpansionPanelDetails
+                      className={classes.expansionPanelDetails}
+                    >
+                      <Grid container>
+                        <Grid item xs={12} className={classes.expansionPanelLeft}>
+                          {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
+          {dataElement.indicatorCode}
+          </NavLink> */}
+                          <Table className={classes.comboTable} aria-label="simple table">
+                            <TableBody>
+                              <TableRow>
+                                <TableCell><strong>Short Name</strong></TableCell>
+                                <TableCell>{(dataElement.names[1].name)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Code</strong></TableCell>
+                                <TableCell>{(dataElement.names[2].name)}</TableCell>
+                              </TableRow>
+                              <TableRow className={classes.comboTable}>
+                                <TableCell><strong>Description</strong></TableCell>
+                                <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "Not Available"}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>UID</strong></TableCell>
+                                <TableCell>{(dataElement.id)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Source</strong></TableCell>
+                                <TableCell>{(dataElement.source)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Data Type</strong></TableCell>
+                                <TableCell>{(dataElement.datatype)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Domain Type</strong></TableCell>
+                                <TableCell>{(dataElement.extras.domainType)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Value Type</strong></TableCell>
+                                <TableCell>{(dataElement.extras.valueType)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Aggregation Type</strong></TableCell>
+                                <TableCell>{(dataElement.extras.aggregationType)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Result/Target</strong></TableCell>
+                                <TableCell>{dataElement.extras.resultTarget}</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
 
-                                    key =>
-                                      <TableRow key={Math.random()}>
-                                        <TableCell component="th" scope="row">
-                                          {Object(deMappings[dataElement.id])[key].to_concept_name}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                          {Object(deMappings[dataElement.id])[key].to_concept_code}
-                                        </TableCell>
-                                      </TableRow>
 
-                                  ) : (Object.keys(emptyMap).map(
 
-                                  ))
-                                }
-                              </TableBody>
-                            </Table>
-                            {/* open the formula panel */}
-                            {/* <ExpansionPanel>
+                        </Grid>
+                      </Grid>
+                    </ExpansionPanelDetails>
+                    <ExpansionPanel className={classes.dataElementContainer}
+                      TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
+                      onClick={() => !deMappings[dataElement.id] ?
+                        getMappings(dataElement.id) : ''}
+                    //expanded={expanded}
+                    >
+                      <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                        className={classes.expansionPanelSummary}
+                      >
+                        <Typography className={classes.heading}><strong>Disaggregations</strong></Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+
+                        <div className={classes.tableContainer} ></div>
+                        <Grid item xs={12} className={classes.comboTable}>
+
+
+                          <Route render={() => (
+                            <div className={classes.tableContainer}>
+                              {/* data element Disaggregations */}
+                              {/* <strong>Disaggregations</strong>:<br /> */}
+
+                              <Table className={classes.table} aria-label="simple table">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Code</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {
+                                    (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
+
+                                      key =>
+                                        <TableRow key={Math.random()}>
+                                          <TableCell component="th" scope="row">
+                                            {Object(deMappings[dataElement.id])[key].to_concept_name}
+                                          </TableCell>
+                                          <TableCell component="th" scope="row">
+                                            {Object(deMappings[dataElement.id])[key].to_concept_code}
+                                          </TableCell>
+                                        </TableRow>
+
+                                    ) : (Object.keys(emptyMap).map(
+
+                                    ))
+                                  }
+                                </TableBody>
+                              </Table>
+                              {/* open the formula panel */}
+                              {/* <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -1885,7 +1926,7 @@ Compare selected data elements
           <div className={classes.tableContainer} >
        
           {/* indicator tabs */}
-                            {/*       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
+                              {/*       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
           <Tab label="HUMAN READABLE FORMAT" {...a11yProps(0)} />
           <Tab label="UID FORMAT" {...a11yProps(1)} />
         </Tabs>
@@ -1946,26 +1987,26 @@ Compare selected data elements
       
         </ExpansionPanelDetails>
       </ExpansionPanel> */}
-                          </div>
-                        )} />
+                            </div>
+                          )} />
 
 
-                      </Grid>
+                        </Grid>
 
 
 
 
 
-                    </ExpansionPanelDetails>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+
+
+
                   </ExpansionPanel>
 
+                </div>
 
-
-                </ExpansionPanel>
-                
-              </div>
-              
-            ))}
+              ))}
             </ErrorBoundary>
             {/* </Parent> */}
 
