@@ -1811,65 +1811,60 @@ Compare selected data elements
           </NavLink> */}
                           <Table className={classes.comboTable} aria-label="simple table">
                             <TableBody>
-                              {dataElement.names[1] ?
-                                <TableRow>
-                                  <TableCell><strong>Short Name</strong></TableCell>
-                                  <TableCell>{(dataElement.names[1].name)}</TableCell>
-                                </TableRow>
-                                : ''}
-                              {dataElement.names[2] ? (
-                                <TableRow>
-                                  <TableCell><strong>Code</strong></TableCell>
-                                  <TableCell>{(dataElement.names[2].name)}</TableCell>
-                                </TableRow>)
-                                : ''}
-
+                              <TableRow>
+                                <TableCell><strong>Short Name</strong></TableCell>
+                                <TableCell>{dataElement.names[1] ? (dataElement.names[1].name) : 'N/A'}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Code</strong></TableCell>
+                                <TableCell>{dataElement.names[2] ? (dataElement.names[2].name) : 'N/A'}</TableCell>
+                              </TableRow>
                               <TableRow className={classes.comboTable}>
                                 <TableCell><strong>Description</strong></TableCell>
-                                <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "Not Available"}</TableCell>
+                                <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "N/A"}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{(dataElement.id)}</TableCell>
+                                <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{(dataElement.extras.source)}</TableCell>
+                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Data Type</strong></TableCell>
-                                <TableCell>{(dataElement.datatype)}</TableCell>
+                                <TableCell>{dataElement.datatype ? (dataElement.datatype) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Domain Type</strong></TableCell>
-                                <TableCell>{(dataElement.extras.domainType)}</TableCell>
+                                <TableCell>{dataElement.extras.domainType ? (dataElement.extras.domainType) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Value Type</strong></TableCell>
-                                <TableCell>{(dataElement.extras.valueType)}</TableCell>
+                                <TableCell>{dataElement.extras.valueType ? (dataElement.extras.valueType) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Aggregation Type</strong></TableCell>
-                                <TableCell>{(dataElement.extras.aggregationType)}</TableCell>
+                                <TableCell>{dataElement.extras.aggregationType ? (dataElement.extras.aggregationType) : 'N/A'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Applicable Periods</strong></TableCell>
                                 <TableCell>
                                   {
-                                    dataElement.extras['Applicable Periods'] ? (Object.keys(dataElement.extras['Applicable Periods']).map(
+                                    dataElement.extras['Applicable Periods'] ? (dataElement.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElement.extras['Applicable Periods']).map(
 
                                       key =>
 
                                         dataElement.extras['Applicable Periods'][key] + ", "
 
                                     )
-                                    ) : ''
+                                    ) : 'N/A') : 'N/A'
                                   }
                                 </TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Result/Target</strong></TableCell>
-                                <TableCell>{dataElement.extras.resultTarget}</TableCell>
+                                <TableCell>{dataElement.extras.resultTarget ? dataElement.extras.resultTarget : 'N/A'}</TableCell>
                               </TableRow>
                             </TableBody>
                           </Table>
@@ -2096,62 +2091,61 @@ Compare selected data elements
                                   <TableBody>
                                     <TableRow>
                                       <TableCell><strong>Short Name</strong></TableCell>
-                                      <TableCell>{(datim.names[1].name)}</TableCell>
+                                      <TableCell>{datim.names[1] ? (datim.names[1].name) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Code</strong></TableCell>
-                                      <TableCell>{(datim.names[2].name)}</TableCell>
+                                      <TableCell>{datim.names[2] ? (datim.names[2].name) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow className={classes.comboTable}>
                                       <TableCell><strong>Description</strong></TableCell>
-                                      <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}</TableCell>
+                                      <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "N/A"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>UID</strong></TableCell>
-                                      <TableCell>{(datim.id)}</TableCell>
+                                      <TableCell>{datim.id ? (datim.id) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Source</strong></TableCell>
-                                      <TableCell>{(datim.extras.source)}</TableCell>
+                                      <TableCell>{datim.extras.source ? (datim.extras.source) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Data Type</strong></TableCell>
-                                      <TableCell>{(datim.datatype)}</TableCell>
+                                      <TableCell>{datim.datatype ? (datim.datatype) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Domain Type</strong></TableCell>
-                                      <TableCell>{(datim.extras.domainType)}</TableCell>
+                                      <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Value Type</strong></TableCell>
-                                      <TableCell>{(datim.extras.valueType)}</TableCell>
+                                      <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Aggregation Type</strong></TableCell>
-                                      <TableCell>{(datim.extras.aggregationType)}</TableCell>
+                                      <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : 'N/A'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Applicable Periods</strong></TableCell>
                                       <TableCell>
                                         {
-                                          Object.keys(datim.extras['Applicable Periods']).map(
+                                          datim.extras['Applicable Periods'] ? (datim.extras['Applicable Periods'].length > 0 ? (Object.keys(datim.extras['Applicable Periods']).map(
 
                                             key =>
 
-                                              datim.extras['Applicable Periods'][key] + ", "
+                                            datim.extras['Applicable Periods'][key] + ", "
 
                                           )
+                                          ) : 'N/A') : 'N/A'
                                         }
                                       </TableCell>
                                     </TableRow>
                                     <TableRow>
                                       <TableCell><strong>Result/Target</strong></TableCell>
-                                      <TableCell>{datim.extras.resultTarget}</TableCell>
+                                      <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : 'N/A'}</TableCell>
                                     </TableRow>
                                   </TableBody>
                                 </Table>
-
-
 
                                 {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
                                 Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
