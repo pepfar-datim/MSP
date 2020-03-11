@@ -1074,7 +1074,7 @@ export default function Codelist() {
 
   async function getMappings(id) {
     setExpanded(true);
-    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/' + source + version + '/concepts/' + id + '/?includeMappings=true';
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
     try {
