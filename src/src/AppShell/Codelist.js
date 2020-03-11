@@ -1811,14 +1811,19 @@ Compare selected data elements
           </NavLink> */}
                           <Table className={classes.comboTable} aria-label="simple table">
                             <TableBody>
-                              <TableRow>
-                                <TableCell><strong>Short Name</strong></TableCell>
-                                <TableCell>{(dataElement.names[1].name)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Code</strong></TableCell>
-                                <TableCell>{(dataElement.names[2].name)}</TableCell>
-                              </TableRow>
+                              {dataElement.names[1] ?
+                                <TableRow>
+                                  <TableCell><strong>Short Name</strong></TableCell>
+                                  <TableCell>{(dataElement.names[1].name)}</TableCell>
+                                </TableRow>
+                                : ''}
+                              {dataElement.names[2] ? (
+                                <TableRow>
+                                  <TableCell><strong>Code</strong></TableCell>
+                                  <TableCell>{(dataElement.names[2].name)}</TableCell>
+                                </TableRow>)
+                                : ''}
+
                               <TableRow className={classes.comboTable}>
                                 <TableCell><strong>Description</strong></TableCell>
                                 <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "Not Available"}</TableCell>
@@ -1850,16 +1855,17 @@ Compare selected data elements
                               <TableRow>
                                 <TableCell><strong>Applicable Periods</strong></TableCell>
                                 <TableCell>
-                                {
-                                    Object.keys(dataElement.extras['Applicable Periods']).map(
+                                  {
+                                    dataElement.extras['Applicable Periods'] ? (Object.keys(dataElement.extras['Applicable Periods']).map(
 
                                       key =>
-                                          
-                                            dataElement.extras['Applicable Periods'][key] + ", "
-                                         
+
+                                        dataElement.extras['Applicable Periods'][key] + ", "
+
                                     )
+                                    ) : ''
                                   }
-                                   </TableCell>
+                                </TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Result/Target</strong></TableCell>
@@ -2086,66 +2092,66 @@ Compare selected data elements
                                 onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
                               >
 
-<Table className={classes.comboTable} aria-label="simple table">
-                            <TableBody>
-                              <TableRow>
-                                <TableCell><strong>Short Name</strong></TableCell>
-                                <TableCell>{(datim.names[1].name)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Code</strong></TableCell>
-                                <TableCell>{(datim.names[2].name)}</TableCell>
-                              </TableRow>
-                              <TableRow className={classes.comboTable}>
-                                <TableCell><strong>Description</strong></TableCell>
-                                <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{(datim.id)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{(datim.extras.source)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Data Type</strong></TableCell>
-                                <TableCell>{(datim.datatype)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Domain Type</strong></TableCell>
-                                <TableCell>{(datim.extras.domainType)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Value Type</strong></TableCell>
-                                <TableCell>{(datim.extras.valueType)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Aggregation Type</strong></TableCell>
-                                <TableCell>{(datim.extras.aggregationType)}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Applicable Periods</strong></TableCell>
-                                <TableCell>
-                                {
-                                    Object.keys(datim.extras['Applicable Periods']).map(
+                                <Table className={classes.comboTable} aria-label="simple table">
+                                  <TableBody>
+                                    <TableRow>
+                                      <TableCell><strong>Short Name</strong></TableCell>
+                                      <TableCell>{(datim.names[1].name)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Code</strong></TableCell>
+                                      <TableCell>{(datim.names[2].name)}</TableCell>
+                                    </TableRow>
+                                    <TableRow className={classes.comboTable}>
+                                      <TableCell><strong>Description</strong></TableCell>
+                                      <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>UID</strong></TableCell>
+                                      <TableCell>{(datim.id)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Source</strong></TableCell>
+                                      <TableCell>{(datim.extras.source)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Data Type</strong></TableCell>
+                                      <TableCell>{(datim.datatype)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Domain Type</strong></TableCell>
+                                      <TableCell>{(datim.extras.domainType)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Value Type</strong></TableCell>
+                                      <TableCell>{(datim.extras.valueType)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Aggregation Type</strong></TableCell>
+                                      <TableCell>{(datim.extras.aggregationType)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Applicable Periods</strong></TableCell>
+                                      <TableCell>
+                                        {
+                                          Object.keys(datim.extras['Applicable Periods']).map(
 
-                                      key =>
-                                          
-                                      datim.extras['Applicable Periods'][key] + ", "
-                                         
-                                    )
-                                  }
-                                   </TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Result/Target</strong></TableCell>
-                                <TableCell>{datim.extras.resultTarget}</TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
+                                            key =>
 
-                            
+                                              datim.extras['Applicable Periods'][key] + ", "
+
+                                          )
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                      <TableCell><strong>Result/Target</strong></TableCell>
+                                      <TableCell>{datim.extras.resultTarget}</TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+
+
 
                                 {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
                                 Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
