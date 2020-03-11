@@ -1829,7 +1829,7 @@ Compare selected data elements
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{(dataElement.source)}</TableCell>
+                                <TableCell>{(dataElement.extras.source)}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Data Type</strong></TableCell>
@@ -1846,6 +1846,20 @@ Compare selected data elements
                               <TableRow>
                                 <TableCell><strong>Aggregation Type</strong></TableCell>
                                 <TableCell>{(dataElement.extras.aggregationType)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Applicable Periods</strong></TableCell>
+                                <TableCell>
+                                {
+                                    Object.keys(dataElement.extras['Applicable Periods']).map(
+
+                                      key =>
+                                          
+                                            dataElement.extras['Applicable Periods'][key] + ", "
+                                         
+                                    )
+                                  }
+                                   </TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell><strong>Result/Target</strong></TableCell>
