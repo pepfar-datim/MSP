@@ -94,6 +94,7 @@ const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 
 let deMappings = {};
+let pdhDerivatives = {}
 
 
 const useStyles = makeStyles(theme => ({
@@ -739,6 +740,21 @@ export default function Codelist() {
   useEffect(() => {
     loadIndicatorsData();
   }, [queryIndicators]);
+
+  function populatePDHDerivatives(source_data_elements){
+    source_data_elements.map( source_data_element => {
+      if (!pdhDerivatives[source_data_element.source_data_element_name]) {
+        let source_data_element_nameArray = [];
+        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + source_data_element.add_or_subtract);
+        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+      }
+      else {
+        let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name]);
+        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + source_data_element.add_or_subtract);
+        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+      }
+     } )
+  }
   ///////////
 
 
@@ -1884,7 +1900,7 @@ Compare selected data elements
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
-                        className={classes.expansionPanelSummary}
+                        className={`${classes.expansionPanelSummary} ${classes.formulaButton}`}
                       >
                         <Typography className={classes.heading}><strong>Disaggregations</strong></Typography>
                       </ExpansionPanelSummary>
@@ -1926,82 +1942,6 @@ Compare selected data elements
                                   }
                                 </TableBody>
                               </Table>
-                              {/* open the formula panel */}
-                              {/* <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          className={classes.formulaButton}
-        >
-          <Typography className={classes.heading}>Formula</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
-
-          <div className={classes.tableContainer} >
-       
-          {/* indicator tabs */}
-                              {/*       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-          <Tab label="HUMAN READABLE FORMAT" {...a11yProps(0)} />
-          <Tab label="UID FORMAT" {...a11yProps(1)} />
-        </Tabs>
-
-        <TabPanel value={panel} index={0} className={classes.tabPanel}>
-        <Table className={classes.table} aria-label="simple table">
-        <TableBody>
-        <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-          Numerator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-        {dataElement.Numerator}
-           </TableCell> 
-           </TableRow>
-
-           <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-           Denominator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-           {dataElement.Denominator}
-           </TableCell> 
-           </TableRow>
-
-
-          </TableBody>
-        </Table>
-        </TabPanel>
-
-        <TabPanel value={panel} index={1} className={classes.tabPanel}>
-        <Table className={classes.table} aria-label="simple table">
-        <TableBody>
-        <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-          Numerator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-        {dataElement.uidNumerator}
-           </TableCell> 
-           </TableRow>
-
-           <TableRow key={Math.random()}>
-           <TableCell component="th" scope="row">
-           Denominator
-           </TableCell> 
-           <TableCell component="th" scope="row">
-           {dataElement.uidDenominator}
-           </TableCell> 
-           </TableRow>
-
-
-          </TableBody>
-        </Table>
-        </TabPanel>
-
-        </div>
-      
-        </ExpansionPanelDetails>
-      </ExpansionPanel> */}
                             </div>
                           )} />
 
@@ -2014,6 +1954,75 @@ Compare selected data elements
 
                       </ExpansionPanelDetails>
                     </ExpansionPanel>
+                    {/* open the formula panel */}
+              {values.source === 'PDH' ? ( 
+                 <ExpansionPanel>
+                      <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                        className={classes.formulaButton}
+                      >
+                        <Typography className={classes.heading}><strong>Derivations</strong></Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+
+                        <div className={classes.tableContainer} >
+
+                          {/* indicator tabs */}
+                          {/* <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
+          <Tab label="HUMAN READABLE FORMAT" {...a11yProps(0)} />
+          <Tab label="UID FORMAT" {...a11yProps(1)} />
+        </Tabs> */}
+<Table className={classes.table} aria-label="simple table">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell>Source Data Element</TableCell>
+                                    <TableCell>Source Disaggregation</TableCell>
+                                    <TableCell>+/-</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {
+                                  (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
+                                  }
+                                  {
+                                    Object.keys(pdhDerivatives).map(
+
+                                      key =>
+                                        <TableRow key={Math.random()}>
+                                          <TableCell component="th" scope="row" rowSpan={pdhDerivatives[key].size}>
+                                            {key}
+                                          </TableCell>
+                                          <TableCell>
+                                          {Object.keys(pdhDerivatives[key]).map(dissags => 
+                                          <TableRow key={Math.random()}>
+                                            <TableCell component="th" scope="row" width="300">
+                                             {pdhDerivatives[key][dissags].substring(0,pdhDerivatives[key][dissags].length -1)}
+                                           </TableCell>
+                                        </TableRow>
+                                          )}
+                                          </TableCell>
+                                          <TableCell>
+                                          {Object.keys(pdhDerivatives[key]).map(dissags => 
+                                          <TableRow key={Math.random()}>
+                                          <TableCell component="th" scope="row" align="right">
+                                          {(pdhDerivatives[key][dissags].substring(pdhDerivatives[key][dissags].length - 1,pdhDerivatives[key][dissags].length)) == 1 ? '+' : '-'}
+                                        </TableCell>
+                                        </TableRow>
+                                          )}
+                                          </TableCell>
+                                        </TableRow>
+
+                                    )
+                                  }
+                                </TableBody>
+                              </Table>
+                        </div>
+{pdhDerivatives = []}
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+               ) : '' }
 
 
 
@@ -2133,7 +2142,7 @@ Compare selected data elements
 
                                             key =>
 
-                                            datim.extras['Applicable Periods'][key] + ", "
+                                              datim.extras['Applicable Periods'][key] + ", "
 
                                           )
                                           ) : 'N/A') : 'N/A'
