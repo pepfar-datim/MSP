@@ -313,6 +313,7 @@ const useStyles = makeStyles(theme => ({
       color: '#ffffff'
     }
   },
+  
   titleNote:{
     color: "rgba(0, 0, 0, 0.87) !important",
     fontSize: '0.8rem',
@@ -365,6 +366,44 @@ const useStyles = makeStyles(theme => ({
     marginTop: '1em',
     backgroundColor:'#eeeeee',
     border:0
+  },
+  indicatorTable:{
+    backgroundColor: '#C1A783',
+    color: '#000000',
+    marginBottom: '1em',
+    marginTop: '1em',
+  },
+  numeratorTitle: {    
+    fontSize: '1.2rem', 
+    textAlign: 'center',
+  },
+  leftAlignedTitle: {    
+    fontSize: '1.2rem', 
+    textAlign: 'left',
+    fontWeight: 'bold',
+  },
+  numeratorGridContainer: {
+    border: '2px solid #C1A783',
+    marginBottom: '2em',
+  },
+  numeratorGrid:{
+    backgroundColor: '#fcfbfa',
+    color: '#000000',
+    /*marginBottom: '1em',*/
+    /*marginTop: '1em',*/
+    padding: '1em',
+    borderBottom: '1px solid #ffffff',
+    
+  },
+  numeratorGridCentered:{
+    backgroundColor: '#f7f4f0',
+    color: '#000000',
+    /*marginBottom: '1em',*/
+    /*marginTop: '1em',*/
+    padding: '1em',
+    borderTop: '2px solid #C1A783',
+    borderBottom: '2px solid #C1A783',
+    textAlign: 'center',
   },
   [theme.breakpoints.down('sm')]: {
     // styles
@@ -621,8 +660,9 @@ const useStyles = makeStyles(theme => ({
         var mappedDataElements = [];
         if (jsonData && Array.isArray(jsonData)){          
           mappedDataElements = jsonData.map(item => {
+            console.log(item);
             var dataElementItem = {};
-            dataElementItem.source = item.owner;
+            dataElementItem.source = item.extras.source;
             dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
             dataElementItem.uid = item.external_id;
             dataElementItem.id = item.id;
@@ -754,7 +794,7 @@ const useStyles = makeStyles(theme => ({
           }        
           //console.log(jsonData);
           setIndicatorDetailLoading(false);
-          var data = createIndicatorDetailForUI(jsonData);
+          var data = createIndicatorDetailForUI(jsonData);         
           dispatch({
             type: 'changeIndicatorName',
             indicatorName: indicatorID

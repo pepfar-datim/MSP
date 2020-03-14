@@ -10,6 +10,14 @@ import styled from 'styled-components';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 import {convertMarkdown} from '../util.js';
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
+import Grid from '@material-ui/core/Grid';
 
 const ExpandTitle = styled.p`
     margin:0;
@@ -35,7 +43,7 @@ export default function  IndicatorDetail(props) {
       {/* Indicator description */}        
         <ExpansionPanel defaultExpanded={false}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-              <ExpandTitle>Description</ExpandTitle>
+              <ExpandTitle>Description/Details</ExpandTitle>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <div>
@@ -65,99 +73,76 @@ export default function  IndicatorDetail(props) {
         {/* Indicator numerator */}   
             <ExpansionPanel defaultExpanded={false}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header" >
-                <ExpandTitle>Numerator</ExpandTitle>
+                <ExpandTitle>Numerator/Denominator/Disaggregates</ExpandTitle>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={props.classes.panelDetails}>
-                    <p className={props.classes.childContent}><strong>Numerator</strong>: {props.currentIndicator.numerator}</p>
-                    <p className={props.classes.childContent}><strong>Numerator Description</strong>: {props.currentIndicator.numerator_description}</p>
-                    <p className={props.classes.childContent}><strong>Disaggregate Groups</strong></p>              
-                    <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.numerator_disaggregation_groups)}} />                                           
+              <div className={props.classes.numeratorTitle} ><strong>Numerator</strong></div>  
+              <Grid container className={props.classes.numeratorGridContainer}>                                        
+                <Grid item xs={12} className={props.classes.numeratorGrid} >
+                <div><strong>Numerator:</strong> {props.currentIndicator.numerator}</div>
+                <p>{props.currentIndicator.numerator_description}</p>
+                </Grid>
+                <Grid item xs={12} className={props.classes.numeratorGridCentered} >
+                <div><strong>Disaggregates</strong> </div>              
+                </Grid>
+                <Grid item xs={12} className={props.classes.numeratorGrid} >                  
+                <div><div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.numerator_disaggregation_groups)}} /> </div>               
+                </Grid>
+              </Grid>
+
+              <div className={props.classes.numeratorTitle} ><strong>Denominator</strong></div>  
+              <Grid container className={props.classes.numeratorGridContainer}>                                        
+                <Grid item xs={12} className={props.classes.numeratorGrid} >
+                <div><strong>Denominator:</strong> {props.currentIndicator.denominator}</div>
+                <p>[denominator description missing in OCL]</p>
+                </Grid>
+                <Grid item xs={12} className={props.classes.numeratorGridCentered} >
+                <div><strong>Disaggregates</strong> </div>              
+                </Grid>
+                <Grid item xs={12} className={props.classes.numeratorGrid} >                  
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator_disaggregation_groups)}} />              
+                </Grid>
+              </Grid>   
+              <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} /> 
+                                                
               </ExpansionPanelDetails>
             </ExpansionPanel>
-
-        {/* Indicator denominator */}
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" >
-                <ExpandTitle>Denominator</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={props.classes.panelDetails}>
-                    <p className={props.classes.childContent}><strong>Denominator</strong>: {props.currentIndicator.denominator}</p>
-                    <p className={props.classes.childContent}><strong>Denominator Description</strong>: {props.currentIndicator.numerator_description}</p>
-                    <p className={props.classes.childContent}><strong>Disaggregate Groups</strong>:                
-                      <span dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator_disaggregation_groups)}} />
-                    </p>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-
-        {/* Indicator disaggregate */}
-        {props.currentIndicator && props.currentIndicator.disaggregate_descriptions_and_definitions !== "" ? 
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>Disaggregate descriptions & definitions</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>                                    
-                  <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} />                         
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-            : null }
-
-        {/* Indicator pepfar definition */}
-        {props.currentIndicator && props.currentIndicator.PEPFAR_support_definition !== "" ?  
+                  
             <ExpansionPanel>
               <ExpansionPanelSummary  expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>PEPFAR-support definition</ExpandTitle>
+                <ExpandTitle>Other/Quality Assurance</ExpandTitle>
                     {/*<ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>*/}
               </ExpansionPanelSummary>
-              <ExpansionPanelDetails>                          
-                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.PEPFAR_support_definition)}}/>
+              <ExpansionPanelDetails>    
+                <div>
+                {props.currentIndicator && props.currentIndicator.PEPFAR_support_definition !== "" ?  
+                  <div>
+                    <div className={props.classes.leftAlignedTitle}>PEPFAR-support definition</div>
+                      <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.PEPFAR_support_definition)}}/>
+                  </div>  : null }
+                {props.currentIndicator && props.currentIndicator.how_to_use !== "" ?  
+                  <div>
+                  <div className={props.classes.leftAlignedTitle}>How to use</div>
+                  <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_use)}} />
+                </div>  : null }
+                {props.currentIndicator && props.currentIndicator.how_to_collect !== "" ?  
+                <div>
+                  <div className={props.classes.leftAlignedTitle}>How to collect</div>
+                  <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_collect)}}/>
+                </div>  : null }
+                {props.currentIndicator && props.currentIndicator.how_to_review !== "" ?  
+                 <div>
+                 <div className={props.classes.leftAlignedTitle}>How to review data quality</div>
+                 <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_review)}} />
+               </div>  : null }
+               {props.currentIndicator && props.currentIndicator.guiding_narrative_questions !== "" ?  
+                 <div>
+                 <div className={props.classes.leftAlignedTitle}>Guiding narrative questions</div>
+                 <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.guiding_narrative_questions)}}/>
+               </div>  : null }
+              </div>              
               </ExpansionPanelDetails>
-            </ExpansionPanel>
-        : null }
-        {/* Indicator how to use */}
-        {props.currentIndicator && props.currentIndicator.how_to_use !== "" ?  
-            <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-              <ExpandTitle>How to use</ExpandTitle>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-            <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_use)}} />
-            </ExpansionPanelDetails>
-            </ExpansionPanel>
-        : null }
-        {/* Indicator how to collect */}
-        {props.currentIndicator && props.currentIndicator.how_to_collect !== "" ?  
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>How to collect</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_collect)}}/>
-            </ExpansionPanelDetails>
-            </ExpansionPanel>
-        : null }
-        {/* Indicator how to review quality */}
-        {props.currentIndicator && props.currentIndicator.how_to_review !== "" ?  
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>How to review data quality</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_review)}} />
-            </ExpansionPanelDetails>
-            </ExpansionPanel>
-          : null }
-        {/* Indicator guiding narrative questions */}
-        {props.currentIndicator && props.currentIndicator.guiding_narrative_questions !== "" ?  
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>Guiding narrative questions</ExpandTitle>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.guiding_narrative_questions)}}/>
-            </ExpansionPanelDetails>
-            </ExpansionPanel>
-        : null }              
-        
+            </ExpansionPanel>                     
         </div>
     );
 }
