@@ -1196,7 +1196,10 @@ export default function Codelist() {
           downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();          
         } 
         let downloadLink = document.createElement('a');
-        downloadLink.href = downloadURL;           
+        downloadLink.href = downloadURL;    
+        if (downloadValue.trim() !== "CSV"){
+          downloadLink.setAttribute("target", "_blank");
+        }         
         downloadLink.setAttribute('download', "download"); 
         downloadLink.click();
         revokeDownloadLink(downloadLink.href);          
