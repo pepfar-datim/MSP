@@ -53,6 +53,8 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 //import Alert from '@material-ui/lab/Alert';
 import InputBase from '@material-ui/core/InputBase';
+import  Radio  from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 
 //tab panel function
@@ -1133,15 +1135,15 @@ export default function Codelist() {
   const handleCompareCheckbox = dataElement => event => {
     event.stopPropagation();
     //remove the element from the selected data element when unclick
-    if (selectedDataElement.includes(dataElement.display_name)) {
+    if (selectedDataElement.includes(dataElement.id)) {
       const newSelectedDataElement = selectedDataElement.filter(data => {
-        return data !== dataElement.display_name;
+        return data !== dataElement.id;
       });
       setSelectedDataElement(newSelectedDataElement);
     } else {
       //add the element from the selected data element when click
       !deMappings[dataElement.id] ? getMappings(dataElement.id) : '';
-      const newSelectedDataElement = [...selectedDataElement, dataElement.display_name];
+      const newSelectedDataElement = [...selectedDataElement, dataElement.id];
       setSelectedDataElement(newSelectedDataElement);
     }
 
@@ -1154,7 +1156,7 @@ export default function Codelist() {
     if (selectedDataElement.length < dataElements.length) {
       const tempDataElement = [];
       dataElements.map(dataElement => {
-        tempDataElement.push(dataElement.display_name);
+        tempDataElement.push(dataElement.id);
         return true;
       })
 
@@ -1166,17 +1168,10 @@ export default function Codelist() {
     return true;
   }
 
-
-
-
-
-
-
-
   //set dropdown popup
   const dropDownMenu = buttonName => event => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
-    setDropDownName(buttonName);
+    setDropDownName(buttonName);    
 
 
   };
@@ -1186,18 +1181,36 @@ export default function Codelist() {
     setAnchorEl(null);
   };
 
-
-
-  //download dropdown menu
-  const [download, setDownload] = React.useState({
-    HTML: true,
-    JSON: false,
-    CSV: false,
-    XML: false
-  });
-  const handleDownloadChange = name => event => {
-    setDownload({ ...download, [name]: event.target.checked });
+  const [downloadValue, setDownloadValue] = React.useState('HTML');
+  const handleDownloadChange = event => {        
+    setDownloadValue(event.target.value);    
   };
+
+  const performDownload = event => {   
+    const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
+    let downloadURL = "";     
+        if (selectedDataElement.length > 0) {          
+          downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();          
+        }else if (values.dataSet !== "All") {         
+          downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();          
+        } 
+        let downloadLink = document.createElement('a');
+        downloadLink.href = downloadURL;           
+        downloadLink.setAttribute('download', "download"); 
+        downloadLink.click();
+        revokeDownloadLink(downloadLink.href);          
+  }
+
+  function revokeDownloadLink(href){
+    setTimeout(function(){             
+        window.URL.revokeObjectURL(href);  
+    }, 10000);  
+  } 
+
+  const clearSelectedDataElements = event => {    
+    setSelectedDataElement([]);      
+  }
+  
   //compare dropdown menu
   const [compare, setCompare] = React.useState({
     DATIM: true,
@@ -1208,7 +1221,7 @@ export default function Codelist() {
     setCompare({ ...compare, [name]: event.target.checked });
   };
 
-  const { HTML, JSON, CSV, XML } = download;
+  
   const { DATIM, PDH, MOH } = compare;
 
 
@@ -1243,7 +1256,7 @@ export default function Codelist() {
       console.log("toggleDrawer dataElements")
       console.log(dataElements)
       dataElements.map(dataElement => {
-        if (selectedDataElement.includes(dataElement.display_name)) {
+        if (selectedDataElement.includes(dataElement.id)) {
           selectDataTemp.push(dataElement);
           if (!deMappings[dataElement.id]) {
             getMappings(dataElement.id)
@@ -1259,6 +1272,23 @@ export default function Codelist() {
     }
   };
 
+  // when values.dataSet === "All" && selectedDataElement.length ==0 disable the button
+  
+  function getDownloadLabel() {   
+    let downloadLabel = "Download";   
+    if (values.dataSet === "All"){   
+      if (selectedDataElement.length > 0){
+        downloadLabel = "Download Selected Data Elements";
+      }
+    }else if (values.dataSet !== "" && values.dataSet !== "All"){
+      if (selectedDataElement.length > 0){
+        downloadLabel = "Download Selected Data Elements";
+      }else {
+        downloadLabel = "Download Full Code List";
+      }
+    }
+    return downloadLabel;
+  }   
 
   //set initial panel state and panel handle change function
   const [panel, setPanel] = React.useState(0);
@@ -1326,9 +1356,7 @@ export default function Codelist() {
               <headings.H1>Data Elements</headings.H1>
             </Grid>}
 
-
             <Grid item xs={12} md={5} justifycontent="flex-end" >
-
               {/* search bar */}
               <Paper component="form" className={classes.search}>
                 <InputBase
@@ -1346,11 +1374,8 @@ export default function Codelist() {
                   <SearchIcon />
                 </IconButton>
               </Paper>
-
             </Grid>
           </Grid>
-
-
         </div>
       </div>
 
@@ -1636,16 +1661,19 @@ export default function Codelist() {
             {/* dashboard, including download, compare, select all buttons */}
             <div className={classes.tabDashboard}>
               <div>
-
-                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton">
-                  Download selected data elements Download Full Code List </Button>
+                {selectedDataElement && selectedDataElement.length > 0 ?                 
+                <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
+                 Clear All selected   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px'  }}> {selectedDataElement.length}</span></Button> 
+                 : null }
+                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length=== 0 && values.dataSet === "All" ? true: false}>
+                 {getDownloadLabel()} </Button>
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
 </Button> */}
                 <Button variant="outlined" className={classes.actionButton} onClick={toggleDrawer('bottom', true)} id="comparisonButton">
                   Compare selected data elements
-</Button>
+                </Button>
               </div>
 
               <div>
@@ -1690,35 +1718,19 @@ Compare selected data elements
                 {
                   dropDownName === "download" ?
                     <FormControl component="fieldset" className={classes.popOver}>
-
                       <FormGroup>
                         <FormLabel component="legend" className={classes.formLegend}>Data Format</FormLabel>
-                        <FormControlLabel
-                          control={<Checkbox checked={HTML} style={{ color: '#D55804' }} onChange={handleDownloadChange('HTML')} value="HTML" />}
-                          label="HTML"
-                        />
-                        <FormControlLabel
-                          control={<Checkbox checked={CSV} style={{ color: '#D55804' }} onChange={handleDownloadChange('CSV')} value="CSV" />}
-                          label="CSV"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={JSON} style={{ color: '#D55804' }} onChange={handleDownloadChange('JSON')} value="JSON" />
-                          }
-                          label="JSON"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={XML} style={{ color: '#D55804' }} onChange={handleDownloadChange('XML')} value="XML" />
-                          }
-                          label="XML"
-                        />
-                        <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={() => console.log(download, dataElements)}>
+                        <RadioGroup aria-label="download" name="downloadRadio" value={downloadValue} onChange={handleDownloadChange}>
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML"/>
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />}  label="CSV" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON"/>
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />}  label="XML" />
+                        </RadioGroup>                      
+                        <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
                           Download DATA
-          </Button>
+                        </Button>
                       </FormGroup>
                     </FormControl> :
-
 
                     //  compare popover panel
                     <FormControl component="fieldset" className={classes.popOver}>
@@ -1768,7 +1780,7 @@ Compare selected data elements
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
             <ErrorBoundary>
               {dataElements.map(dataElement => (
-                <div key={dataElement.display_name}>
+                <div key={dataElement.id}>
 
                   <ExpansionPanel className={classes.dataelementContainer}
                     TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
@@ -1791,7 +1803,7 @@ Compare selected data elements
                         onClick={handleCompareCheckbox(dataElement)}
                         onFocus={event => event.stopPropagation()}
                         control={<Checkbox />}
-                        checked={selectedDataElement.includes(dataElement.display_name) ? true : false}
+                        checked={selectedDataElement.includes(dataElement.id) ? true : false}
                       // label="I acknowledge that I should stop the click event propagation"
                       />
                       <Grid container alignItems="center" justify="space-between">

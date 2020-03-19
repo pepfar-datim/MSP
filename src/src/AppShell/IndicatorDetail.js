@@ -35,6 +35,13 @@ const ExpandSubTitle = styled.span`
 
 
 export default function  IndicatorDetail(props) {   
+  let versionText = "";  
+  props.versionMap.map(   
+      item => {         
+        if (props.currentIndicator.periodYear && item.year === props.currentIndicator.periodYear) {
+          versionText = item.fromToText;
+        }
+  });  
     return (
       <div>       
         {props.indicatorDetailLoading ? 
@@ -63,7 +70,7 @@ export default function  IndicatorDetail(props) {
         <ExpansionPanel defaultExpanded={false}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <ExpandTitle>Indicator changes</ExpandTitle>
-              <ExpandSubTitle> Guidance Version: {props.currentIndicator.guidance_version}</ExpandSubTitle>
+              <ExpandSubTitle> Guidance Version: {versionText} </ExpandSubTitle>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>                        
                 <div><strong>Change from previous version</strong>: {props.currentIndicator.changeFromPreviousVersion}</div>                        
