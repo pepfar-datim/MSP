@@ -1198,17 +1198,20 @@ export default function Codelist() {
 
   const performDownload = event => {
     const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
-    let downloadURL = "";
-    if (selectedDataElement.length > 0) {
-      downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
-    } else if (values.dataSet !== "All") {
-      downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
-    }
-    let downloadLink = document.createElement('a');
-    downloadLink.href = downloadURL;
-    downloadLink.setAttribute('download', "download");
-    downloadLink.click();
-    revokeDownloadLink(downloadLink.href);
+    let downloadURL = "";     
+        if (selectedDataElement.length > 0) {          
+          downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();          
+        }else if (values.dataSet !== "All") {         
+          downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();          
+        } 
+        let downloadLink = document.createElement('a');
+        downloadLink.href = downloadURL;    
+        if (downloadValue.trim() !== "CSV"){
+          downloadLink.setAttribute("target", "_blank");
+        }         
+        downloadLink.setAttribute('download', "download"); 
+        downloadLink.click();
+        revokeDownloadLink(downloadLink.href);          
   }
 
   function revokeDownloadLink(href) {
