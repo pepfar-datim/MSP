@@ -54,7 +54,7 @@ import IconButton from '@material-ui/core/IconButton';
 //import Alert from '@material-ui/lab/Alert';
 import InputBase from '@material-ui/core/InputBase';
 import Chip from '@material-ui/core/Chip';
-import  Radio  from '@material-ui/core/Radio';
+import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 
 
@@ -97,6 +97,7 @@ const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 
 let deMappings = {};
+let selectDataTemp = {};
 let pdhDerivatives = {}
 
 
@@ -1132,20 +1133,28 @@ export default function Codelist() {
 
 
   const [selectedDataElement, setSelectedDataElement] = React.useState([]);
+
   //implement comparison checkbox
   const handleCompareCheckbox = dataElement => event => {
     event.stopPropagation();
+
     //remove the element from the selected data element when unclick
     if (selectedDataElement.includes(dataElement.id)) {
       const newSelectedDataElement = selectedDataElement.filter(data => {
         return data !== dataElement.id;
       });
       setSelectedDataElement(newSelectedDataElement);
+
+
+      if (Object.keys(selectDataTemp).includes(dataElement.id)) {
+        delete selectDataTemp[dataElement.id]
+      }
     } else {
       //add the element from the selected data element when click
       !deMappings[dataElement.id] ? getMappings(dataElement.id) : '';
       const newSelectedDataElement = [...selectedDataElement, dataElement.id];
       setSelectedDataElement(newSelectedDataElement);
+      selectDataTemp[dataElement.id] = dataElement
     }
 
 
@@ -1172,7 +1181,7 @@ export default function Codelist() {
   //set dropdown popup
   const dropDownMenu = buttonName => event => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
-    setDropDownName(buttonName);    
+    setDropDownName(buttonName);
 
 
   };
@@ -1183,35 +1192,35 @@ export default function Codelist() {
   };
 
   const [downloadValue, setDownloadValue] = React.useState('HTML');
-  const handleDownloadChange = event => {        
-    setDownloadValue(event.target.value);    
+  const handleDownloadChange = event => {
+    setDownloadValue(event.target.value);
   };
 
-  const performDownload = event => {   
+  const performDownload = event => {
     const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
-    let downloadURL = "";     
-        if (selectedDataElement.length > 0) {          
-          downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();          
-        }else if (values.dataSet !== "All") {         
-          downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();          
-        } 
-        let downloadLink = document.createElement('a');
-        downloadLink.href = downloadURL;           
-        downloadLink.setAttribute('download', "download"); 
-        downloadLink.click();
-        revokeDownloadLink(downloadLink.href);          
+    let downloadURL = "";
+    if (selectedDataElement.length > 0) {
+      downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
+    } else if (values.dataSet !== "All") {
+      downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
+    }
+    let downloadLink = document.createElement('a');
+    downloadLink.href = downloadURL;
+    downloadLink.setAttribute('download', "download");
+    downloadLink.click();
+    revokeDownloadLink(downloadLink.href);
   }
 
-  function revokeDownloadLink(href){
-    setTimeout(function(){             
-        window.URL.revokeObjectURL(href);  
-    }, 10000);  
-  } 
-
-  const clearSelectedDataElements = event => {    
-    setSelectedDataElement([]);      
+  function revokeDownloadLink(href) {
+    setTimeout(function () {
+      window.URL.revokeObjectURL(href);
+    }, 10000);
   }
-  
+
+  const clearSelectedDataElements = event => {
+    setSelectedDataElement([]);
+  }
+
   //compare dropdown menu
   const [compare, setCompare] = React.useState({
     DATIM: true,
@@ -1222,7 +1231,7 @@ export default function Codelist() {
     setCompare({ ...compare, [name]: event.target.checked });
   };
 
-  
+
   const { DATIM, PDH, MOH } = compare;
 
 
@@ -1249,47 +1258,40 @@ export default function Codelist() {
       setCompare({ ...comparePanel, [DATIM]: true });
       setComparePanel({ ...comparePanel, [side]: open });
 
-      const selectDataTemp = [];
+      //const selectDataTemp = [];
 
       //get data element details of the selected data elements
 
       // eslint-disable-next-line array-callback-return
       console.log("toggleDrawer dataElements")
-      console.log(dataElements)
-      dataElements.map(dataElement => {
-        if (selectedDataElement.includes(dataElement.id)) {
-          selectDataTemp.push(dataElement);
-          if (!deMappings[dataElement.id]) {
-            getMappings(dataElement.id)
-          }
-        }
-
+      console.log(selectedDataElement)
+      let temp = []
+      Object.values(selectDataTemp).map(value => {
+        temp.push(value)
       }
-
       )
-      setSelectedDatim(selectDataTemp);
-      console.log("!!setSelectedDatim.length " + setSelectedDatim.length)
-
+      setSelectedDatim(temp);
+      
     }
   };
 
   // when values.dataSet === "All" && selectedDataElement.length ==0 disable the button
-  
-  function getDownloadLabel() {   
-    let downloadLabel = "Download";   
-    if (values.dataSet === "All"){   
-      if (selectedDataElement.length > 0){
+
+  function getDownloadLabel() {
+    let downloadLabel = "Download";
+    if (values.dataSet === "All") {
+      if (selectedDataElement.length > 0) {
         downloadLabel = "Download Selected Data Elements";
       }
-    }else if (values.dataSet !== "" && values.dataSet !== "All"){
-      if (selectedDataElement.length > 0){
+    } else if (values.dataSet !== "" && values.dataSet !== "All") {
+      if (selectedDataElement.length > 0) {
         downloadLabel = "Download Selected Data Elements";
-      }else {
+      } else {
         downloadLabel = "Download Full Code List";
       }
     }
     return downloadLabel;
-  }   
+  }
 
   //set initial panel state and panel handle change function
   const [panel, setPanel] = React.useState(0);
@@ -1662,12 +1664,12 @@ export default function Codelist() {
             {/* dashboard, including download, compare, select all buttons */}
             <div className={classes.tabDashboard}>
               <div>
-                {selectedDataElement && selectedDataElement.length > 0 ?                 
-                <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
-                 Clear All selected   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px'  }}> {selectedDataElement.length}</span></Button> 
-                 : null }
-                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length=== 0 && values.dataSet === "All" ? true: false}>
-                 {getDownloadLabel()} </Button>
+                {selectedDataElement && selectedDataElement.length > 0 ?
+                  <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
+                    Clear All selected   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px' }}> {selectedDataElement.length}</span></Button>
+                  : null}
+                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                  {getDownloadLabel()} </Button>
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
@@ -1722,11 +1724,11 @@ Compare selected data elements
                       <FormGroup>
                         <FormLabel component="legend" className={classes.formLegend}>Data Format</FormLabel>
                         <RadioGroup aria-label="download" name="downloadRadio" value={downloadValue} onChange={handleDownloadChange}>
-                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML"/>
-                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />}  label="CSV" />
-                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON"/>
-                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />}  label="XML" />
-                        </RadioGroup>                      
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                        </RadioGroup>
                         <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
                           Download DATA
                         </Button>
@@ -1819,10 +1821,10 @@ Compare selected data elements
                         </Grid>
 
                         <Grid item xs={3}>
-                        <Typography>
+                          <Typography>
                             <strong>Data Element UID</strong>: {dataElement.external_id}
                           </Typography>
-                          </Grid>
+                        </Grid>
                         {/* <Chip
                             variant="outlined"
                             size="small"
@@ -1835,16 +1837,16 @@ Compare selected data elements
                             size="small"
                             label={"Source: " + dataElement.extras.source}
                             clickable
-                            //color="primary"
+                          //color="primary"
                           //onClick={handleClick}
                           />
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
-                          <Grid item xs={3} >
-                          </Grid>
+                        </Grid>
+                        <Grid item xs={3} >
+                        </Grid>
+                        <Grid item xs={3} >
+                        </Grid>
+                        <Grid item xs={3} >
+                        </Grid>
                       </Grid>
 
                     </ExpansionPanelSummary>
@@ -2407,6 +2409,3 @@ Compare selected data elements
   );
 
 }
-
-
-
