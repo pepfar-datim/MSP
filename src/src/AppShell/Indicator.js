@@ -105,6 +105,7 @@ const org = getConfig().org;
 const source = getConfig().source;
 const defaultYear = getConfig().defaultYear;
 const codeListMap = getCodeListMap();
+const versionMap = getConfig().versionMap;
 
 const ExpandTitle = styled.p`
     margin:0;
@@ -500,9 +501,9 @@ const useStyles = makeStyles(theme => ({
       setFormularPanel(newFormularPanel);
     };
 
-    const getIndicatorGroup = function (indicatorData) { 
+    const getIndicatorGroup = function (indicatorData) {     
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
-      var filteredByYearData = indicatorData.filter(function (data) {        
+      var filteredByYearData = indicatorData.filter(function (data) {                
         if (values.frequency !== "" && values.fiscal !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
         }else if (values.frequency !== "") {                   
@@ -660,7 +661,7 @@ const useStyles = makeStyles(theme => ({
         var mappedDataElements = [];
         if (jsonData && Array.isArray(jsonData)){          
           mappedDataElements = jsonData.map(item => {
-            console.log(item);
+            //console.log(item);
             var dataElementItem = {};
             dataElementItem.source = item.extras.source;
             dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
@@ -871,7 +872,7 @@ const useStyles = makeStyles(theme => ({
         ...oldValues,
         [event.target.name]: event.target.value,
       }));  
-      setPage(0);
+      setPage(0);      
   };
 
   //when value has changed, call useEffect function
@@ -1028,7 +1029,7 @@ return (
      
       {/* indicator details */}
       <TabPanel value={panel} index={INDICATOR_PANEL} className={classes.tabPanel}>    
-        <IndicatorDetail currentIndicator={currentIndicator} classes={classes}  indicatorDetailLoading={indicatorDetailLoading}  />           
+        <IndicatorDetail currentIndicator={currentIndicator} versionMap={versionMap} classes={classes}  indicatorDetailLoading={indicatorDetailLoading}  />           
       </TabPanel>
 
 
