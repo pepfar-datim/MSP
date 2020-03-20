@@ -56,7 +56,8 @@ import InputBase from '@material-ui/core/InputBase';
 import Chip from '@material-ui/core/Chip';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-
+import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 //tab panel function
 function TabPanel(props) {
@@ -123,6 +124,11 @@ const useStyles = makeStyles(theme => ({
   },
   chipContainer: {
     marginRight: '10px'
+  },
+  absolute: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(3),
   },
   formControl: {
     width: '100%'
@@ -1198,20 +1204,20 @@ export default function Codelist() {
 
   const performDownload = event => {
     const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
-    let downloadURL = "";     
-        if (selectedDataElement.length > 0) {          
-          downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();          
-        }else if (values.dataSet !== "All") {         
-          downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();          
-        } 
-        let downloadLink = document.createElement('a');
-        downloadLink.href = downloadURL;    
-        if (downloadValue.trim() !== "CSV"){
-          downloadLink.setAttribute("target", "_blank");
-        }         
-        downloadLink.setAttribute('download', "download"); 
-        downloadLink.click();
-        revokeDownloadLink(downloadLink.href);          
+    let downloadURL = "";
+    if (selectedDataElement.length > 0) {
+      downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
+    } else if (values.dataSet !== "All") {
+      downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
+    }
+    let downloadLink = document.createElement('a');
+    downloadLink.href = downloadURL;
+    if (downloadValue.trim() !== "CSV") {
+      downloadLink.setAttribute("target", "_blank");
+    }
+    downloadLink.setAttribute('download', "download");
+    downloadLink.click();
+    revokeDownloadLink(downloadLink.href);
   }
 
   function revokeDownloadLink(href) {
@@ -1274,7 +1280,7 @@ export default function Codelist() {
       }
       )
       setSelectedDatim(temp);
-      
+
     }
   };
 
@@ -1336,7 +1342,23 @@ export default function Codelist() {
       return this.props.children;
     }
   }
-
+  const [toolTipOpen, setToolTipOpen] = React.useState(false);
+  const handleTooltipClose = () => {
+    setToolTipOpen(false);
+  };
+  const handleTooltipOpen = () => {
+    setToolTipOpen(true);
+  };
+  const copyToClipboard = str => {
+    console.log("copied text" + str)
+    const el = document.createElement('textarea');
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    //handleTooltipOpen()
+  };
 
   return (
     <div>
@@ -1782,7 +1804,6 @@ Compare selected data elements
               </div> : ([])
             }
             {/* data elements */}
-            {console.log(" ExpansionPanel dataElements size : " + dataElements.length)}
             {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
             <ErrorBoundary>
               {dataElements.map(dataElement => (
@@ -1865,6 +1886,42 @@ Compare selected data elements
                           {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
           {dataElement.indicatorCode}
           </NavLink> */}
+                          <Grid>
+                            {/* <ClickAwayListener onClickAway={handleTooltipClose}>
+                              <div
+                              // role="button"
+                              // onClick={handleTooltipClose}
+                              // onKeyDown={handleTooltipClose}
+                              >
+                                <Tooltip
+                                  PopperProps={{
+                                    disablePortal: true,
+                                  }}
+                                  onClose={handleTooltipClose}
+                                  open={toolTipOpen}
+                                  disableFocusListener
+                                  disableHoverListener
+                                  disableTouchListener
+                                  title="Copied"
+                                >
+                                  <Chip
+                                    variant="outlined"
+                                    size="small"
+                                    label={"UID: " + dataElement.id}
+                                    onClick={() => copyToClipboard(dataElement.id)}
+                                  />
+                                </Tooltip>
+                              </div>
+                            </ClickAwayListener> */}
+                            <Tooltip disableFocusListener title="Click to copy UID">
+                            <Chip
+                                    variant="outlined"
+                                    size="small"
+                                    label={"UID: " + dataElement.id}
+                                    onClick={() => copyToClipboard(dataElement.id)}
+                                  />
+                            </Tooltip>
+                          </Grid>
                           <Table className={classes.comboTable} aria-label="simple table">
                             <TableBody>
                               <TableRow>
@@ -1879,14 +1936,14 @@ Compare selected data elements
                                 <TableCell><strong>Description</strong></TableCell>
                                 <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "N/A"}</TableCell>
                               </TableRow>
-                              <TableRow>
+                              {/* <TableRow>
                                 <TableCell><strong>UID</strong></TableCell>
                                 <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
+                              </TableRow> */}
+                              {/* <TableRow>
                                 <TableCell><strong>Source</strong></TableCell>
                                 <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
-                              </TableRow>
+                              </TableRow> */}
                               <TableRow>
                                 <TableCell><strong>Data Type</strong></TableCell>
                                 <TableCell>{dataElement.datatype ? (dataElement.datatype) : 'N/A'}</TableCell>
@@ -2133,7 +2190,7 @@ Compare selected data elements
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel3b-content"
                                 id="panel3b-header"
-                                onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
+                              //onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
                               >
 
                                 <Table className={classes.comboTable} aria-label="simple table">
