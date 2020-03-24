@@ -37,7 +37,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Drawer from '@material-ui/core/Drawer';
 import CloseIcon from '@material-ui/icons/Close';
 import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
 import { getConfig } from '../config.js';
@@ -51,13 +50,13 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-//import Alert from '@material-ui/lab/Alert';
 import InputBase from '@material-ui/core/InputBase';
 import Chip from '@material-ui/core/Chip';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Tooltip from '@material-ui/core/Tooltip';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Slide from '@material-ui/core/Slide';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -203,6 +202,13 @@ const useStyles = makeStyles(theme => ({
   changeBoxTitle: {
     color: '#920E0E'
   },
+  detailsDialogBar: {
+    position: 'relative',
+  },
+  detailsDialogTitle: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
   expansionPanelSummary: {
     borderBottom: '1px solid #C1A783',
     color: '#000000'
@@ -295,6 +301,14 @@ const useStyles = makeStyles(theme => ({
   },
   actionButton: {
     marginLeft: '20px',
+    marginTop: '10px',
+    marginBottom: '20px',
+    '&:hover, &:focus': {
+      backgroundColor: '#C1A783',
+      color: '#000000'
+    }
+  },
+  detailsButton: {
     marginTop: '10px',
     marginBottom: '20px',
     '&:hover, &:focus': {
@@ -780,9 +794,15 @@ export default function Codelist() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogMessage, setDialogMessage] = React.useState('');
 
-  const handleClose = () => {
+  const handleDialogClose = () => {
     setDialogOpen(false);
   };
+  const [detailPanel, setDetailPanel] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
   const styles = theme => ({
     root: {
@@ -1139,6 +1159,7 @@ export default function Codelist() {
 
 
   const [selectedDataElement, setSelectedDataElement] = React.useState([]);
+  const [dataElementDetail, setDataElementDetail] = React.useState(null);
 
   //implement comparison checkbox
   const handleCompareCheckbox = dataElement => event => {
@@ -1284,6 +1305,16 @@ export default function Codelist() {
     }
   };
 
+  const toggleDetailDrawer = (dataElement, side, open) => event => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDataElementDetail(dataElement);
+      setDetailPanel({ ...detailPanel, [side]: open });
+
+
+  };
+
   // when values.dataSet === "All" && selectedDataElement.length ==0 disable the button
 
   function getDownloadLabel() {
@@ -1359,6 +1390,7 @@ export default function Codelist() {
     document.body.removeChild(el);
     //handleTooltipOpen()
   };
+
 
   return (
     <div>
@@ -1705,8 +1737,8 @@ Compare selected data elements
               </div>
 
               <div>
-                <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
-                  <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                <Dialog onClose={handleDialogClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
+                  <DialogTitle id="customized-dialog-title" onClose={handleDialogClose}>
                   </DialogTitle>
                   <DialogContent >
                     <Typography gutterBottom>
@@ -1714,7 +1746,7 @@ Compare selected data elements
                     </Typography>
                   </DialogContent>
                   <DialogActions>
-                    <Button autoFocus onClick={handleClose} color="primary">
+                    <Button autoFocus onClick={handleDialogClose} color="primary">
                       OK
           </Button>
                   </DialogActions>
@@ -1882,110 +1914,30 @@ Compare selected data elements
                       className={classes.expansionPanelDetails}
                     >
                       <Grid container>
-                        <Grid item xs={12} className={classes.expansionPanelLeft}>
-                          {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
-          {dataElement.indicatorCode}
-          </NavLink> */}
-                          <Grid>
-                            {/* <ClickAwayListener onClickAway={handleTooltipClose}>
-                              <div
-                              // role="button"
-                              // onClick={handleTooltipClose}
-                              // onKeyDown={handleTooltipClose}
-                              >
-                                <Tooltip
-                                  PopperProps={{
-                                    disablePortal: true,
-                                  }}
-                                  onClose={handleTooltipClose}
-                                  open={toolTipOpen}
-                                  disableFocusListener
-                                  disableHoverListener
-                                  disableTouchListener
-                                  title="Copied"
-                                >
-                                  <Chip
-                                    variant="outlined"
-                                    size="small"
-                                    label={"UID: " + dataElement.id}
-                                    onClick={() => copyToClipboard(dataElement.id)}
-                                  />
-                                </Tooltip>
-                              </div>
-                            </ClickAwayListener> */}
+                        
+                          <Grid item xs={12} className={classes.expansionPanelLeft}>
                             <Tooltip disableFocusListener title="Click to copy UID">
-                            <Chip
-                                    variant="outlined"
-                                    size="small"
-                                    label={"UID: " + dataElement.id}
-                                    onClick={() => copyToClipboard(dataElement.id)}
-                                  />
+                              <Chip
+                                variant="outlined"
+                                size="small"
+                                label={"UID: " + dataElement.id}
+                                onClick={() => copyToClipboard(dataElement.id)}
+                              />
                             </Tooltip>
                           </Grid>
-                          <Table className={classes.comboTable} aria-label="simple table">
-                            <TableBody>
-                              <TableRow>
-                                <TableCell><strong>Short Name</strong></TableCell>
-                                <TableCell>{dataElement.names[1] ? (dataElement.names[1].name) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Code</strong></TableCell>
-                                <TableCell>{dataElement.names[2] ? (dataElement.names[2].name) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow className={classes.comboTable}>
-                                <TableCell><strong>Description</strong></TableCell>
-                                <TableCell>{(dataElement.descriptions) ? dataElement.descriptions[0].description : "N/A"}</TableCell>
-                              </TableRow>
-                              {/* <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
-                              </TableRow> */}
-                              {/* <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
-                              </TableRow> */}
-                              <TableRow>
-                                <TableCell><strong>Data Type</strong></TableCell>
-                                <TableCell>{dataElement.datatype ? (dataElement.datatype) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Domain Type</strong></TableCell>
-                                <TableCell>{dataElement.extras.domainType ? (dataElement.extras.domainType) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Value Type</strong></TableCell>
-                                <TableCell>{dataElement.extras.valueType ? (dataElement.extras.valueType) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Aggregation Type</strong></TableCell>
-                                <TableCell>{dataElement.extras.aggregationType ? (dataElement.extras.aggregationType) : 'N/A'}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Applicable Periods</strong></TableCell>
-                                <TableCell>
-                                  {
-                                    dataElement.extras['Applicable Periods'] ? (dataElement.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElement.extras['Applicable Periods']).map(
-
-                                      key =>
-
-                                        dataElement.extras['Applicable Periods'][key] + ", "
-
-                                    )
-                                    ) : 'N/A') : 'N/A'
-                                  }
-                                </TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Result/Target</strong></TableCell>
-                                <TableCell>{dataElement.extras.resultTarget ? dataElement.extras.resultTarget : 'N/A'}</TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-
-
-
+                          <Grid item xs={12} className={classes.expansionPanelLeft}>
+                          <strong>Description: </strong> {(dataElement.descriptions) ? dataElement.descriptions[0].description : "N/A"}
+                          </Grid>
+                          
+                            <Grid item xs={12} className={classes.expansionPanelLeft}>
+                          {/* <ExpansionPanelActions> */}
+                          <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
+                          View all data element details or compare with other data elements
+                </Button>
+                          {/* </ExpansionPanelActions> */}
+                          </Grid>
+                          
                         </Grid>
-                      </Grid>
                     </ExpansionPanelDetails>
                     <ExpansionPanel className={classes.dataElementContainer}
                       TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
@@ -2453,7 +2405,90 @@ Compare selected data elements
 
 
 
+            <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
+              <Grid container className={classes.comparePanelContainer}>
+              <Grid item xs={12}>
 
+{/* <div className={classes.fixedTop}> */}
+<div >
+  <CloseIcon onClick={toggleDetailDrawer(dataElementDetail,'bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
+  <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
+  {/* comparison panel title */}
+</div>
+                          {/* <Dialog fullScreen open={detailsOpen} onClose={handleDetailsClose} 
+                          TransitionComponent={Transition}
+                          >
+                            <AppBar className={classes.detailsDialogBar}>
+                              <Toolbar>
+                                <IconButton edge="start" color="inherit" onClick={handleDetailsClose} aria-label="close">
+                                  <CloseIcon />
+                                </IconButton>
+                              </Toolbar>
+                              </AppBar> */}
+                              {dataElementDetail ? 
+                              <Table className={classes.comboTable} aria-label="simple table">
+                                <TableBody>
+                                  <TableRow>
+                                    <TableCell><strong>Short Name</strong></TableCell>
+                                    <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Code</strong></TableCell>
+                                    <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow className={classes.comboTable}>
+                                    <TableCell><strong>Description</strong></TableCell>
+                                    <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "N/A"}</TableCell>
+                                  </TableRow>
+                                  {/* <TableRow>
+                                <TableCell><strong>UID</strong></TableCell>
+                                <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
+                              </TableRow> */}
+                                  {/* <TableRow>
+                                <TableCell><strong>Source</strong></TableCell>
+                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
+                              </TableRow> */}
+                                  <TableRow>
+                                    <TableCell><strong>Data Type</strong></TableCell>
+                                    <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Domain Type</strong></TableCell>
+                                    <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Value Type</strong></TableCell>
+                                    <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Aggregation Type</strong></TableCell>
+                                    <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : 'N/A'}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Applicable Periods</strong></TableCell>
+                                    <TableCell>
+                                      {
+                                        dataElementDetail.extras['Applicable Periods'] ? (dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElementDetail.extras['Applicable Periods']).map(
+
+                                          key =>
+
+                                          dataElementDetail.extras['Applicable Periods'][key] + ", "
+
+                                        )
+                                        ) : 'N/A') : 'N/A'
+                                      }
+                                    </TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell><strong>Result/Target</strong></TableCell>
+                                    <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : 'N/A'}</TableCell>
+                                  </TableRow>
+                                </TableBody>
+                              </Table> : ''}
+                              </Grid>
+</Grid>
+                          {/* </Dialog> */}
+</Drawer>
 
 
 
