@@ -1968,7 +1968,7 @@ Compare selected data elements
                           <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                             <Tab label="DISAGGREGATIONS FORMULA" {...a11yProps(0)} />
                             <Tab label="DISAGGREGATIONS LIST" {...a11yProps(1)} />
-                            <Tab label="DERIVATIONS" {...a11yProps(2)} />
+                            {values.source === 'PDH' ? (<Tab label="DERIVATIONS" {...a11yProps(2)} />) : ''}
                           </Tabs>
                           <TabPanel value={panel} index={0} className={classes.tabPanel}>
                           <Grid container alignItems="center" justify="space-between">
@@ -2030,8 +2030,9 @@ Compare selected data elements
                               </Table>
                             </Grid>
                           </TabPanel>
-                          <TabPanel value={panel} index={2} className={classes.tabPanel}>
+                          
                             {values.source === 'PDH' ? (
+                              <TabPanel value={panel} index={2} className={classes.tabPanel}>
                               <div className={classes.tableContainer} >
                                 <Table className={classes.table} aria-label="simple table">
                                   <TableHead>
@@ -2079,8 +2080,9 @@ Compare selected data elements
                                 </Table>
                                 {pdhDerivatives = []}
                               </div>
+                              </TabPanel>
                             ) : ''}
-                          </TabPanel>
+                          
                         </div>
                       )} />
 
