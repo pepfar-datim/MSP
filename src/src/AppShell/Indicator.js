@@ -24,6 +24,8 @@ import Paper from '@material-ui/core/Paper';
 // eslint-disable-next-line no-unused-vars
 import { Route, BrowserRouter as Router, NavLink, useParams, useLocation, Redirect } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
+import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -37,6 +39,7 @@ import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
 import {getCodeListMap} from '../currentCodelist.js'
 import IndicatorDetail from './IndicatorDetail';
+import DataElementDetail from './DataElementDetail';
 import Shortcut from './Shortcut';
 
 
@@ -251,6 +254,14 @@ const useStyles = makeStyles(theme => ({
       color: '#000000'
     }
   },
+  detailsButton: {
+    marginTop: '10px',
+    marginBottom: '20px',
+    '&:hover, &:focus': {
+      backgroundColor: '#C1A783',
+      color: '#000000'
+    }
+  },
   downloadButton:{
     marginRight: '20px',
     marginTop: '10px',
@@ -314,7 +325,16 @@ const useStyles = makeStyles(theme => ({
       color: '#ffffff'
     }
   },
-  
+  closeComparePanel: {
+    float: 'right',
+    margin: '1em',
+    cursor: 'pointer',
+    padding: '10px',
+    border: '1px solid #111111',
+    borderRadius: '50%',
+    marginTop: 0
+  },
+ 
   titleNote:{
     color: "rgba(0, 0, 0, 0.87) !important",
     fontSize: '0.8rem',
@@ -495,10 +515,28 @@ const useStyles = makeStyles(theme => ({
     };
 
     const [formularPanel, setFormularPanel] = React.useState(0);
+    const [dataElementDetail, setDataElementDetail] = React.useState(null);
+
+    const [detailPanel, setDetailPanel] = React.useState({
+      top: false,
+      left: false,
+      bottom: false,
+      right: false,
+    });
+
     const handleFormularChange = (event, newFormularPanel) => {
       event.stopPropagation();
       event.preventDefault();
       setFormularPanel(newFormularPanel);
+    };
+
+    const toggleDetailDrawer = (dataElement, side, open) => event => {
+      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {        
+        return;
+      }
+      console.log(dataElement);
+      setDataElementDetail(dataElement);      
+      setDetailPanel({ ...detailPanel, [side]: open });
     };
 
     const getIndicatorGroup = function (indicatorData) {     
@@ -663,12 +701,14 @@ const useStyles = makeStyles(theme => ({
           mappedDataElements = jsonData.map(item => {
             //console.log(item);
             var dataElementItem = {};
-            dataElementItem.source = item.extras.source;
+            /*dataElementItem.source = item.extras.source;
             dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
             dataElementItem.uid = item.external_id;
             dataElementItem.id = item.id;
             dataElementItem.code = item.id;
             dataElementItem.name = item.display_name;   
+            dataElementItem.extra = item.extra;*/
+            dataElementItem = item;
             var deMappings = []; 
             const mappings = [];           
             //const mappings = item.mappings.filter(mapping => mapping.map_type === "Has Option");
@@ -740,9 +780,11 @@ const useStyles = makeStyles(theme => ({
         
         const jsonData = await response.json();
         let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');         
-        //console.log(jsonData);   
-        matchDataElements.map(item => {          
-          if (item.id === id && (!item.disags || item.disags.length ===0)) {                      
+        console.log(jsonData);   
+        matchDataElements.map(item => {        
+            
+          if (item.id === id && (!item.disags || item.disags.length ===0)) {        
+            console.log(item);                        
             const deMappings = sortedData
             .filter(mapping => mapping.map_type === "Has Option")            
             .map(mapping => {
@@ -754,6 +796,7 @@ const useStyles = makeStyles(theme => ({
            
             var sortedMappings = sortJSON(deMappings, 'name', 'asc');
             item.disags = sortedMappings;
+            
           }
           return item;
         })       
@@ -1045,7 +1088,7 @@ return (
       
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
-        <div key={dataElement.code}>
+        <div key={dataElement.external_id}>
           <ExpansionPanel className={classes.expansionPanel}   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}  
                           onClick={() => dataElement.disags.length === 0 ? getMappings(dataElement.id) : null}>
 
@@ -1054,17 +1097,29 @@ return (
               <Grid container alignItems="center" justify="space-between">       
                 <Grid item  xs={11} md={9}>         
                   <Typography className={classes.heading}> 
-                  <strong>{dataElement.name}</strong> {dataElement.category}
+                  <strong>{dataElement.display_name}</strong>
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <Typography className={classes.heading}> 
-                  <strong>Data Element UID</strong>: {dataElement.uid} 
+                  <strong>Data Element UID</strong>: {dataElement.external_id}
                   </Typography>
                   </Grid>
+                  <Grid item xs={2} >
+                    <Chip
+                      variant="outlined" size="small" label={"Source: " + dataElement.extras.source} clickable                    
+                    />                     
+                  </Grid>
+                  <Grid item xs={2} >                   
+                     <Chip
+                      variant="outlined" size="small" label={"UID: " + dataElement.external_id} clickable                    
+                    />                                                           
+                  </Grid>
+                  <Grid item xs={8} />
               </Grid>         
             </ExpansionPanelSummary>
 
+            <DataElementDetail dataElementDetail={dataElementDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
           {/* data elements details */}
           <ExpansionPanelDetails className={classes.expansionPanelDetails}>
             <Grid container>
@@ -1073,10 +1128,16 @@ return (
                 <strong>Description</strong>: {dataElement.description}<br/> 
                 {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
                 {dataElement.indicatorName}
-                </NavLink> */}
-                <strong>Source</strong>: {dataElement.source}<br/>          
+                </NavLink> */}                       
               </Typography>
             </Grid>
+
+            <Grid item xs={12} className={classes.expansionPanelLeft}>                        
+              <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
+              View data element details
+              </Button>              
+            </Grid>
+
        
             {/* data element Disaggregations */}
             <Grid item  xs={12} className={classes.comboTable}>

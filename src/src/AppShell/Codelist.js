@@ -57,6 +57,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
+import DataElementDetail from './DataElementDetail';
 
 
 //tab panel function
@@ -2419,93 +2420,7 @@ Compare selected data elements
             </Drawer>
 
 
-
-            <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
-              <Grid container className={classes.comparePanelContainer}>
-                <Grid item xs={12}>
-
-                  {/* <div className={classes.fixedTop}> */}
-                  <div >
-                    <CloseIcon onClick={toggleDetailDrawer(dataElementDetail, 'bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
-                    <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
-                    {/* comparison panel title */}
-                  </div>
-                  {/* <Dialog fullScreen open={detailsOpen} onClose={handleDetailsClose} 
-                          TransitionComponent={Transition}
-                          >
-                            <AppBar className={classes.detailsDialogBar}>
-                              <Toolbar>
-                                <IconButton edge="start" color="inherit" onClick={handleDetailsClose} aria-label="close">
-                                  <CloseIcon />
-                                </IconButton>
-                              </Toolbar>
-                              </AppBar> */}
-                  {dataElementDetail ?
-                    <Table className={classes.comboTable} aria-label="simple table">
-                      <TableBody>
-                        <TableRow>
-                          <TableCell><strong>Short Name</strong></TableCell>
-                          <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Code</strong></TableCell>
-                          <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow className={classes.comboTable}>
-                          <TableCell><strong>Description</strong></TableCell>
-                          <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "N/A"}</TableCell>
-                        </TableRow>
-                        {/* <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
-                              </TableRow> */}
-                        {/* <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
-                              </TableRow> */}
-                        <TableRow>
-                          <TableCell><strong>Data Type</strong></TableCell>
-                          <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Domain Type</strong></TableCell>
-                          <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Value Type</strong></TableCell>
-                          <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Aggregation Type</strong></TableCell>
-                          <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : 'N/A'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Applicable Periods</strong></TableCell>
-                          <TableCell>
-                            {
-                              dataElementDetail.extras['Applicable Periods'] ? (dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElementDetail.extras['Applicable Periods']).map(
-
-                                key =>
-
-                                  dataElementDetail.extras['Applicable Periods'][key] + ", "
-
-                              )
-                              ) : 'N/A') : 'N/A'
-                            }
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell><strong>Result/Target</strong></TableCell>
-                          <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : 'N/A'}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table> : ''}
-                </Grid>
-              </Grid>
-              {/* </Dialog> */}
-            </Drawer>
-
-
+            <DataElementDetail dataElementDetail={dataElementDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
 
           </Grid>
         </Grid>
