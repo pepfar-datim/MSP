@@ -1125,7 +1125,7 @@ return (
             <Grid container>
             <Grid item  xs={12} className={classes.expansionPanelLeft}>
               <Typography>
-                <strong>Description</strong>: {dataElement.description}<br/> 
+                <strong>Description</strong>: {dataElement.descriptions ? dataElement.descriptions[0].description : "N/A"}              
                 {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
                 {dataElement.indicatorName}
                 </NavLink> */}                       
