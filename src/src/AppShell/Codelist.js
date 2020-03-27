@@ -57,7 +57,9 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
-
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import InfoIcon from '@material-ui/icons/Info';
 
 //tab panel function
 function TabPanel(props) {
@@ -103,6 +105,10 @@ let pdhDerivatives = {}
 
 
 const useStyles = makeStyles(theme => ({
+  margin: {
+    margin: theme.spacing(1),
+    backgroundColor: '#fcfcfc'
+  },
   hide: {
     display: 'none'
   },
@@ -116,7 +122,8 @@ const useStyles = makeStyles(theme => ({
   heroContainer: {
     margin: '0 auto',
     backgroundColor: '#eeeeee',
-    paddingBottom: '20px'
+    padding: '20px',
+    width: '350px'
   },
   root: {
     width: '100%',
@@ -443,6 +450,15 @@ const useStyles = makeStyles(theme => ({
     /*borderColor: `'#D55804' !important`,
     borderWidth: '2px',*/
   },
+  compare: {
+    padding: '6px 4px',
+    display: 'flex',
+    alignItems: 'left',
+    width: '150px',
+    //border: '2px solid #D55804',
+    /*borderColor: `'#D55804' !important`,
+    borderWidth: '2px',*/
+  },
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
@@ -517,6 +533,9 @@ const useStyles = makeStyles(theme => ({
     },
     compareTitle: {
       display: 'none'
+    },
+    gridList: {
+      width: 300
     }
 
   }
@@ -570,6 +589,7 @@ export default function Codelist() {
   const [source, setSource] = useState(["MER"]);
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
+  const [compareInputText, setCompareInputText] = useState(""); // set the search DE to compare
   const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
@@ -875,6 +895,10 @@ export default function Codelist() {
     setSearchInputText(document.getElementById("inputSearch").value);
   };
 
+  const handleCompareInputChange = () => {
+    setCompareInputText(document.getElementById("compareSearch").value);
+  }; 
+
   const performSearch = event => {
     var searchText = document.getElementById("inputSearch").value;
     // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
@@ -882,10 +906,23 @@ export default function Codelist() {
     setPage(0);
   }
 
+  const performCompare = event => {
+    var searchText = document.getElementById("compareSearch").value;
+    // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
+    setSearch("*" + searchText + "*");
+    setPage(0);
+  } 
+
   const handleKeyPress = (event) => {
     if (event.keyCode === 13) { // the enter/return key       
       event.preventDefault();
       performSearch();
+    }
+  };
+  const handleKeyPressCompare = (event) => {
+    if (event.keyCode === 13) { // the enter/return key       
+      event.preventDefault();
+      performCompare();
     }
   };
 
@@ -1902,16 +1939,8 @@ Compare selected data elements
                           size="small"
                           label={"Source: " + dataElement.extras.source}
                           clickable
-                        //color="primary"
-                        //onClick={handleClick}
                         />
                       </Grid>
-                      {/* <Grid item xs={3} >
-                        </Grid>
-                        <Grid item xs={3} >
-                        </Grid>
-                        <Grid item xs={3} >
-                        </Grid> */}
                     </Grid>
 
                   </ExpansionPanelSummary>
@@ -1971,30 +2000,30 @@ Compare selected data elements
                             {values.source === 'PDH' ? (<Tab label="DERIVATIONS" {...a11yProps(2)} />) : ''}
                           </Tabs>
                           <TabPanel value={panel} index={0} className={classes.tabPanel}>
-                          <Grid container alignItems="center" justify="space-between">
-                      <Grid item xs={9}  >
-                            <div className={classes.tableContainer}>
-                              {
+                            <Grid container alignItems="center" justify="space-between">
+                              <Grid item xs={9}  >
+                                <div className={classes.tableContainer}>
+                                  {
 
-                                (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
+                                    (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
 
-                                  key =>
+                                      key =>
 
-                                    checked ? (Object(deMappings[dataElement.id])[key].to_concept_code +
-                                      ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + '))
-                                      : (Object(deMappings[dataElement.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + ')))
+                                        checked ? (Object(deMappings[dataElement.id])[key].to_concept_code +
+                                          ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + '))
+                                          : (Object(deMappings[dataElement.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + ')))
 
-                                  : ''
-                              }
-                            </div></Grid>
-                            <Grid item xs={3} >
-                            <FormControlLabel
-                              value="Start"
-                              control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}
-                              label={format}
-                              labelPlacement="start"
-                            />
-                            </Grid>
+                                      : ''
+                                  }
+                                </div></Grid>
+                              <Grid item xs={3} >
+                                <FormControlLabel
+                                  value="Start"
+                                  control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}
+                                  label={format}
+                                  labelPlacement="start"
+                                />
+                              </Grid>
                             </Grid>
                           </TabPanel>
                           <TabPanel value={panel} index={1} className={classes.tabPanel}>
@@ -2030,9 +2059,9 @@ Compare selected data elements
                               </Table>
                             </Grid>
                           </TabPanel>
-                          
-                            {values.source === 'PDH' ? (
-                              <TabPanel value={panel} index={2} className={classes.tabPanel}>
+
+                          {values.source === 'PDH' ? (
+                            <TabPanel value={panel} index={2} className={classes.tabPanel}>
                               <div className={classes.tableContainer} >
                                 <Table className={classes.table} aria-label="simple table">
                                   <TableHead>
@@ -2080,9 +2109,9 @@ Compare selected data elements
                                 </Table>
                                 {pdhDerivatives = []}
                               </div>
-                              </TabPanel>
-                            ) : ''}
-                          
+                            </TabPanel>
+                          ) : ''}
+
                         </div>
                       )} />
 
@@ -2421,16 +2450,20 @@ Compare selected data elements
 
 
             <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
-              <Grid container className={classes.comparePanelContainer}>
-                <Grid item xs={12}>
+              <Grid container className={classes.comparePanelContainer} alignItems="center" justify="space-between">
 
-                  {/* <div className={classes.fixedTop}> */}
-                  <div >
-                    <CloseIcon onClick={toggleDetailDrawer(dataElementDetail, 'bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
-                    <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
-                    {/* comparison panel title */}
-                  </div>
-                  {/* <Dialog fullScreen open={detailsOpen} onClose={handleDetailsClose} 
+                {/* <div className={classes.fixedTop}> */}
+
+                {/* <Grid container alignItems="center" justify="space-between"> */}
+                <Grid item xs={6}  >
+                  <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
+                </Grid>
+                <Grid item xs={6}  >
+                  <CloseIcon onClick={toggleDetailDrawer(dataElementDetail, 'bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
+                </Grid>
+                {/* </Grid> */}
+                {/* comparison panel title */}
+                {/* <Dialog fullScreen open={detailsOpen} onClose={handleDetailsClose} 
                           TransitionComponent={Transition}
                           >
                             <AppBar className={classes.detailsDialogBar}>
@@ -2440,6 +2473,8 @@ Compare selected data elements
                                 </IconButton>
                               </Toolbar>
                               </AppBar> */}
+                {/* <Grid container alignItems="center" justify="space-between"> */}
+                <Grid item xs={6}  >
                   {dataElementDetail ?
                     <Table className={classes.comboTable} aria-label="simple table">
                       <TableBody>
@@ -2501,12 +2536,41 @@ Compare selected data elements
                       </TableBody>
                     </Table> : ''}
                 </Grid>
+                {/* <Grid item xs={6}  > */}
+                <div className={classes.heroContainer}>
+                  <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
+                  <div>
+                    <GridList cellHeight={60} className={classes.gridList} cols={2}>
+                    <GridListTile >
+                      <Paper component="form" className={classes.compare}>
+                        <InputBase
+                          className={classes.input}
+                          //inputProps={{ 'aria-label': 'search data elements' }}
+                          id="compareSearch"
+                          key="compareSearch"
+                          onKeyDown={handleKeyPressCompare}
+                          onChange={handleCompareInputChange}
+                          value={compareInputText}
+                        />
+                      </Paper>
+                      </GridListTile>
+                    {/* </Grid>
+                    <Grid item xs={3}  > */}
+                    <GridListTile>
+                      <Button type="button" className={classes.margin} aria-label="search" onClick={performCompare} variant="outlined" >
+                        COMPARE
+                </Button>
+                </GridListTile>
+                    </GridList>
+                    <div><InfoIcon fontSize='medium' color="disabled"></InfoIcon><i style={{color: '#8a8987'}}>Please enter a Data Element UID</i></div>
+                  </div>
+
+                </div>
+                {/* </Grid> */}
+                {/* </Grid> */}
+                {/* </Dialog> */}
               </Grid>
-              {/* </Dialog> */}
             </Drawer>
-
-
-
           </Grid>
         </Grid>
 
