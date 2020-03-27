@@ -60,6 +60,8 @@ import Switch from '@material-ui/core/Switch';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
+import DataElementDetail from './DataElementDetail';
+
 
 //tab panel function
 function TabPanel(props) {
@@ -1342,6 +1344,8 @@ export default function Codelist() {
 
     }
   };
+
+  //const openCompareDrawer = 
 
   const toggleDetailDrawer = (dataElement, side, open) => event => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
