@@ -2055,7 +2055,7 @@ Compare selected data elements
                           <Chip
                             variant="outlined"
                             size="small"
-                            style={{color: '#7d807e'}}
+                            style={{color: '#7d807e', marginTop: '10px'}}
                             label={"UID: " + dataElement.id}
                             onClick={() => copyToClipboard(dataElement.id)}
                           />
@@ -2063,14 +2063,14 @@ Compare selected data elements
                         <Chip
                           variant="outlined"
                           size="small"
-                          style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#7d807e'}}
+                          style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#7d807e', marginTop: '10px'}}
                           label={"Source: " + dataElement.extras.source}
                           clickable
                         />
                         <Chip
                           variant="outlined"
                           size="small"
-                          style={{marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#7d807e' }}
+                          style={{marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#7d807e', marginTop: '10px' }}
                           label={"Type: " + dataElement.concept_class}
                           clickable
                         />
