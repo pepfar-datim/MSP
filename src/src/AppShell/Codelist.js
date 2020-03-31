@@ -2723,7 +2723,7 @@ Compare selected data elements
                                     <Chip
                                       variant="outlined"
                                       size="small"
-                                      style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#cbf7f5' }}
+                                      style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
                                       label={"Source: " + de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source}
                                       clickable
                                     />
