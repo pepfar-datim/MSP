@@ -61,6 +61,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
 import DataElementDetail from './DataElementDetail';
+import rp from 'request-promise'
 
 
 //tab panel function
@@ -102,6 +103,7 @@ const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 
 let deMappings = {};
+let de = {}
 let selectDataTemp = {};
 let pdhDerivatives = {}
 
@@ -899,7 +901,7 @@ export default function Codelist() {
 
   const handleCompareInputChange = () => {
     setCompareInputText(document.getElementById("compareSearch").value);
-  }; 
+  };
 
   const performSearch = event => {
     var searchText = document.getElementById("inputSearch").value;
@@ -908,12 +910,21 @@ export default function Codelist() {
     setPage(0);
   }
 
-  const performCompare = event => {
-    var searchText = document.getElementById("compareSearch").value;
-    // search:  q=*demo, q=*demo*, q=demo*.  Add * to the search string to search any string containing "tx_curr"  
-    setSearch("*" + searchText + "*");
-    setPage(0);
-  } 
+  const performCompare = async (dataElementDetail) =>  {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    console.log("inside performCompare dataElementDetail " + dataElementDetail)
+    var compareText = document.getElementById("compareSearch") ? document.getElementById("compareSearch").value : '';
+    console.log("inside performCompare compareText " + compareText)
+    if (compareText !== '') {
+      if (!de[compareText]) {
+        await getDataElement(compareText);
+      }
+      console.log("inside performCompare dataElement " + de[compareText])
+      toggleCompareDetailDrawer(dataElementDetail, de[compareText], 'bottom', true)
+    }
+  }
 
   const handleKeyPress = (event) => {
     if (event.keyCode === 13) { // the enter/return key       
@@ -1159,7 +1170,7 @@ export default function Codelist() {
   }, [values.indicator]);
 
   async function getMappings(id) {
-    setExpanded(true);
+    //setExpanded(true);
     const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
@@ -1187,6 +1198,43 @@ export default function Codelist() {
         deMappings[id] = sortedData;
       }
       return deMappings;
+    } catch (e) {
+      console.log("error:" + e.message);
+      setError(e.message);
+      //setErrorDisplay(e.message);
+    }
+
+
+  };
+
+  async function getDataElement(id) {
+    console.log("inside getDataElement")
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true';
+    console.log(" queryByDataElement " + queryMapping)
+
+    try {
+      let options = {
+        uri: queryMapping
+      }
+      const response = await rp(options)
+      //const response = await fetch(queryMapping);
+      // if (!response.ok) {
+      //   console.log(response);
+      //   setErrorDisplay("Failed to fetch")
+      //   throw new Error(
+      //     `Error when retrieving data element mappings ${response.status} ${response.statusText}`
+      //   );
+      // }
+
+      //const jsonData = await response.json();
+      const jsonData = JSON.parse(response)
+      console.log("jsonData " + jsonData)
+      de[id] = jsonData;
+      if (!deMappings[id]) {
+        let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+        deMappings[id] = sortedData;
+      }
+      return de[id]
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);
@@ -1315,33 +1363,38 @@ export default function Codelist() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    if (selectedDataElement.length > 3) {
-      setDialogOpen(true);
-      setDialogMessage("You cannot compare more than 3 data elements at a time")
-    }
-    else if (selectedDataElement.length < 2) {
-      setDialogOpen(true);
-      setDialogMessage("Please select 2-3 data elements")
-    }
-
-    else {
-      setCompare({ ...comparePanel, [DATIM]: true });
-      setComparePanel({ ...comparePanel, [side]: open });
-
-      //const selectDataTemp = [];
-
-      //get data element details of the selected data elements
-
-      // eslint-disable-next-line array-callback-return
-      console.log("toggleDrawer dataElements")
-      console.log(selectedDataElement)
-      let temp = []
-      Object.values(selectDataTemp).map(value => {
-        temp.push(value)
+    if (open) {
+      if (selectedDataElement.length > 3) {
+        setDialogOpen(true);
+        setDialogMessage("You cannot compare more than 3 data elements at a time")
       }
-      )
-      setSelectedDatim(temp);
+      else if (selectedDataElement.length < 2) {
+        setDialogOpen(true);
+        setDialogMessage("Please select 2-3 data elements")
+      }
 
+      else {
+        setCompare({ ...comparePanel, [DATIM]: true });
+        setComparePanel({ ...comparePanel, [side]: open });
+
+        //const selectDataTemp = [];
+
+        //get data element details of the selected data elements
+
+        // eslint-disable-next-line array-callback-return
+        console.log("toggleDrawer dataElements")
+        console.log(selectedDataElement)
+        let temp = []
+        Object.values(selectDataTemp).map(value => {
+          temp.push(value)
+        }
+        )
+        setSelectedDatim(temp);
+
+      }
+    }
+    else {
+      setComparePanel({ ...comparePanel, [side]: open });
     }
   };
 
@@ -1354,6 +1407,21 @@ export default function Codelist() {
     setDataElementDetail(dataElement);
     setDetailPanel({ ...detailPanel, [side]: open });
 
+
+  };
+
+  const toggleCompareDetailDrawer = (dataElementDetail, dataElement, side, open) => {
+
+    console.log(" inside toggleCompareDetailDrawer dataElement " + dataElement)
+    toggleDetailDrawer('bottom', false)
+    let temp = []
+    temp.push(dataElementDetail);
+    temp.push(dataElement);
+    setSelectedDatim(temp);
+    setCompare({ ...comparePanel, [DATIM]: true });
+    setComparePanel({ ...comparePanel, [side]: open });
+
+    console.log(" selectedDatim.length " + selectedDatim.length)
 
   };
 
@@ -2190,7 +2258,7 @@ Compare selected data elements
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel3b-content"
                                 id="panel3b-header"
-                              //onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
+                                onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
                               >
 
                                 <Table className={classes.comboTable} aria-label="simple table">
@@ -2545,28 +2613,28 @@ Compare selected data elements
                   <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
                   <div>
                     <GridList cellHeight={60} className={classes.gridList} cols={2}>
-                    <GridListTile >
-                      <Paper component="form" className={classes.compare}>
-                        <InputBase
-                          className={classes.input}
-                          //inputProps={{ 'aria-label': 'search data elements' }}
-                          id="compareSearch"
-                          key="compareSearch"
-                          onKeyDown={handleKeyPressCompare}
-                          onChange={handleCompareInputChange}
-                          value={compareInputText}
-                        />
-                      </Paper>
+                      <GridListTile >
+                        <Paper component="form" className={classes.compare}>
+                          <InputBase
+                            className={classes.input}
+                            //inputProps={{ 'aria-label': 'search data elements' }}
+                            id="compareSearch"
+                            key="compareSearch"
+                            onKeyDown={handleKeyPressCompare}
+                            onChange={handleCompareInputChange}
+                            value={compareInputText}
+                          />
+                        </Paper>
                       </GridListTile>
-                    {/* </Grid>
+                      {/* </Grid>
                     <Grid item xs={3}  > */}
-                    <GridListTile>
-                      <Button type="button" className={classes.margin} aria-label="search" onClick={performCompare} variant="outlined" >
-                        COMPARE
+                      <GridListTile>
+                        <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail)} variant="outlined" >
+                          COMPARE
                 </Button>
-                </GridListTile>
+                      </GridListTile>
                     </GridList>
-                    <div><InfoIcon fontSize='medium' color="disabled"></InfoIcon><i style={{color: '#8a8987'}}>Please enter a Data Element UID</i></div>
+                    <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter a Data Element UID</i></div>
                   </div>
 
                 </div>
