@@ -212,7 +212,7 @@ const useStyles = makeStyles(theme => ({
   },
   expansionPanelSummary: {
     borderBottom: '1px solid #C1A783',
-    color: '#000000'
+    color: '#000000',
   },
   expansionPanelDetails: {
     paddingTop: '30px',
@@ -1869,7 +1869,8 @@ Compare selected data elements
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                     className={classes.expansionPanelSummary}
-                  >
+                    style={{backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white'}}
+                                      >
                     <FormControlLabel
                       aria-label="Acknowledge"
                       onClick={handleCompareCheckbox(dataElement)}
