@@ -2032,7 +2032,9 @@ Compare selected data elements
                       checked={selectedDataElement.includes(dataElement.id) ? true : false}
                     // label="I acknowledge that I should stop the click event propagation"
                     />
-                    <Grid container alignItems="center" justify="space-between">
+                    <Grid container alignItems="center" 
+                    //justify="space-between"
+                    spacing={1}>
                       <Grid item xs={9}  >
                         <Typography className={classes.heading}>
                           <strong>{dataElement.display_name}</strong>
@@ -2050,7 +2052,7 @@ Compare selected data elements
                             label={"UID: " + dataElement.external_id}
                           //onClick={handleClick}
                           /></Grid> */}
-                      <Grid item xs={12} >
+                      <Grid item xs={2} >
                         <Tooltip disableFocusListener title="Click to copy UID">
                           <Chip
                             variant="outlined"
@@ -2060,21 +2062,24 @@ Compare selected data elements
                             onClick={() => copyToClipboard(dataElement.id)}
                           />
                         </Tooltip>
+                        </Grid>
+                        <Grid item xs={2} >
                         <Chip
                           variant="outlined"
                           size="small"
                           style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#7d807e', marginTop: '10px'}}
                           label={"Source: " + dataElement.extras.source}
                           clickable
-                        />
+                        /></Grid>
+                        <Grid item xs={2} >
                         <Chip
                           variant="outlined"
                           size="small"
                           style={{marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#7d807e', marginTop: '10px' }}
                           label={"Type: " + dataElement.concept_class}
                           clickable
-                        />
-                      </Grid>
+                        /></Grid>
+                        <Grid item xs={3} ></Grid>
                     </Grid>
 
                   </ExpansionPanelSummary>
