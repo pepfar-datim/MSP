@@ -1179,7 +1179,7 @@ export default function Codelist() {
 
   async function getMappings(id) {
     //setExpanded(true);
-    let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true';
+    let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
     try {
@@ -1206,8 +1206,16 @@ export default function Codelist() {
         async function (key) {
           if (Object(deMappings[id])[key].map_type === 'Derived From') {
             const derivationId = Object(deMappings[id])[key].to_concept_code
+            if (derivationId === id) {
+              let from_concept_url = Object(deMappings[id])[key].from_concept_url
+              if (from_concept_url.endsWith('/')) {
+                from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+              }
+              let arr = from_concept_url.split('/')
+              derivationId = arr[arr.length - 1]
+            }
             if (!deMappings[derivationId]) {
-              queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true';
+              queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
               response = await fetch(queryMapping);
               if (!response.ok) {
                 console.log(response);
@@ -1237,7 +1245,7 @@ export default function Codelist() {
 
   async function getDataElement(id) {
     console.log("inside getDataElement")
-    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true';
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
     try {
@@ -2030,11 +2038,12 @@ Compare selected data elements
                       onFocus={event => event.stopPropagation()}
                       control={<Checkbox />}
                       checked={selectedDataElement.includes(dataElement.id) ? true : false}
+
                     // label="I acknowledge that I should stop the click event propagation"
                     />
-                    <Grid container alignItems="center" 
-                    //justify="space-between"
-                    spacing={1}>
+                    <Grid container alignItems="center"
+                      //justify="space-between"
+                      spacing={1}>
                       <Grid item xs={9}  >
                         <Typography className={classes.heading}>
                           <strong>{dataElement.display_name}</strong>
@@ -2057,29 +2066,29 @@ Compare selected data elements
                           <Chip
                             variant="outlined"
                             size="small"
-                            style={{color: '#7d807e', marginTop: '10px'}}
+                            style={{ color: '#7d807e', marginTop: '10px' }}
                             label={"UID: " + dataElement.id}
                             onClick={() => copyToClipboard(dataElement.id)}
                           />
                         </Tooltip>
-                        </Grid>
-                        <Grid item xs={2} >
+                      </Grid>
+                      <Grid item xs={2} >
                         <Chip
                           variant="outlined"
                           size="small"
-                          style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#7d807e', marginTop: '10px'}}
+                          style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#7d807e', marginTop: '10px' }}
                           label={"Source: " + dataElement.extras.source}
                           clickable
                         /></Grid>
-                        <Grid item xs={2} >
+                      <Grid item xs={2} >
                         <Chip
                           variant="outlined"
                           size="small"
-                          style={{marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#7d807e', marginTop: '10px' }}
+                          style={{ marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#7d807e', marginTop: '10px' }}
                           label={"Type: " + dataElement.concept_class}
                           clickable
                         /></Grid>
-                        <Grid item xs={3} ></Grid>
+                      <Grid item xs={3} ></Grid>
                     </Grid>
 
                   </ExpansionPanelSummary>
@@ -2704,50 +2713,85 @@ Compare selected data elements
                     <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div>
                   </div>
                   <div>
-                    <Table className={classes.comboTable} style={{ marginLeft: '20px' }} aria-label="simple table">
+                    <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
                       <TableBody>
                         <TableRow>
                           <TableCell><strong>Linked Resources</strong></TableCell>
                           <TableCell></TableCell>
                         </TableRow>
+
                         {dataElementDetail ? (
                           (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
-                            key =>
-                              (deMappings[dataElementDetail.id][key].map_type === "Derived From") ? (
-                                <TableRow>
-                                  <TableCell component="th" scope="row">
-                                    {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
-                                    <Chip
-                                      variant="outlined"
-                                      size="small"
-                                      style={{ marginTop: '10px' }}
-                                      label={"UID: " + deMappings[dataElementDetail.id][key].to_concept_code}
-                                      clickable
-                                    />
-                                    <Chip
-                                      variant="outlined"
-                                      size="small"
-                                      style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
-                                      label={"Source: " + de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source}
-                                      clickable
-                                    />
-                                    <Chip
-                                      variant="outlined"
-                                      size="small"
-                                      style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
-                                      label={"Type: " + de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class}
-                                      clickable
-                                    />
-                                  </TableCell>
-                                  <TableCell component="th" scope="row">
-                                    <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, deMappings[dataElementDetail.id][key].to_concept_code)} variant="outlined" >
-                                      COMPARE
+                            function (key) {
+                              if (deMappings[dataElementDetail.id][key].map_type === "Derived From") {
+                                let name = ''
+                                let code = ''
+                                let source = ''
+                                let type = ''
+                                if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
+                                  name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
+                                  code = deMappings[dataElementDetail.id][key].to_concept_code
+                                  source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
+                                  type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
+                                }
+                                else {
+                                  let from_concept_url = deMappings[dataElementDetail.id][key].from_concept_url
+                                  if (from_concept_url.endsWith('/')) {
+                                    from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                  }
+                                  let arr = from_concept_url.split('/')
+                                  let derivationId = arr[arr.length - 1]
+                                  name = de[derivationId].display_name
+                                  code = de[derivationId].id
+                                  source = de[derivationId].extras.source
+                                  type = de[derivationId].concept_class
+                                  console.log(name + code + source + type)
+                                }
+                                return (
+                                  <TableRow>
+                                    <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
+                                      <Grid container alignItems="center"
+                                        //justify="space-between"
+                                        spacing={2}>
+                                        <Grid item xs={12}  >
+                                          {name}
+                                        </Grid>
+                                        <Grid item xs={3}  >
+                                          <Chip
+                                            variant="outlined"
+                                            size="small"
+                                            style={{ marginTop: '10px' }}
+                                            label={"UID: " + code}
+                                            clickable
+                                          /></Grid>
+                                        <Grid item xs={3}  >
+                                          <Chip
+                                            variant="outlined"
+                                            size="small"
+                                            style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
+                                            label={"Source: " + source}
+                                            clickable
+                                          /></Grid>
+                                        <Grid item xs={3}  >
+                                          <Chip
+                                            variant="outlined"
+                                            size="small"
+                                            style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
+                                            label={"Type: " + type}
+                                            clickable
+                                          /></Grid>
+                                      </Grid>
+                                    </TableCell>
+                                    <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                      <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
+                                        COMPARE
                                     </Button>
-                                  </TableCell>
-                                </TableRow>
-                              ) : ''
-                          ) : ''
+                                    </TableCell>
+                                  </TableRow>
+                                )
+                              }
+                            }) : ''
                         ) : ''
                         }
 
