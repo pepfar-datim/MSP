@@ -24,9 +24,13 @@ import Paper from '@material-ui/core/Paper';
 // eslint-disable-next-line no-unused-vars
 import { Route, BrowserRouter as Router, NavLink, useParams, useLocation, Redirect } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
+import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
+import Switch from '@material-ui/core/Switch';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TablePagination from '@material-ui/core/TablePagination';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 
 import FormControl from '@material-ui/core/FormControl';
@@ -37,6 +41,7 @@ import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
 import {getCodeListMap} from '../currentCodelist.js'
 import IndicatorDetail from './IndicatorDetail';
+import DataElementDetail from './DataElementDetail';
 import Shortcut from './Shortcut';
 
 
@@ -251,6 +256,14 @@ const useStyles = makeStyles(theme => ({
       color: '#000000'
     }
   },
+  detailsButton: {
+    marginTop: '10px',
+    marginBottom: '20px',
+    '&:hover, &:focus': {
+      backgroundColor: '#C1A783',
+      color: '#000000'
+    }
+  },
   downloadButton:{
     marginRight: '20px',
     marginTop: '10px',
@@ -314,7 +327,16 @@ const useStyles = makeStyles(theme => ({
       color: '#ffffff'
     }
   },
-  
+  closeComparePanel: {
+    float: 'right',
+    margin: '1em',
+    cursor: 'pointer',
+    padding: '10px',
+    border: '1px solid #111111',
+    borderRadius: '50%',
+    marginTop: 0
+  },
+ 
   titleNote:{
     color: "rgba(0, 0, 0, 0.87) !important",
     fontSize: '0.8rem',
@@ -445,7 +467,7 @@ const useStyles = makeStyles(theme => ({
     const [page, setPage] = React.useState(0);    
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     var [count, setCountOfValues] = useState(0);
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = (event, newPage) => {      
       setPage(newPage);
     };
 
@@ -495,10 +517,29 @@ const useStyles = makeStyles(theme => ({
     };
 
     const [formularPanel, setFormularPanel] = React.useState(0);
+    const [dataElementDetail, setDataElementDetail] = React.useState(null);
+    let pdhDerivatives = {}
+
+    const [detailPanel, setDetailPanel] = React.useState({
+      top: false,
+      left: false,
+      bottom: false,
+      right: false,
+    });
+
     const handleFormularChange = (event, newFormularPanel) => {
       event.stopPropagation();
       event.preventDefault();
       setFormularPanel(newFormularPanel);
+    };
+
+    const toggleDetailDrawer = (dataElement, side, open) => event => {
+      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {        
+        return;
+      }
+      console.log(dataElement);
+      setDataElementDetail(dataElement);      
+      setDetailPanel({ ...detailPanel, [side]: open });
     };
 
     const getIndicatorGroup = function (indicatorData) {     
@@ -628,8 +669,7 @@ const useStyles = makeStyles(theme => ({
     
     
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
-    const loadDataElementsDataByIndicator = async (indicatorID)=> {
-          
+    const loadDataElementsDataByIndicator = async (indicatorID)=> {      
       var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query); 
       
@@ -663,12 +703,14 @@ const useStyles = makeStyles(theme => ({
           mappedDataElements = jsonData.map(item => {
             //console.log(item);
             var dataElementItem = {};
-            dataElementItem.source = item.extras.source;
+            /*dataElementItem.source = item.extras.source;
             dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
             dataElementItem.uid = item.external_id;
             dataElementItem.id = item.id;
             dataElementItem.code = item.id;
             dataElementItem.name = item.display_name;   
+            dataElementItem.extra = item.extra;*/
+            dataElementItem = item;
             var deMappings = []; 
             const mappings = [];           
             //const mappings = item.mappings.filter(mapping => mapping.map_type === "Has Option");
@@ -717,12 +759,10 @@ const useStyles = makeStyles(theme => ({
     }, [queryIndicators]);
 
     // update indicator each time indicatorId changes
-    useEffect(() => {                      
-        if ( init  && indicatorId && indicatorId !== '' ) {          
-          //console.log("UPDATE INDIATGOR");
-          updateIndicator(indicatorId, panel);                             
-        }                    
-        setPage(0);
+    useEffect(() => {                                 
+      if ( init  && indicatorId && indicatorId !== '' ) {                                      
+          updateIndicator(indicatorId, panel);                           
+        }                            
     }, [indicatorId, page, rowsPerPage]);
  
     async function getMappings(id) {          
@@ -739,10 +779,11 @@ const useStyles = makeStyles(theme => ({
         }
         
         const jsonData = await response.json();
-        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');         
-        //console.log(jsonData);   
-        matchDataElements.map(item => {          
-          if (item.id === id && (!item.disags || item.disags.length ===0)) {                      
+        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');                   
+        matchDataElements.map(item => {        
+            
+          if (item.id === id && (!item.disags || item.disags.length ===0)) {        
+                                    
             const deMappings = sortedData
             .filter(mapping => mapping.map_type === "Has Option")            
             .map(mapping => {
@@ -754,6 +795,7 @@ const useStyles = makeStyles(theme => ({
            
             var sortedMappings = sortJSON(deMappings, 'name', 'asc');
             item.disags = sortedMappings;
+            
           }
           return item;
         })       
@@ -771,8 +813,7 @@ const useStyles = makeStyles(theme => ({
     };
   
     
-    const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
-      console.log("loadIndicatorDetail: " + indicatorID);      
+    const loadIndicatorDetailByIndicator =  async (indicatorID)=> {           
       var query = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/" +  indicatorID + "/";      
       console.log("query indicator detail : " + query );
       setIndicatorDetailLoading(true);
@@ -813,9 +854,7 @@ const useStyles = makeStyles(theme => ({
     }
 
   //update indicator details and matched data-element for selected indicator
-  function updateIndicator(indicatorId, panel){     
-    
-    //console.log("updateIndicator - indicatorID:" + indicatorId );    
+  function updateIndicator(indicatorId, panel){             
     if (indicatorId === '' || !isValidIndicatorID(indicatorId) ) {      
       setErrorLoadIndicatorDetail("Invalid Indicator ID.");
       backtoDefault();
@@ -875,6 +914,10 @@ const useStyles = makeStyles(theme => ({
       setPage(0);      
   };
 
+  const handleNavLinkChange = event => {
+    setPage(0);
+  }
+
   //when value has changed, call useEffect function
   useEffect(() => {
     //if it's not the first time the app mounted
@@ -893,7 +936,9 @@ const useStyles = makeStyles(theme => ({
   useEffect(() => {
     //if it's not the first time the app mounted
     //console.log("***** useEffect, run only when init change to true. init: " + init);
+    
     if(init && indicatorId !== ''){     
+      console.log("setPage to 0, update Indicator:" + indicatorId)
       setPage(0);
       updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                           
     }    
@@ -920,7 +965,7 @@ const useStyles = makeStyles(theme => ({
               return(
                 <div key={"group_" + index + indicator.id }  className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
                  {currentIndicator.name===indicator.name || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
-                  <NavLink  to={"/indicator/" + indicator.id} ><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
+                  <NavLink  to={"/indicator/" + indicator.id} onClick={handleNavLinkChange}><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
                  }                                                
                 </div>
               )                 
@@ -931,6 +976,33 @@ const useStyles = makeStyles(theme => ({
     );
     return true;
   }, this);
+
+  function populatePDHDerivatives(source_data_elements) {
+    source_data_elements.map(source_data_element => {
+      if (!pdhDerivatives[source_data_element.source_data_element_name]) {
+        let source_data_element_nameArray = [];
+        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + source_data_element.add_or_subtract);
+        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+      }
+      else {
+        let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name]);
+        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + source_data_element.add_or_subtract);
+        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+      }
+    })
+  }
+  const [checked, setChecked] = React.useState(false);
+  const [format, setFormat] = React.useState('Names');
+
+  const toggleChecked = () => {
+    setChecked(prev => !prev);
+    if (!checked) {
+      setFormat('UIDs')
+    }
+    else {
+      setFormat('Names')
+    }
+  };
 
   //layout
 return (
@@ -1013,7 +1085,7 @@ return (
     currentIndicator && currentIndicator.length === 0  ? 
         <div>
            <Grid container alignItems="center" >   
-              <div>Select an indicator to view details.</div>
+              <div>Select an indicator to view details.</div>             
           </Grid>
         </div>
         : 
@@ -1045,7 +1117,7 @@ return (
       
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
-        <div key={dataElement.code}>
+        <div key={dataElement.external_id}>
           <ExpansionPanel className={classes.expansionPanel}   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}  
                           onClick={() => dataElement.disags.length === 0 ? getMappings(dataElement.id) : null}>
 
@@ -1054,116 +1126,168 @@ return (
               <Grid container alignItems="center" justify="space-between">       
                 <Grid item  xs={11} md={9}>         
                   <Typography className={classes.heading}> 
-                  <strong>{dataElement.name}</strong> {dataElement.category}
+                  <strong>{dataElement.display_name}</strong>
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <Typography className={classes.heading}> 
-                  <strong>Data Element UID</strong>: {dataElement.uid} 
+                  <strong>Data Element UID</strong>: {dataElement.external_id}
                   </Typography>
                   </Grid>
+                  <Grid item xs={2} >
+                    <Chip
+                      variant="outlined" size="small" label={"Source: " + dataElement.extras.source} clickable                    
+                    />                     
+                  </Grid>
+                  <Grid item xs={2} >                   
+                     <Chip
+                      variant="outlined" size="small" label={"UID: " + dataElement.external_id} clickable                    
+                    />                                                           
+                  </Grid>
+                  <Grid item xs={8} />
               </Grid>         
             </ExpansionPanelSummary>
 
+            <DataElementDetail dataElementDetail={dataElementDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
           {/* data elements details */}
           <ExpansionPanelDetails className={classes.expansionPanelDetails}>
             <Grid container>
             <Grid item  xs={12} className={classes.expansionPanelLeft}>
               <Typography>
-                <strong>Description</strong>: {dataElement.description}<br/> 
+                <strong>Description</strong>: {dataElement.descriptions ? dataElement.descriptions[0].description : "N/A"}              
                 {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
                 {dataElement.indicatorName}
-                </NavLink> */}
-                <strong>Source</strong>: {dataElement.source}<br/>          
+                </NavLink> */}                       
               </Typography>
             </Grid>
+
+            <Grid item xs={12} className={classes.expansionPanelLeft}>                        
+              <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
+              View data element details
+              </Button>              
+            </Grid>
+
        
             {/* data element Disaggregations */}
             <Grid item  xs={12} className={classes.comboTable}>
-              <strong>Disaggregations</strong>:<br/>       
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Disaggregations Name</TableCell>
-              <TableCell>Disaggregations Code </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-            {
-             Object.keys(Object(dataElement.disags)).map(
-               key => 
-               <TableRow key={Math.random()}>
-                <TableCell component="th" scope="row">
-                {Object(dataElement.disags)[key].name}
-                </TableCell> 
-                <TableCell component="th" scope="row">
-                {Object(dataElement.disags)[key].code}
-                </TableCell> 
-              </TableRow>              
-             )
-            }
-            </TableBody>
-        </Table>
-
+              
          {/* open the formula panel */}        
         { 
         <ExpansionPanel>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content"  id="panel1a-header" className={classes.formulaButton}>
-            <Typography className={classes.heading}>Formula</Typography>
+            <Typography className={classes.heading}><strong>Disaggregations and Derivations</strong></Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
             <div className={classes.tableContainer} >                     
               <Tabs value={formularPanel} onChange={handleFormularChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-                <Tab label="HUMAN READABLE FORMAT" {...formularProps(0)} />
-                <Tab label="UID FORMAT" {...formularProps(1)} />
+                <Tab label="DISAGGREGATIONS FORMULA" {...formularProps(0)} />
+                <Tab label="DISAGGREGATIONS LIST" {...formularProps(1)} />
+                {dataElement.extras && dataElement.extras.source === 'PDH' ? (<Tab label="DERIVATIONS" {...formularProps(2)} />) : <Tab label="" {...formularProps(2)} />}
               </Tabs>
 
-              <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>
-                <Table className={classes.table} aria-label="simple table">
-                <TableBody>
-                  <TableRow key={Math.random()}>                   
-                    {(dataElement && dataElement.disags )? 
-                      <TableCell component="th" scope="row">                               
-                      {
+              <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>                
+                <Grid container alignItems="center" justify="space-between">
+                  <Grid item xs={9}  >
+                    <div className={classes.tableContainer}>
+                    {(dataElement && dataElement.disags )?                                                    
                         dataElement.disags.map(
                           (item, index ) => 
-                            (index < dataElement.disags.length -1) ?
-                              ( <span key={"item" + index}> {item.name} +   </span>)
-                           :  ( <span key={"item" + index}> {item.name}   </span>)                                                    
-                        )
-                      }                        
-                      </TableCell> 
-                      : null
-                  }                    
-                  </TableRow>                 
-                  </TableBody>
-                </Table>
+                            (index < dataElement.disags.length -1) ?                              
+                              (checked ? (<span key={"item_name" + item.code + index}> {item.code} + </span>) : (<span key={"item_code" + item.code + index}> {item.name} + </span>))
+                            :                              
+                            (checked ? (<span key={"item_name" + item.code + index}> {item.code} </span>) : (<span key={"item_code" + item.code + index}> {item.name}  </span>))                                               
+                        )                           
+                      : null}
+                    </div></Grid>
+                    <Grid item xs={3} md={2}>
+                    <FormControlLabel  value="Start" control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}  label={format} labelPlacement="start" />
+                  </Grid>
+                </Grid>
               </FormularPanel>
-              <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>
+              <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>                
                 <Table className={classes.table} aria-label="simple table">
-                <TableBody>
-                  <TableRow key={Math.random()}>
-                   
-                    {(dataElement && dataElement.disags )? 
-
-                    <TableCell component="th" scope="row">                               
-                    {
-                      dataElement.disags.map(
-                        (item, index ) => 
-                          (index < dataElement.disags.length -1) ?
-                            ( <span key={"item_" + item.code + index}> {item.code} +   </span>  )
-                         : ( <span key={"item_" + item.code + index}> {item.code}   </span>   )                                                    
-                      )
-                    }           
-                   
-                    </TableCell> 
-                    : null}
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                    <TableCell>Code </TableCell>
                     </TableRow>
-
-                  
+                  </TableHead>
+                  <TableBody>
+                  {
+                  Object.keys(Object(dataElement.disags)).map(
+                    key => 
+                    <TableRow key={Math.random()}>
+                      <TableCell component="th" scope="row">
+                      {Object(dataElement.disags)[key].name}
+                      </TableCell> 
+                      <TableCell component="th" scope="row">
+                      {Object(dataElement.disags)[key].code}
+                      </TableCell> 
+                    </TableRow>              
+                  )
+                  }
                   </TableBody>
-                </Table>
+                </Table>               
               </FormularPanel>
+              {dataElement.extras && dataElement.extras.source === 'PDH' ? (
+                <FormularPanel value={formularPanel} index={2} className={classes.tabPanel}>
+                  <div className={classes.tableContainer} >
+                    <Table className={classes.table} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell width="25%" align="center">Source Data Element</TableCell>
+                          <TableCell width="60" align="center" >Source Disaggregation</TableCell>
+                          <TableCell width="15%" align="center">+/-</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {
+                          (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
+                        }
+                        {
+                          Object.keys(pdhDerivatives).map(                         
+                            (key, index) =>
+                              <TableRow key={"row_" + index}  style={{verticalAlign: 'top', border: '2px solid #C8C8C8', backgroundColor: (index % 2 === 0) ? "#F8F8F8" : "#F0F0F0" }}  >
+                                <TableCell component="th" scope="row" valign="top" rowSpan={pdhDerivatives[key].size} style={{ borderRight: '2px solid #C8C8C8'}} >
+                                  {key}
+                                </TableCell>
+                                <TableCell>
+                                  <Table>
+                                    <TableBody>                                 
+                                      {Object.keys(pdhDerivatives[key]).map((dissags, disIndex) =>
+                                        <TableRow key={"row_disag_" + index + "_"+ disIndex}>
+                                          <TableCell component="th" scope="row"  width="100%" >
+                                            {pdhDerivatives[key][dissags].substring(0, pdhDerivatives[key][dissags].length - 1)}
+                                          </TableCell>                                         
+                                        </TableRow>
+                                      )}
+                                  </TableBody>
+                                   </Table>
+                                </TableCell>
+                                <TableCell>
+                                  <Table>
+                                    <TableBody>
+                                  {Object.keys(pdhDerivatives[key]).map((dissags, disIndex) =>
+                                    <TableRow key={"row_disag_op_" + index + "_"+ disIndex}>
+                                      <TableCell component="th" scope="row" align="right">
+                                        {(pdhDerivatives[key][dissags].substring(pdhDerivatives[key][dissags].length - 1, pdhDerivatives[key][dissags].length)) == 1 ? '+' : '-'}
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                  </TableBody>
+                                   </Table>
+                                </TableCell>
+                              </TableRow>
+
+                          )
+                        }
+                      </TableBody>
+                    </Table>
+                    {pdhDerivatives = []}
+                  </div>
+                             
+                </FormularPanel>)
+              : null}
             </div>
           </ExpansionPanelDetails>
         </ExpansionPanel>
@@ -1195,9 +1319,7 @@ return (
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-
-                    
+                    onChangeRowsPerPage={handleChangeRowsPerPage}                    
                   />
                 </TableRow>
               </tbody></table>
