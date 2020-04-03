@@ -60,8 +60,6 @@ import Switch from '@material-ui/core/Switch';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
-import DataElementDetail from './DataElementDetail';
-import rp from 'request-promise'
 
 
 //tab panel function
@@ -1252,18 +1250,18 @@ export default function Codelist() {
       let options = {
         uri: queryMapping
       }
-      const response = await rp(options)
-      //const response = await fetch(queryMapping);
-      // if (!response.ok) {
-      //   console.log(response);
-      //   setErrorDisplay("Failed to fetch")
-      //   throw new Error(
-      //     `Error when retrieving data element mappings ${response.status} ${response.statusText}`
-      //   );
-      // }
+      //const response = await rp(options)
+      const response = await fetch(queryMapping);
+      if (!response.ok) {
+        console.log(response);
+        setErrorDisplay("Failed to fetch")
+        throw new Error(
+          `Error when retrieving data element mappings ${response.status} ${response.statusText}`
+        );
+      }
 
-      //const jsonData = await response.json();
-      const jsonData = JSON.parse(response)
+      const jsonData = await response.json();
+      //const jsonData = JSON.parse(response)
       console.log("jsonData " + jsonData)
       de[id] = jsonData;
       if (!deMappings[id]) {
@@ -1377,6 +1375,7 @@ export default function Codelist() {
 
   const clearSelectedDataElements = event => {
     setSelectedDataElement([]);
+    selectDataTemp = {}
   }
 
   //compare dropdown menu
