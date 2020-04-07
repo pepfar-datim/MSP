@@ -584,6 +584,7 @@ const useStyles = makeStyles(theme => ({
       indicatorItem.updated_on = indicatorOCL.updated_on ? indicatorOCL.updated_on : "";        
       indicatorItem.group = indicatorOCL.extras && indicatorOCL.extras["Indicator Group"] ? indicatorOCL.extras["Indicator Group"]: "";
       indicatorItem.level = indicatorOCL.extras && indicatorOCL.extras["Reporting level"] ? indicatorOCL.extras["Reporting level"]: "";
+      indicatorItem.source = indicatorOCL.source;
       indicatorItem.frequency = indicatorOCL.extras && indicatorOCL.extras["Reporting frequency"] ? indicatorOCL.extras["Reporting frequency"]: "";
       indicatorItem.period = indicatorOCL.extras && indicatorOCL.extras["Period"] ? indicatorOCL.extras["Period"]: "";
       indicatorItem.periodYear = (indicatorItem.period !== "") ? "20" + indicatorItem.period.trim().substring(2,4) : "";
@@ -1089,8 +1090,13 @@ return (
           </Grid>
         </div>
         : 
-      <div>      
-      <headings.H1>{currentIndicator.name}</headings.H1>
+      <div>     
+      
+      <headings.H1>{currentIndicator.name}     
+          <Chip style={{ backgroundColor: '#f7f4f0', float:"right"}}
+            variant="outlined" size="medium" label={ currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                    
+          />                     
+      </headings.H1>
       
       {/* indicator tabs */}    
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
