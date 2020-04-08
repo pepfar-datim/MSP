@@ -1897,7 +1897,7 @@ export default function Codelist() {
               <div>
                 {selectedDataElement && selectedDataElement.length > 0 ?
                   <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
-                    Clear All selected   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px' }}> {selectedDataElement.length}</span></Button>
+                    Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px' }}> {selectedDataElement.length}</span></Button>
                   : null}
                 <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
                   {getDownloadLabel()} </Button>
@@ -2030,8 +2030,8 @@ Compare selected data elements
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                     className={classes.expansionPanelSummary}
-                    style={{backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white'}}
-                                      >
+                    style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white' }}
+                  >
                     <FormControlLabel
                       aria-label="Acknowledge"
                       onClick={handleCompareCheckbox(dataElement)}
@@ -2111,7 +2111,7 @@ Compare selected data elements
                       <Grid item xs={12} className={classes.expansionPanelLeft}>
                         {/* <ExpansionPanelActions> */}
                         <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
-                          View all data element details or compare with other data elements
+                          View Data Element Details
                 </Button>
                         {/* </ExpansionPanelActions> */}
                       </Grid>
