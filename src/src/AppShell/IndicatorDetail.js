@@ -8,14 +8,8 @@ import * as color_palette from '../Styles/Colors';
 import styled from 'styled-components';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
-
 import {convertMarkdown} from '../util.js';
-import TableContainer from '@material-ui/core/TableContainer';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+
 
 import Grid from '@material-ui/core/Grid';
 
@@ -39,6 +33,7 @@ export default function  IndicatorDetail(props) {
   props.versionMap.map(   
       item => {         
         if (props.currentIndicator.periodYear && item.year === props.currentIndicator.periodYear) {
+          console.log(item);
           versionText = item.fromToText;
         }
   });  
@@ -48,7 +43,7 @@ export default function  IndicatorDetail(props) {
           <div><LinearProgress mode="indeterminate" /></div> : null                  
         }
       {/* Indicator description */}        
-        <ExpansionPanel defaultExpanded={false}>
+        <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <ExpandTitle>Description/Details</ExpandTitle>
           </ExpansionPanelSummary>
@@ -67,7 +62,7 @@ export default function  IndicatorDetail(props) {
         </ExpansionPanel>
 
         {/* Indicator changes */}
-        <ExpansionPanel defaultExpanded={false}>
+        <ExpansionPanel defaultExpanded={true}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <ExpandTitle>Indicator changes</ExpandTitle>
               <ExpandSubTitle> Guidance Version: {versionText} </ExpandSubTitle>
@@ -78,7 +73,7 @@ export default function  IndicatorDetail(props) {
             </ExpansionPanel>
 
         {/* Indicator numerator */}   
-            <ExpansionPanel defaultExpanded={false}>
+            <ExpansionPanel defaultExpanded={true}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header" >
                 <ExpandTitle>Numerator/Denominator/Disaggregates</ExpandTitle>
               </ExpansionPanelSummary>
@@ -115,7 +110,7 @@ export default function  IndicatorDetail(props) {
               </ExpansionPanelDetails>
             </ExpansionPanel>
                   
-            <ExpansionPanel>
+            <ExpansionPanel defaultExpanded={true}>
               <ExpansionPanelSummary  expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
                 <ExpandTitle>Other/Quality Assurance</ExpandTitle>
                     {/*<ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>*/}

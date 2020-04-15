@@ -780,7 +780,8 @@ const useStyles = makeStyles(theme => ({
         }
         
         const jsonData = await response.json();
-        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');                   
+        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');    
+        console.log(sortedData) ;              
         matchDataElements.map(item => {        
             
           if (item.id === id && (!item.disags || item.disags.length ===0)) {        
@@ -953,7 +954,7 @@ const useStyles = makeStyles(theme => ({
   indicatorGroups.map(function(indGroup, index) {
     //console.log(indGroup + " - " + index);
     groupExpansionPanelList.push(
-      <ExpansionPanel key={"panel" + index}    TransitionProps={{ unmountOnExit: true, mountOnEnter: true }} >
+      <ExpansionPanel key={"panel" + index}    TransitionProps={{ unmountOnExit: true, mountOnEnter: true }} defaultExpanded={true}>
        <ExpansionPanelSummary key={"summary_" + index} expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content" id="panel1a-header" className={classes.sidebarExpansionSummary} >
           <ExpandTitle key={"title_" + index} className={classes.sidebarExpandTitle}>{indGroup}</ExpandTitle>
@@ -1199,9 +1200,9 @@ return (
                         dataElement.disags.map(
                           (item, index ) => 
                             (index < dataElement.disags.length -1) ?                              
-                              (checked ? (<span key={"item_name" + item.code + index}> {item.code} + </span>) : (<span key={"item_code" + item.code + index}> {item.name} + </span>))
+                              (checked ? (<span key={"item_name" + item.code + index}> {item.code} + </span>) : (<span key={"item_code" + item.code + index}> {item.name.trim().substring(0, 1).toUpperCase() + item.name.trim().substring(1)}</span>))
                             :                              
-                            (checked ? (<span key={"item_name" + item.code + index}> {item.code} </span>) : (<span key={"item_code" + item.code + index}> {item.name}  </span>))                                               
+                            (checked ? (<span key={"item_name" + item.code + index}> {item.code} </span>) : (<span key={"item_code" + item.code + index}>{item.name.trim().substring(0, 1).toUpperCase() + item.name.trim().substring(1)}  </span>))                                               
                         )                           
                       : null}
                     </div></Grid>
