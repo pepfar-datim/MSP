@@ -681,7 +681,7 @@ export default function Compare() {
   };
   return (
       <ErrorBoundary>
-          <Grid container className={classes.comparePanelContainer}>
+          <Grid container >
             <Grid item xs={12}>
 
               {/* <div className={classes.fixedTop}> */}
