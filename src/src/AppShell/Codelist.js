@@ -1596,11 +1596,12 @@ export default function Codelist() {
 
       <div className={classes.container}>
         <div className={classes.container}>
-          <Breadcrumb></Breadcrumb>
+          
           {/* hero section */}
           <Grid container alignItems="center" >
             {<Grid item xs={12} md={7} >
               {/* <headings.H1>Data Elements</headings.H1> */}
+              <Breadcrumb></Breadcrumb>
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
