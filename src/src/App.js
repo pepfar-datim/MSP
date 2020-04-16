@@ -10,6 +10,7 @@ import Sidebar from './Components/Sidebar';
 import About from './AppShell/About';
 import NotFound from './AppShell/NotFound';
 import Indicator from './AppShell/Indicator';
+import Compare from './AppShell/Compare';
 import {StateProvider} from './ContextSetup';
 
 import clsx from 'clsx';
@@ -160,6 +161,7 @@ export default function App() {
                     <Route path="/about" component={About} />
                     <Route exact path="/index.html" component={Welcome} />                    
                     <Route path="/indicator/:id" component={Indicator} /> 
+                    <Route path="/compare" component={Compare} /> 
                     <Route component={NotFound} />
                   </Switch>
             </main>          

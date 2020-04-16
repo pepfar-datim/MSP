@@ -15,6 +15,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { Redirect } from "react-router-dom";
 
 import { useStateValue } from '../ContextSetup';
 import TextField from '@material-ui/core/TextField';
@@ -27,7 +28,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import { Route, NavLink, useLocation } from 'react-router-dom';
+import { Route, NavLink, useLocation, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -60,7 +61,7 @@ import Switch from '@material-ui/core/Switch';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
-
+import history from './../history';
 
 //tab panel function
 function TabPanel(props) {
@@ -556,6 +557,7 @@ export default function Codelist() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [expanded, setExpanded] = React.useState(false);
+  let history = useHistory()
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -1378,6 +1380,7 @@ export default function Codelist() {
     selectDataTemp = {}
   }
 
+  const [comparePage, setComparePage] = React.useState("")
   //compare dropdown menu
   const [compare, setCompare] = React.useState({
     DATIM: true,
@@ -1414,7 +1417,7 @@ export default function Codelist() {
 
       else {
         setCompare({ ...comparePanel, [DATIM]: true });
-        setComparePanel({ ...comparePanel, [side]: open });
+        //setComparePanel({ ...comparePanel, [side]: open });
 
         //const selectDataTemp = [];
 
@@ -1429,7 +1432,16 @@ export default function Codelist() {
         }
         )
         setSelectedDatim(temp);
-
+        let compareLink = ''
+        Object.keys(selectedDataElement).map(key =>{
+          compareLink = compareLink + 'id' + (parseInt(key)+1) + '=' + selectedDataElement[key] + '&'
+        })
+        compareLink = '/compare?' + compareLink.substring(0,compareLink.length - 1)
+        history.push(compareLink)
+          
+            //return <Redirect to={compareLink}/> 
+          
+        //setComparePage("/compare")
       }
     }
     else {
@@ -1567,6 +1579,7 @@ export default function Codelist() {
   };
 
   return (
+ <Route render={(history) => (
     <div>
 
 
@@ -1860,8 +1873,9 @@ export default function Codelist() {
                             }
                           }}
 
-                        >
-                          <option value={'All'}>All</option>)
+                       >
+                          <option value={'All'}>All</option> 
+  
                         {indicatorsTemp.map(key => <option key={Math.random()} value={key.id} >{key.display_name}</option>)
                           }
 
@@ -1905,9 +1919,18 @@ export default function Codelist() {
 
 Compare selected data elements
 </Button> */}
-                <Button variant="outlined" className={classes.actionButton} onClick={toggleDrawer('bottom', true)} id="comparisonButton">
-                  Compare selected data elements
+
+                {/* <NavLink to={{
+                  //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
+                  pathname: comparePage,
+                  data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
+                }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}
+                  <Button variant="outlined" className={classes.actionButton}
+                    onClick={toggleDrawer('bottom', true)}
+                    id="comparisonButton">
+                    Compare selected data elements
                 </Button>
+                {/* </NavLink> */}
               </div>
 
               <div>
@@ -2133,7 +2156,7 @@ Compare selected data elements
                       <Typography className={classes.heading}><strong>Disaggregations and Derivations</strong></Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                      <Route render={() => (
+                      {/* <Route render={() => ( */}
                         <div className={classes.tableContainer}>
                           <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                             <Tab label="DISAGGREGATIONS FORMULA" {...a11yProps(0)} />
@@ -2254,8 +2277,6 @@ Compare selected data elements
                           ) : ''}
 
                         </div>
-                      )} />
-
 
 
                     </ExpansionPanelDetails>
@@ -2287,7 +2308,6 @@ Compare selected data elements
                   />
                 </TableRow>
               </tbody></table>
-
             {/* data element comparison panel */}
             <Drawer anchor="bottom" open={comparePanel.bottom} onClose={toggleDrawer('bottom', false)}>
               <Grid container className={classes.comparePanelContainer}>
@@ -2309,6 +2329,7 @@ Compare selected data elements
                   {/* datim row */}
 
                   <div className={classes.compareRow} >
+                    
                     <ErrorBoundary>
                       {
                         selectedDatim.map(datim => {
@@ -2399,7 +2420,7 @@ Compare selected data elements
                                 <ExpansionPanelDetails className={classes.panelDetail}>
 
 
-                                  <Route render={({ history }) => (
+                                  {/* <Route render={({ history }) => ( */}
                                     <div className={classes.tableContainer} key={Math.random()}>
                                       {/* data element Disaggregations */}
                                       <strong>Disaggregations</strong>:<br />
@@ -2432,7 +2453,7 @@ Compare selected data elements
                                         </TableBody>
                                       </Table>
                                     </div>
-                                  )}></Route>
+                                  {/* )}></Route> */}
                                 </ExpansionPanelDetails>
                               </ExpansionPanel>
 
@@ -2812,7 +2833,7 @@ Compare selected data elements
 
     </div >
 
-
+                      )} ></Route>
   );
 
 }
