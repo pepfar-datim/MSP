@@ -1600,7 +1600,7 @@ export default function Codelist() {
           {/* hero section */}
           <Grid container alignItems="center" >
             {<Grid item xs={12} md={7} >
-              <headings.H1>Data Elements</headings.H1>
+              {/* <headings.H1>Data Elements</headings.H1> */}
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
