@@ -559,6 +559,7 @@ export default function Codelist() {
   const [page, setPage] = React.useState(0);
   const [expanded, setExpanded] = React.useState(false);
   let history = useHistory()
+  const params = new URLSearchParams(useLocation().search)
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -706,6 +707,18 @@ export default function Codelist() {
       }
     }
   }
+
+  useEffect(() => {
+    async function loadData() {
+      if(params.get('dataElementid')){
+        await getMappings(params.get('dataElementid'))
+        setDataElementDetail(de[params.get('dataElementid')]);
+    setDetailPanel({ ...detailPanel, bottom: true });
+      }
+    }
+    loadData();
+    //toggleDetailDrawer(de[params.get('dataElementid')], 'bottom', true)
+  }, []);
 
   useEffect(() => {
     loadDataElementsByPeriod();
@@ -937,11 +950,12 @@ export default function Codelist() {
     let compareLink = ''
     if (!dataElementToCompare) {
       if (compareText !== '') {
-          compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText 
+          compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
       }
     } else{
-      compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare 
+      compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true' 
     }
+    console.log('**  history.push(compareLink)')
         history.push(compareLink)
   }
 
@@ -1468,7 +1482,9 @@ export default function Codelist() {
     }
     setDataElementDetail(dataElement);
     setDetailPanel({ ...detailPanel, [side]: open });
-
+    if(!open){
+      history.push('/codelist')
+    }
 
   };
 

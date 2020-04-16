@@ -483,7 +483,9 @@ export default function Compare() {
     async function loadData() {
       let tempDEs = []
       for (let i = 1; i <= [...params.keys()].length; i++) {
+        if(params.get('id' + i)){
         await getMappings(params.get('id' + i))
+        }
         if (de[params.get('id' + i)]) {
           tempDEs.push(de[params.get('id' + i)])
         }
@@ -521,7 +523,12 @@ export default function Compare() {
   };
 
   const goBack = () => {
+    console.log("params.get('dataElementDetail') " + params.get('dataElementDetail'))
+    if(params.get('dataElementDetail')){
+      history.push('/codelist?dataElementid=' + params.get('id1'))
+    }else{
     history.goBack()
+    }
   }
   const styles = theme => ({
     root: {
@@ -680,7 +687,7 @@ export default function Compare() {
               {/* <div className={classes.fixedTop}> */}
               <div >
                 {/* <NavLink to="/codelist"> */}
-                <Button onClick={history.goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
+                <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                   id="backButton"> Back</Button>
                 {/* </NavLink> */}
                 <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
