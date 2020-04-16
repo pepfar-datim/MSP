@@ -813,6 +813,7 @@ export default function Compare() {
                                       (mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
 
                                         key =>
+                                        Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
                                           <TableRow key={Math.random()}>
                                             <TableCell component="th" scope="row">
                                               {Object(mappings[datim.id])[key].to_concept_name}
@@ -821,6 +822,7 @@ export default function Compare() {
                                               {Object(mappings[datim.id])[key].to_concept_code}
                                             </TableCell>
                                           </TableRow>
+                                        ) : ''
                                       ) : ''
                                     }
                                   </TableBody>

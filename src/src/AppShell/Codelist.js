@@ -2235,15 +2235,16 @@ Compare selected data elements
                                     (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
 
                                       key =>
+                                      Object(deMappings[dataElement.id])[key].map_type === 'Has Option' ? (
                                         <TableRow key={Math.random()}>
                                           <TableCell component="th" scope="row">
-                                            {Object(deMappings[dataElement.id])[key].to_concept_name}
+                                           {Object(deMappings[dataElement.id])[key].to_concept_name}
                                           </TableCell>
                                           <TableCell component="th" scope="row">
                                             {Object(deMappings[dataElement.id])[key].to_concept_code}
                                           </TableCell>
                                         </TableRow>
-
+                                      ) : ''
                                     ) : ''
                                   }
                                 </TableBody>
