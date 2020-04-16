@@ -918,21 +918,31 @@ export default function Codelist() {
     console.log("inside performCompare dataElementDetail " + dataElementDetail)
     var compareText = document.getElementById("compareSearch") ? document.getElementById("compareSearch").value : '';
     console.log("inside performCompare compareText " + compareText)
+    // if (!dataElementToCompare) {
+    //   if (compareText !== '') {
+    //     if (!de[compareText]) {
+    //       await getDataElement(compareText);
+    //     }
+    //     console.log("inside performCompare dataElement " + de[compareText])
+    //     toggleCompareDetailDrawer(dataElementDetail, de[compareText], 'bottom', true)
+    //   }
+    // } else {
+    //   if (!de[dataElementToCompare]) {
+    //     await getDataElement(dataElementToCompare);
+    //   }
+    //   console.log("inside performCompare dataElement " + de[dataElementToCompare])
+    //   toggleCompareDetailDrawer(dataElementDetail, de[dataElementToCompare], 'bottom', true)
+    // }
+
+    let compareLink = ''
     if (!dataElementToCompare) {
       if (compareText !== '') {
-        if (!de[compareText]) {
-          await getDataElement(compareText);
-        }
-        console.log("inside performCompare dataElement " + de[compareText])
-        toggleCompareDetailDrawer(dataElementDetail, de[compareText], 'bottom', true)
+          compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText 
       }
-    } else {
-      if (!de[dataElementToCompare]) {
-        await getDataElement(dataElementToCompare);
-      }
-      console.log("inside performCompare dataElement " + de[dataElementToCompare])
-      toggleCompareDetailDrawer(dataElementDetail, de[dataElementToCompare], 'bottom', true)
+    } else{
+      compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare 
     }
+        history.push(compareLink)
   }
 
   const handleKeyPress = (event) => {
