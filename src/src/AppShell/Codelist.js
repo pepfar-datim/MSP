@@ -445,13 +445,14 @@ const useStyles = makeStyles(theme => ({
 
 
   search: {
-    padding: '6px 4px',
+   // padding: '6px 4px',
     display: 'flex',
     alignItems: 'center',
     width: '100%',
     border: '2px solid #D55804',
     /*borderColor: `'#D55804' !important`,
     borderWidth: '2px',*/
+    marginTop: '15px'
   },
   compare: {
     padding: '6px 4px',
@@ -1595,7 +1596,6 @@ export default function Codelist() {
 
 
       <div className={classes.container}>
-        <div className={classes.container}>
           
           {/* hero section */}
           <Grid container alignItems="center" >
@@ -1624,9 +1624,7 @@ export default function Codelist() {
               </Paper>
             </Grid>
           </Grid>
-        </div>
-      </div>
-
+      {/* </div> */}
 
 
       {errorDisplay !== null ?
@@ -1638,7 +1636,7 @@ export default function Codelist() {
 
 
 
-      <div className={classes.container}>
+      {/* <div className={classes.container}> */}
         <Grid container>
 
 
