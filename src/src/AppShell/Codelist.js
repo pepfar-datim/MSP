@@ -2054,6 +2054,7 @@ Compare selected data elements
                     className={classes.expansionPanelSummary}
                     style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white' }}
                   >
+                    <ErrorBoundary>
                     <FormControlLabel
                       aria-label="Acknowledge"
                       onClick={handleCompareCheckbox(dataElement)}
@@ -2112,7 +2113,7 @@ Compare selected data elements
                         /></Grid>
                       <Grid item xs={3} ></Grid>
                     </Grid>
-
+                    </ErrorBoundary>
                   </ExpansionPanelSummary>
 
 
@@ -2155,6 +2156,7 @@ Compare selected data elements
                       <Typography className={classes.heading}><strong>Disaggregations and Derivations</strong></Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+                    <ErrorBoundary>
                       {/* <Route render={() => ( */}
                         <div className={classes.tableContainer}>
                           <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
@@ -2277,7 +2279,7 @@ Compare selected data elements
 
                         </div>
 
-
+                        </ErrorBoundary>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
                 </ExpansionPanel>
