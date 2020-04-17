@@ -56,23 +56,23 @@ export default function  IndicatorDetail(props) {
                     <TableRow>
                         <TableCell style={{width: '30%'}} padding='none'><strong>Reporting Level</strong></TableCell>
                         <TableCell padding='none'>
-                          {props.currentIndicator.level === '' ?  'N/A' : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.level)}} />)}
+                          {props.currentIndicator.level === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.level)}} />)}
                         </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell padding='none'><strong>Reporting frequency</strong></TableCell>
                       <TableCell padding='none'>
-                      {props.currentIndicator.frequency === '' ?  'N/A' : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.frequency)}} />)}
+                      {props.currentIndicator.frequency === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.frequency)}} />)}
                        </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell padding='none'><strong>How to calculate annual total</strong></TableCell>
-                      <TableCell padding='none'>{props.currentIndicator.how_to_calculate_annual_total === '' ?  'N/A' : 
+                      <TableCell padding='none'>{props.currentIndicator.how_to_calculate_annual_total === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
                       (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_calculate_annual_total)}} />)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell padding='none'><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
-                      <TableCell padding='none'>{props.currentIndicator.changeFromPreviousVersion === '' ?  'N/A' : 
+                      <TableCell padding='none'>{props.currentIndicator.changeFromPreviousVersion === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
                       (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.changeFromPreviousVersion)}} />)}</TableCell>
                     </TableRow>
                 </TableBody>
