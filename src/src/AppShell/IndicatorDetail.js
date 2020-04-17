@@ -24,12 +24,6 @@ const ExpandTitle = styled.p`
     color: ${color_palette.SECONDARY_RED};
     font-weight: bold;
 `;
-const ExpandSubTitle = styled.span`
-    margin-left: 1em;
-    font-size: 1em;
-    padding-top: 5px;
-    font-weight: 300;
-`;
 
 
 export default function  IndicatorDetail(props) {   
@@ -49,40 +43,42 @@ export default function  IndicatorDetail(props) {
         {/* Indicator description */}        
         <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-              <ExpandTitle>Description/Details</ExpandTitle>
+              <ExpandTitle>Details</ExpandTitle>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <div>
             <div className={props.classes.numeratorTitle} style={{textAlign: 'left'}}><strong>Description</strong></div>
               <div >             
-                <span dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.description)}} /><br/>              
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.description)}} />         
               </div>            
-              <Table className={props.classes.table} aria-label="simple table">
+              <Table  className={props.classes.comboTable} aria-label="simple table">
                 <TableBody>
                     <TableRow>
-                        <TableCell style={{width: '30%'}}><strong>Reporting Level</strong></TableCell>
-                        <TableCell>{props.currentIndicator.level !== ''  ? props.currentIndicator.level : 'N/A'}</TableCell>
+                        <TableCell style={{width: '30%'}} padding='none'><strong>Reporting Level</strong></TableCell>
+                        <TableCell padding='none'>
+                          {props.currentIndicator.level === '' ?  'N/A' : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.level)}} />)}
+                        </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>Reporting frequency</strong></TableCell>
-                      <TableCell>{props.currentIndicator.frequency !== '' ? props.currentIndicator.frequency : 'N/A'}</TableCell>
+                      <TableCell padding='none'><strong>Reporting frequency</strong></TableCell>
+                      <TableCell padding='none'>
+                      {props.currentIndicator.frequency === '' ?  'N/A' : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.frequency)}} />)}
+                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>How to calculate annual total</strong></TableCell>
-                      <TableCell>{props.currentIndicator.how_to_calculate_annual_total === '' ?  'N/A' : 
-                      (<span dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_calculate_annual_total)}} />)}</TableCell>
+                      <TableCell padding='none'><strong>How to calculate annual total</strong></TableCell>
+                      <TableCell padding='none'>{props.currentIndicator.how_to_calculate_annual_total === '' ?  'N/A' : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_calculate_annual_total)}} />)}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
-                      <TableCell>{props.currentIndicator.changeFromPreviousVersion === '' ?  'N/A' : 
-                      (<span dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.changeFromPreviousVersion)}} />)}</TableCell>
+                      <TableCell padding='none'><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
+                      <TableCell padding='none'>{props.currentIndicator.changeFromPreviousVersion === '' ?  'N/A' : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.changeFromPreviousVersion)}} />)}</TableCell>
                     </TableRow>
                 </TableBody>
               </Table>                    
             </div>
            
-  
- 
           </ExpansionPanelDetails>
         </ExpansionPanel>
        
@@ -120,9 +116,14 @@ export default function  IndicatorDetail(props) {
                 <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator_disaggregation_groups)}} />              
                 </Grid>
               </Grid>   
-              <div className={props.classes.numeratorTitle}><strong>Disaggregate descriptions and definitions</strong></div>
-              <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} /> 
-                                                
+                <div>{
+                props.currentIndicator && props.currentIndicator.disaggregate_descriptions_and_definitions !== "" ?              
+                <div>
+                  <div className={props.classes.numeratorTitle}><strong>Disaggregate descriptions and definitions</strong></div>
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} /> 
+                </div>
+              : null }                    
+              </div>              
               </ExpansionPanelDetails>
             </ExpansionPanel>
                   
