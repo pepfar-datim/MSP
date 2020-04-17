@@ -53,6 +53,7 @@ export default function  IndicatorDetail(props) {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <div>
+            <div className={props.classes.numeratorTitle} style={{textAlign: 'left'}}><strong>Description</strong></div>
               <div >             
                 <span dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.description)}} /><br/>              
               </div>            
