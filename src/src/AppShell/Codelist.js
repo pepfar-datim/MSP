@@ -61,6 +61,10 @@ import InfoIcon from '@material-ui/icons/Info';
 import TreeView from '@material-ui/lab/TreeView';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
+import history from './../history';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import styled from 'styled-components';
 
 //tab panel function
 function TabPanel(props) {
@@ -100,12 +104,18 @@ const currentYear = getConfig().defaultYear
 const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 
+const ActionButtonLabel = styled.p`
+    margin:0;
+    padding:0;
+    font-size: 0.9em;  
+    font-weight: bold;
+`;
+
 let deMappings = {};
 let de = {}
 let selectDataTemp = {};
 let derivedCoC = {}
 let pdhDerivatives = {}
-
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -530,7 +540,7 @@ const useStyles = makeStyles(theme => ({
     },
     actionButton: {
       width: '90vw',
-      fontSize: '1em'
+      fontSize: '1em' 
     },
     compareRow: {
       flexDirection: 'column'
@@ -1942,16 +1952,21 @@ export default function Codelist() {
 
             <Grid item xs={12} md={9} className={classes.dataElementContent}>
 
-              {/* dashboard, including download, compare, select all buttons */}
-              <div className={classes.tabDashboard}>
-                <div>
-                  {selectedDataElement && selectedDataElement.length > 0 ?
-                    <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
-                      Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '15px', paddingRight: '15px', borderRadius: '15px' }}> {selectedDataElement.length}</span></Button>
-                    : null}
-                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
-                    {getDownloadLabel()} </Button>
-                  {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+            {/* dashboard, including download, compare, select all buttons */}
+            <div className={classes.tabDashboard}>
+              <div>
+                {selectedDataElement && selectedDataElement.length > 0 ?
+                  <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
+                    <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
+                  : null}
+                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                 <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel>
+                  {
+                   selectedDataElement.length === 0 && values.dataSet === "All" ?
+                   <GetAppIcon/> : <GetAppIcon style={{color: '#1D5893'}}/>
+                  }
+                </Button>
+                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
 </Button> */}
@@ -1964,7 +1979,8 @@ Compare selected data elements
                   <Button variant="outlined" className={classes.actionButton}
                     onClick={toggleDrawer('bottom', true)}
                     id="comparisonButton">
-                    Compare selected data elements
+                     <ActionButtonLabel>Compare selected data elements</ActionButtonLabel>
+                    <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }}/>
                 </Button>
                   {/* </NavLink> */}
                 </div>

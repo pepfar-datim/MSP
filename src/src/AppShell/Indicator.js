@@ -245,7 +245,8 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '30px'
   },
   chip:{
-    marginRight: '5px'
+    marginTop: '10px', 
+    color: '#4e4f4f' 
   },
   filterButton:{
     marginBottom: '20px',
@@ -780,8 +781,7 @@ const useStyles = makeStyles(theme => ({
         }
         
         const jsonData = await response.json();
-        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');    
-        console.log(sortedData) ;              
+        let sortedData = sortJSON(jsonData.mappings, 'to_concept_name', 'asc');                        
         matchDataElements.map(item => {        
             
           if (item.id === id && (!item.disags || item.disags.length ===0)) {        
@@ -1018,7 +1018,7 @@ return (
   <Grid item xs={12} md={3}>      
     <Shortcut ></Shortcut>
     <Paper className={classes.sidebar}>
-    <h4 className={classes.sidebarTitle}>INDICATOR FILTERS</h4>
+    <h4 className={classes.sidebarTitle}>Reference Indicator Filters</h4>
     {/* filters */}
     <form className={classes.filterContainer} autoComplete="off">
       {/* fiscal filter */}
@@ -1131,27 +1131,18 @@ return (
             {/* data elements summary */}
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
               <Grid container alignItems="center" justify="space-between">       
-                <Grid item  xs={11} md={9}>         
+                <Grid item  xs={12} md={12}>         
                   <Typography className={classes.heading}> 
                   <strong>{dataElement.display_name}</strong>
                   </Typography>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <Typography className={classes.heading}> 
-                  <strong>Data Element UID</strong>: {dataElement.external_id}
-                  </Typography>
+                </Grid>               
+                  <Grid item xs={12} md={3}  className={classes.chip}>                    
+                    <Chip variant="outlined"   size="small" label={"UID: " + dataElement.external_id} clickable />  
+                    </Grid>
+                  <Grid item xs={12} md={3} className={classes.chip}>  
+                    <Chip variant="outlined"  style={{ backgroundColor: '#d8ebe0' }}  size="small" label={"Source: " + dataElement.extras.source} clickable />                                                                                         
                   </Grid>
-                  <Grid item xs={2} >
-                    <Chip
-                      variant="outlined" size="small" label={"Source: " + dataElement.extras.source} clickable                    
-                    />                     
-                  </Grid>
-                  <Grid item xs={2} >                   
-                     <Chip
-                      variant="outlined" size="small" label={"UID: " + dataElement.external_id} clickable                    
-                    />                                                           
-                  </Grid>
-                  <Grid item xs={8} />
+                  <Grid item xs={12} md={6} />
               </Grid>         
             </ExpansionPanelSummary>
 

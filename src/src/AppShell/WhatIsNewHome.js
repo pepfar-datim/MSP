@@ -154,19 +154,18 @@ dispatch({
     return(
         <div className={classes.home}>
            <Grid container alignItems="center"  >
-          <Grid item xs={12} md={8}>
-          <headings.H1>KEY UPDATES AND CHANGES</headings.H1>
-          <div className={classes.divider}></div>
+            <Grid item xs={12} md={8}>
+            <headings.H1>KEY UPDATES AND CHANGES</headings.H1>
+            <div className={classes.divider}></div>
+            </Grid>
+          <Grid item xs={12} md={4}>
+            <Button variant="outlined" href ='https://www.state.gov/wp-content/uploads/2019/10/PEPFAR-MER-Indicator-Reference-Guide-Version-2.4-FY20.pdf'color="primary" className={classes.button}>
+            Download MER Guidance v2.4
+            </Button>          
           </Grid>
           <Grid item xs={12} md={4}>
-          <Button variant="outlined" href ='https://www.state.gov/wp-content/uploads/2019/10/PEPFAR-MER-Indicator-Reference-Guide-Version-2.4-FY20.pdf'color="primary" className={classes.button}>
-          Download MER Guidance v2.4
-          </Button>
-          
+            <headings.H4 className={classes.subtitle}>MER 2.3 to MER 2.4</headings.H4>
           </Grid>
-          
-       <headings.H4 className={classes.subtitle}>MER 2.3 to MER 2.4</headings.H4>
-       
         <p>Through the past 3 years of quarterly, site-level monitoring, PEPFAR programs have used data to improve 
           implementation. Changes to the MER highlight key program areas (e.g., index testing services) that should 
           be taken to scale.</p>

@@ -6,6 +6,10 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import * as color_palette from '../Styles/Colors';
 import styled from 'styled-components';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {convertMarkdown} from '../util.js';
@@ -20,20 +24,13 @@ const ExpandTitle = styled.p`
     color: ${color_palette.SECONDARY_RED};
     font-weight: bold;
 `;
-const ExpandSubTitle = styled.span`
-    margin-left: 1em;
-    font-size: 1em;
-    padding-top: 5px;
-    font-weight: 300;
-`;
 
 
 export default function  IndicatorDetail(props) {   
   let versionText = "";  
   props.versionMap.map(   
       item => {         
-        if (props.currentIndicator.periodYear && item.year === props.currentIndicator.periodYear) {
-          console.log(item);
+        if (props.currentIndicator.periodYear && item.year === props.currentIndicator.periodYear) {  
           versionText = item.fromToText;
         }
   });  
@@ -42,35 +39,49 @@ export default function  IndicatorDetail(props) {
         {props.indicatorDetailLoading ? 
           <div><LinearProgress mode="indeterminate" /></div> : null                  
         }
-      {/* Indicator description */}        
+
+        {/* Indicator description */}        
         <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-              <ExpandTitle>Description/Details</ExpandTitle>
+              <ExpandTitle>Details</ExpandTitle>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <div>
-              <p className={props.classes.childContent}>
-                {props.currentIndicator.description}
-              </p>
-              <p>
-                <strong>Reporting level</strong>: {props.currentIndicator.level} <br/>
-                <strong>Reporting frequency</strong>: {props.currentIndicator.frequency} <br/>
-                <strong>How to calculate annual total</strong>:  {props.currentIndicator.how_to_calculate_annual_total} 
-              </p>
+            <div className={props.classes.numeratorTitle} style={{textAlign: 'left'}}><strong>Description</strong></div>
+              <div >             
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.description)}} />         
+              </div>            
+              <Table  className={props.classes.comboTable} aria-label="simple table">
+                <TableBody>
+                    <TableRow>
+                        <TableCell style={{width: '30%'}} padding='none'><strong>Reporting Level</strong></TableCell>
+                        <TableCell padding='none'>
+                          {props.currentIndicator.level === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.level)}} />)}
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>Reporting frequency</strong></TableCell>
+                      <TableCell padding='none'>
+                      {props.currentIndicator.frequency === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.frequency)}} />)}
+                       </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>How to calculate annual total</strong></TableCell>
+                      <TableCell padding='none'>{props.currentIndicator.how_to_calculate_annual_total === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_calculate_annual_total)}} />)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
+                      <TableCell padding='none'>{props.currentIndicator.changeFromPreviousVersion === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.changeFromPreviousVersion)}} />)}</TableCell>
+                    </TableRow>
+                </TableBody>
+              </Table>                    
             </div>
+           
           </ExpansionPanelDetails>
         </ExpansionPanel>
-
-        {/* Indicator changes */}
-        <ExpansionPanel defaultExpanded={true}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-              <ExpandTitle>Indicator changes</ExpandTitle>
-              <ExpandSubTitle> Guidance Version: {versionText} </ExpandSubTitle>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>                        
-                <div><strong>Change from previous version</strong>: {props.currentIndicator.changeFromPreviousVersion}</div>                        
-            </ExpansionPanelDetails>
-            </ExpansionPanel>
+       
 
         {/* Indicator numerator */}   
             <ExpansionPanel defaultExpanded={true}>
@@ -81,8 +92,9 @@ export default function  IndicatorDetail(props) {
               <div className={props.classes.numeratorTitle} ><strong>Numerator</strong></div>  
               <Grid container className={props.classes.numeratorGridContainer}>                                        
                 <Grid item xs={12} className={props.classes.numeratorGrid} >
-                <div><strong>Numerator:</strong> {props.currentIndicator.numerator}</div>
-                <p>{props.currentIndicator.numerator_description}</p>
+                <div><strong>Numerator:</strong> <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.numerator)}} /> 
+               </div>               
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.numerator_description)}} />
                 </Grid>
                 <Grid item xs={12} className={props.classes.numeratorGridCentered} >
                 <div><strong>Disaggregates</strong> </div>              
@@ -95,8 +107,10 @@ export default function  IndicatorDetail(props) {
               <div className={props.classes.numeratorTitle} ><strong>Denominator</strong></div>  
               <Grid container className={props.classes.numeratorGridContainer}>                                        
                 <Grid item xs={12} className={props.classes.numeratorGrid} >
-                <div><strong>Denominator:</strong> {props.currentIndicator.denominator}</div>
-                <p>[denominator description missing in OCL]</p>
+                <div><strong>Denominator:</strong> 
+                {props.currentIndicator.denominator === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator)}} />)}
+                  </div> 
                 </Grid>
                 <Grid item xs={12} className={props.classes.numeratorGridCentered} >
                 <div><strong>Disaggregates</strong> </div>              
@@ -105,14 +119,20 @@ export default function  IndicatorDetail(props) {
                 <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator_disaggregation_groups)}} />              
                 </Grid>
               </Grid>   
-              <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} /> 
-                                                
+                <div>{
+                props.currentIndicator && props.currentIndicator.disaggregate_descriptions_and_definitions !== "" ?              
+                <div>
+                  <div className={props.classes.numeratorTitle}><strong>Disaggregate descriptions and definitions</strong></div>
+                <div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.disaggregate_descriptions_and_definitions)}} /> 
+                </div>
+              : null }                    
+              </div>              
               </ExpansionPanelDetails>
             </ExpansionPanel>
                   
             <ExpansionPanel defaultExpanded={true}>
               <ExpansionPanelSummary  expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
-                <ExpandTitle>Other/Quality Assurance</ExpandTitle>
+                <ExpandTitle>Additional Attributes</ExpandTitle>
                     {/*<ExpandSubTitle>Standard definition of DSD and TA-SDI used.</ExpandSubTitle>*/}
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>    

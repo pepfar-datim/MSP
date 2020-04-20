@@ -68,8 +68,9 @@ export default function  DataElementDetail(props) {
                                 <TableCell>
                                     {
                                     props.dataElementDetail.extras && props.dataElementDetail.extras['Applicable Periods'] ? (props.dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(props.dataElementDetail.extras['Applicable Periods']).map(
-                                        key =>
-                                        props.dataElementDetail.extras['Applicable Periods'][key] + ", "
+                                        (key, index) =>                                       
+                                            (index < props.dataElementDetail.extras['Applicable Periods'].length -1) ?                              
+                                                props.dataElementDetail.extras['Applicable Periods'][key] + ", " : props.dataElementDetail.extras['Applicable Periods'][key] 
                                     )
                                     ) : 'N/A') : 'N/A'
                                     }
