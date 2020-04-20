@@ -34,6 +34,7 @@ const BreadcrumbsItem = ({ ...rest, match }) => {
     return (
       match.isExact ?
       (
+        routeName === 'Codelist' ? <BreadcrumbItem active>Data Elements</BreadcrumbItem> :
         <BreadcrumbItem active>{routeName}</BreadcrumbItem>
       ) :
       (
