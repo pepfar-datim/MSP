@@ -60,18 +60,18 @@ export default function  IndicatorDetail(props) {
                         </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell padding='none'><strong>Reporting frequency</strong></TableCell>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>Reporting frequency</strong></TableCell>
                       <TableCell padding='none'>
                       {props.currentIndicator.frequency === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.frequency)}} />)}
                        </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell padding='none'><strong>How to calculate annual total</strong></TableCell>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>How to calculate annual total</strong></TableCell>
                       <TableCell padding='none'>{props.currentIndicator.how_to_calculate_annual_total === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
                       (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.how_to_calculate_annual_total)}} />)}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell padding='none'><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
+                      <TableCell style={{width: '30%'}} padding='none'><strong>Change from previous version</strong> <br/>({versionText})</TableCell>
                       <TableCell padding='none'>{props.currentIndicator.changeFromPreviousVersion === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
                       (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.changeFromPreviousVersion)}} />)}</TableCell>
                     </TableRow>
@@ -107,7 +107,10 @@ export default function  IndicatorDetail(props) {
               <div className={props.classes.numeratorTitle} ><strong>Denominator</strong></div>  
               <Grid container className={props.classes.numeratorGridContainer}>                                        
                 <Grid item xs={12} className={props.classes.numeratorGrid} >
-                <div><strong>Denominator:</strong> {props.currentIndicator.denominator}</div>               
+                <div><strong>Denominator:</strong> 
+                {props.currentIndicator.denominator === '' ?  <div dangerouslySetInnerHTML={{__html: convertMarkdown('N/A')}} /> : 
+                      (<div dangerouslySetInnerHTML={{__html: convertMarkdown(props.currentIndicator.denominator)}} />)}
+                  </div> 
                 </Grid>
                 <Grid item xs={12} className={props.classes.numeratorGridCentered} >
                 <div><strong>Disaggregates</strong> </div>              
