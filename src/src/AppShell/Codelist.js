@@ -805,6 +805,7 @@ export default function Codelist() {
   }, [queryIndicators]);
 
   function populatePDHDerivatives(source_data_elements) {
+    try{
     source_data_elements.map(source_data_element => {
       if (!pdhDerivatives[source_data_element.source_data_element_name]) {
         let source_data_element_nameArray = [];
@@ -828,10 +829,14 @@ export default function Codelist() {
           derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
         }
       }
-      console.log('derivedCoC.size ' + Object.keys(derivedCoC).length)
-      console.log('pdhDerivatives.size ' + pdhDerivatives['VMMC_CIRC (N, TA, Technique/Sex): Voluntary Circumcised'].length)
     })
+  } catch(e){
+    setError('Something went wrong... ')
+    // throw new Error(
+    //   `Error when retrieving data element  ${e.message}`
+    // );
   }
+}
   ///////////
 
 

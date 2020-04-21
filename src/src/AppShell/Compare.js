@@ -679,6 +679,93 @@ export default function Compare() {
 
 
   };
+
+  const buildTable = function(){
+    let table = []
+    var i;
+    for( i=0; i< selectedDatim.length; i++){
+      table.push(
+        <div className={classes.compareRowColumn} key={Math.random()}>
+          <div className={classes.fixedTop}>
+            {/* <div className={classes.compareCardSummary}> */}
+            <div className={classes.compareTitle}>
+              {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
+              <div className={classes.compareTitleColumn}>{selectedDatim[i].display_name}</div>
+              {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
+            </div>
+          </div>
+          <ExpansionPanel className={classes.expandPanel}>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel3b-content"
+              id="panel3b-header"
+             // onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
+            >
+
+              <Table className={classes.comboTable} aria-label="simple table">
+                <TableBody>
+                  <TableRow>
+                    <TableCell><strong>Short Name</strong></TableCell>
+                    <TableCell>{selectedDatim[i].names[1] ? (selectedDatim[i].names[1].name) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Code</strong></TableCell>
+                    <TableCell>{selectedDatim[i].names[2] ? (selectedDatim[i].names[2].name) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.comboTable}>
+                    <TableCell><strong>Description</strong></TableCell>
+                    <TableCell>{(selectedDatim[i].descriptions) ? selectedDatim[i].descriptions[0].description : "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>UID</strong></TableCell>
+                    <TableCell>{selectedDatim[i].id ? (selectedDatim[i].id) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Source</strong></TableCell>
+                    <TableCell>{selectedDatim[i].extras.source ? (selectedDatim[i].extras.source) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Data Type</strong></TableCell>
+                    <TableCell>{selectedDatim[i].datatype ? (selectedDatim[i].datatype) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Domain Type</strong></TableCell>
+                    <TableCell>{selectedDatim[i].extras.domainType ? (selectedDatim[i].extras.domainType) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Value Type</strong></TableCell>
+                    <TableCell>{selectedDatim[i].extras.valueType ? (selectedDatim[i].extras.valueType) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Aggregation Type</strong></TableCell>
+                    <TableCell>{selectedDatim[i].extras.aggregationType ? (selectedDatim[i].extras.aggregationType) : 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Applicable Periods</strong></TableCell>
+                    <TableCell>
+                      {
+                        selectedDatim[i].extras['Applicable Periods'] ? (selectedDatim[i].extras['Applicable Periods'].length > 0 ? (Object.keys(selectedDatim[i].extras['Applicable Periods']).map(
+
+                          key =>
+
+                          selectedDatim[i].extras['Applicable Periods'][key] + ", "
+
+                        )
+                        ) : 'N/A') : 'N/A'
+                      }
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Result/Target</strong></TableCell>
+                    <TableCell>{selectedDatim[i].extras.resultTarget ? selectedDatim[i].extras.resultTarget : 'N/A'}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              </ExpansionPanelSummary></ExpansionPanel></div>
+        )
+      }   
+      return table
+  };
   return (
       <ErrorBoundary>
           <Grid container >
@@ -708,6 +795,7 @@ export default function Compare() {
               <div className={classes.compareRow} >
 
                 {
+                  //buildTable()
                   selectedDatim.map(datim => {
                     !deMappings[datim.id] ? getMappings(datim.id) : ''
                     return (
@@ -787,7 +875,7 @@ export default function Compare() {
                                 </TableRow>
                               </TableBody>
                             </Table>
-
+                  
                             {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
                 Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
 
@@ -835,141 +923,12 @@ export default function Compare() {
                           <div></div>
                         </Grid>
                         {/* </div> */}
-
-
-
-
-                        {/* PDH row */}
-                        {/* 
-          <div className={PDH ? classes.compareRowColumn : classes.hide}>
-
-
-            {datim.pdh.length === 0 ? 'No matching PDH data element' : pdhDataElements.map(pdhDataElement => {
-              if ((datim.pdh).includes(pdhDataElement.uid)) {
-                return (
-                  <ExpansionPanel className={classes.expandPanel} key={Math.random()}>
-                    <ExpansionPanelSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel3b-content"
-                      id="panel3b-header"
-
-                    > */}
-                        {/* <div className={classes.compareCardSummary}>
-                        <div className={classes.compareCardText}>PDH Data Element: </div>
-                        <div className={classes.compareCardName}>{pdhDataElement.name}</div>
-                        <div className={classes.compareCardText}>PDH Data Element UID: <strong>{pdhDataElement.uid}</strong></div>
-                        <div className={classes.compareCardText}>Derived Data Element? <strong>{pdhDataElement.derived}</strong></div>
-                      </div>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-                      <Route render={({ history }) => (
-                        <div className={classes.tableContainer}>
-                          {/* data element Disaggregations */}
-                        {/* <strong>PDH Disaggregations</strong>:<br />
-
-                          <Table className={classes.table} aria-label="simple table"> */}
-                        {/* <TableHead>
-                              <TableRow>
-                                <TableCell>Disaggregations Name</TableCell>
-                                <TableCell>Disaggregations Code</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {
-                                Object.keys(Object(pdhDataElement.combos)).map(
-                                  key => <TableRow key={Math.random()}>
-                                    <TableCell component="th" scope="row">
-                                      {Object(pdhDataElement.combos)[key].name}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row">
-                                      {Object(pdhDataElement.combos)[key].code}
-                                    </TableCell>
-                                  </TableRow>
-
-                                )
-                              }
-                            </TableBody>
-                          </Table>
-                        </div>)}></Route>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                )
-              }
-
-              return true;
-            })
-            }
-          </div> */}
-
-
-                        {/* MOH row */}
-                        {/* <div className={MOH ? classes.compareRowColumn : classes.hide}>
-
-            {datim.moh.length === 0 ? 'No matching MOH data element' : mohDataElements.map(mohDataElement => {
-              if ((datim.moh).includes(mohDataElement.uid)) {
-                return (
-                  <ExpansionPanel className={classes.expandPanel} key={Math.random()}>
-                    <ExpansionPanelSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel3b-content"
-                      id="panel3b-header"
-
-                    >
-                      <div className={classes.compareCardSummary}>
-                        <div className={classes.compareCardText}>MOH Data Element: </div>
-                        <div className={classes.compareCardName}>{mohDataElement.name}</div>
-                        <div className={classes.compareCardText}>MOH Data Element UID: <strong>{mohDataElement.uid}</strong></div>
-                        <div className={classes.compareCardText}>Derived Data Element? <strong>{mohDataElement.derived}</strong></div>
-                      </div>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-                      <Route render={({ history }) => (
-                        <div className={classes.tableContainer}>
-                          {/* data element Disaggregations */}
-                        {/* <strong>MOH Disaggregations</strong>:<br />
-
-                          <Table className={classes.table} aria-label="simple table">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell>Disaggregations Name</TableCell>
-                                <TableCell>Disaggregations Code</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {
-                                Object.keys(Object(mohDataElement.combos)).map(
-                                  key => <TableRow key={Math.random()}>
-                                    <TableCell component="th" scope="row">
-                                      {Object(mohDataElement.combos)[key].name}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row">
-                                      {Object(mohDataElement.combos)[key].code}
-                                    </TableCell>
-                                  </TableRow>
-
-                                )
-                              }
-                            </TableBody>
-                          </Table>
-                        </div>)}></Route>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                )
-              }
-
-              return true;
-            })
-            }*/}
                       </div>
 
                     )
 
                   })
-                }
+                 }
 
               </div>
             </Grid>
