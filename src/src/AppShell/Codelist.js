@@ -540,7 +540,7 @@ const useStyles = makeStyles(theme => ({
     },
     actionButton: {
       width: '90vw',
-      fontSize: '1em' 
+      fontSize: '1em'
     },
     compareRow: {
       flexDirection: 'column'
@@ -804,39 +804,77 @@ export default function Codelist() {
     loadIndicatorsData();
   }, [queryIndicators]);
 
+  // class TreeNode {
+  //   constructor(value) {
+  //     this.value = value;
+  //     this.descendents = [];
+  //   }
+  // }
+  // let derivatives = new TreeNode('root');
+
   function populatePDHDerivatives(source_data_elements) {
-    try{
-    source_data_elements.map(source_data_element => {
-      if (!pdhDerivatives[source_data_element.source_data_element_name]) {
-        let source_data_element_nameArray = [];
-        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract);
-        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
-      }
-      else {
-        let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name]);
-        source_data_element_nameArray.push(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract);
-        pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
-      }
-      if (!derivedCoC[source_data_element.derived_category_option_combo_name]) {
-        let derived_category_option_comboArray = [];
-        derived_category_option_comboArray.push(source_data_element.source_data_element_name)
-        derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
-      }
-      else {
-        let derived_category_option_comboArray = Array.from(derivedCoC[source_data_element.derived_category_option_combo_name]);
-        if (!derived_category_option_comboArray.includes(source_data_element.source_data_element_name)) {
+    try {
+      source_data_elements.map(source_data_element => {
+        if (!derivedCoC[source_data_element.derived_category_option_combo_name]) {
+          let derived_category_option_comboArray = [];
           derived_category_option_comboArray.push(source_data_element.source_data_element_name)
           derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
         }
-      }
-    })
-  } catch(e){
-    setError('Something went wrong... ')
-    // throw new Error(
-    //   `Error when retrieving data element  ${e.message}`
-    // );
+        else {
+          let derived_category_option_comboArray = Array.from(derivedCoC[source_data_element.derived_category_option_combo_name]);
+          if (!derived_category_option_comboArray.includes(source_data_element.source_data_element_name)) {
+            derived_category_option_comboArray.push(source_data_element.source_data_element_name)
+            derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
+          }
+          
+        }
+        if (!pdhDerivatives[source_data_element.source_data_element_name]) {
+          let source_data_element_nameArray = [];
+          let source_category_option_combo_object = {}
+          source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
+          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract
+          source_data_element_nameArray.push(source_category_option_combo_object);
+          pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+        }
+        else {
+          let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name]);
+          let source_category_option_combo_object = {}
+          source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
+          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract
+          source_data_element_nameArray.push(source_category_option_combo_object);
+          pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+        }
+
+        // derivatives.descendents.map(
+        //   derivedDisagNode => {
+        //   if(derivedDisagNode.value === source_data_element.derived_category_option_combo_name){
+        //     derivedDisagNode.descendents.map(
+        //       sourceDENode => {
+        //         if(sourceDENode.value === source_data_element.source_data_element_name){
+        //           let sourceDisagNode = new TreeNode(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract)
+        //           sourceDENode.descendents.push(sourceDisagNode)
+        //         }
+        //       }
+        //     )
+        //   }
+        //   else{
+        //     let derivedDisagNode = new TreeNode(source_data_element.derived_category_option_combo_name)
+        //     let sourceDENode = new TreeNode(source_data_element.source_data_element_name)
+        //     let sourceDisagNode = new TreeNode(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract)
+        //     sourceDENode.descendents.push(sourceDisagNode)
+        //     derivedDisagNode.descendents.push(sourceDENode)
+        //     derivatives.descendents.push(derivedDisagNode)
+        //   }
+        // })
+
+      })
+    } catch (e) {
+      setError('Something went wrong... ')
+      // throw new Error(
+      //   `Error when retrieving data element  ${e.message}`
+      // );
+    }
   }
-}
   ///////////
 
 
@@ -1957,21 +1995,21 @@ export default function Codelist() {
 
             <Grid item xs={12} md={9} className={classes.dataElementContent}>
 
-            {/* dashboard, including download, compare, select all buttons */}
-            <div className={classes.tabDashboard}>
-              <div>
-                {selectedDataElement && selectedDataElement.length > 0 ?
-                  <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
-                    <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
-                  : null}
-                <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
-                 <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel>
-                  {
-                   selectedDataElement.length === 0 && values.dataSet === "All" ?
-                   <GetAppIcon/> : <GetAppIcon style={{color: '#1D5893'}}/>
-                  }
-                </Button>
-                {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+              {/* dashboard, including download, compare, select all buttons */}
+              <div className={classes.tabDashboard}>
+                <div>
+                  {selectedDataElement && selectedDataElement.length > 0 ?
+                    <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
+                      <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
+                    : null}
+                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                    <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel>
+                    {
+                      selectedDataElement.length === 0 && values.dataSet === "All" ?
+                        <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
+                    }
+                  </Button>
+                  {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
 </Button> */}
@@ -1984,9 +2022,9 @@ Compare selected data elements
                   <Button variant="outlined" className={classes.actionButton}
                     onClick={toggleDrawer('bottom', true)}
                     id="comparisonButton">
-                     <ActionButtonLabel>Compare selected data elements</ActionButtonLabel>
-                    <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }}/>
-                </Button>
+                    <ActionButtonLabel>Compare selected data elements</ActionButtonLabel>
+                    <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                  </Button>
                   {/* </NavLink> */}
                 </div>
 
@@ -2220,7 +2258,7 @@ Compare selected data elements
                             <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                               <Tab label="DISAGGREGATIONS FORMULA" {...a11yProps(0)} />
                               <Tab label="DISAGGREGATIONS LIST" {...a11yProps(1)} />
-                             <Tab label="DERIVATIONS" {...a11yProps(2)} />
+                              <Tab label="DERIVATIONS" {...a11yProps(2)} />
                             </Tabs>
                             <TabPanel value={panel} index={0} className={classes.tabPanel}>
                               <Grid container alignItems="center" justify="space-between">
@@ -2284,8 +2322,8 @@ Compare selected data elements
                               </Grid>
                             </TabPanel>
 
-                              <TabPanel value={panel} index={2} className={classes.tabPanel} >
-                                  {/* <Table className={classes.table} aria-label="simple table">
+                            <TabPanel value={panel} index={2} className={classes.tabPanel} >
+                              {/* <Table className={classes.table} aria-label="simple table">
                                   <TableHead>
                                     <TableRow>
                                       <TableCell>Source Data Element</TableCell>
@@ -2329,11 +2367,11 @@ Compare selected data elements
                                     }
                                   </TableBody>
                                 </Table> */}
-                                  {/* {pdhDerivatives = []} */}
-                                  {
-                                    (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
-                                  }
-                                  {/* <TableHead>
+                              {/* {pdhDerivatives = []} */}
+                              {
+                                (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
+                              }
+                              {/* <TableHead>
                                     <TableRow>
                                     <TableCell>Derived Disaggregate</TableCell>
                                       <TableCell>Source Data Element</TableCell>
@@ -2380,37 +2418,39 @@ Compare selected data elements
                                       )
                                     }
                                     </TableBody> */}
-                                  {dataElement.extras.source_data_elements ?  
-                                  <TreeView
-                                    className={classes.derivatives}
-                                    defaultCollapseIcon={<ExpandMoreIcon />}
-                                    // defaultExpanded={['1', '5', '6']}
-                                    defaultExpandIcon={<ChevronRightIcon />}
-                                    style={{ overflow: 'scroll', width: '600px' }}
-                                  >
-                                    {
-                                      Object.keys(derivedCoC).map(
-                                        key =>
-                                          <TreeItem key={key} nodeId={key} label={key}>
-                                            {Object.values(derivedCoC[key]).map(
-                                              value =>
-                                                <TreeItem nodeId={value} label={value}>
-                                                  {Object.values(pdhDerivatives[value]).map(
-                                                    coc =>
-                                                    <TreeItem nodeId={coc} label={(coc.split('|')[0] + ' ............................... ' + (coc.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
+                              {dataElement.extras.source_data_elements ?
+                                <TreeView
+                                  className={classes.derivatives}
+                                  defaultCollapseIcon={<ExpandMoreIcon />}
+                                  // defaultExpanded={['1', '5', '6']}
+                                  defaultExpandIcon={<ChevronRightIcon />}
+                                  style={{ overflow: 'scroll', width: '600px' }}
+                                >
+                                  {
+                                    Object.keys(derivedCoC).map(
+                                      key =>
+                                        <TreeItem key={key} nodeId={key} label={key}>
+                                          {Object.values(derivedCoC[key]).map(
+                                            value =>
+                                              <TreeItem nodeId={value} label={value}>
+                                                {Object.values(pdhDerivatives[value]).map(
+                                                  coc =>
+                                                  key === coc.derivedDisag ? 
+                                                    <TreeItem nodeId={coc.sourceDisag} label={(coc.sourceDisag.split('|')[0] + ' ............................... ' + (coc.sourceDisag.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
                                                     </TreeItem>
-                                                  )}
-                                                </TreeItem>
-                                            )}
+                                                    : ''
+                                                )}
+                                              </TreeItem>
+                                          )}
 
-                                          </TreeItem>
-                                      )
-                                    }
+                                        </TreeItem>
+                                    )
+                                  }
 
-                                  </TreeView> : 'There are no derivations for this selection' }
-                              </TabPanel>
-                              { pdhDerivatives = [] }
-                              { derivedCoC = [] }
+                                </TreeView> : 'There are no derivations for this selection'}
+                            </TabPanel>
+                            {pdhDerivatives = []}
+                            {derivedCoC = []}
                           </div>
 
                         </ErrorBoundary>
