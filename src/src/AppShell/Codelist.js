@@ -476,7 +476,7 @@ const useStyles = makeStyles(theme => ({
   derivatives: {
     maxHeight: 600,
     flexGrow: 1,
-    maxWidth: 800,
+    width: 1000,
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -575,6 +575,7 @@ export default function Codelist() {
   const [expanded, setExpanded] = React.useState(false);
   let history = useHistory()
   const params = new URLSearchParams(useLocation().search)
+  const [dataElementMapping, setDataElementMapping] = React.useState({});
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -1278,6 +1279,8 @@ export default function Codelist() {
       let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
       if (!deMappings[id]) {
         deMappings[id] = sortedData;
+        console.log( 'inside getMappings '+deMappings[id])
+        setDataElementMapping(deMappings[id]);
       }
       if (!de[id]) {
         de[id] = jsonData
@@ -1309,6 +1312,7 @@ export default function Codelist() {
               jsonData = await response.json()
               sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
               deMappings[derivationId] = sortedData
+              setDataElementMapping(deMappings[derivationId]);
               if (!de[derivationId]) {
                 de[derivationId] = jsonData
               }
@@ -1351,6 +1355,7 @@ export default function Codelist() {
       if (!deMappings[id]) {
         let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
         deMappings[id] = sortedData;
+        setDataElementMapping(deMappings[id]);
       }
       return de[id]
     } catch (e) {
@@ -2129,8 +2134,9 @@ Compare selected data elements
               }
               {/* data elements */}
               {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
-              {/* <ErrorBoundary> */}
+              {/* {/* <ErrorBoundary> */}
               {dataElements.map(dataElement => (
+                
                 <div key={dataElement.id}>
 
                   <ExpansionPanel className={classes.dataelementContainer}
@@ -2149,6 +2155,7 @@ Compare selected data elements
                       id="panel1a-header"
                       className={classes.expansionPanelSummary}
                       style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white' }}
+                      
                     >
                       <ErrorBoundary>
                         <FormControlLabel
@@ -2217,6 +2224,7 @@ Compare selected data elements
                     {/* data elements details */}
                     <ExpansionPanelDetails
                       className={classes.expansionPanelDetails}
+                      
                     >
                       <Grid container>
 
@@ -2248,13 +2256,16 @@ Compare selected data elements
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                         className={`${classes.expansionPanelSummary} ${classes.formulaButton}`}
+                        onClick={() => !deMappings[dataElement.id] ?
+                        getMappings(dataElement.id) : ''}
                       >
-                        <Typography className={classes.heading}><strong>Disaggregations and Derivations</strong></Typography>
+                        <Typography className={classes.heading} onClick={() => !deMappings[dataElement.id] ?
+                        getMappings(dataElement.id) : ''}><strong>Disaggregations and Derivations</strong></Typography>
                       </ExpansionPanelSummary>
                       <ExpansionPanelDetails className={classes.expansionPanelDetails} >
                         <ErrorBoundary>
                           {/* <Route render={() => ( */}
-                          <div className={classes.tableContainer}>
+                          {/* <div className={classes.tableContainer}> */}
                             <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                               <Tab label="DISAGGREGATIONS FORMULA" {...a11yProps(0)} />
                               <Tab label="DISAGGREGATIONS LIST" {...a11yProps(1)} />
@@ -2262,20 +2273,22 @@ Compare selected data elements
                             </Tabs>
                             <TabPanel value={panel} index={0} className={classes.tabPanel}>
                               <Grid container alignItems="center" justify="space-between">
-                                <Grid item xs={9}  >
+                                <Grid   >
+                                  {console.log('in TabPanel ' + deMappings[dataElement.id])}
                                   <div className={classes.tableContainer}>
                                     {
 
                                       (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
 
                                         key =>
-
+                                        Object(deMappings[dataElement.id])[key].map_type === 'Has Option' ? (
                                           checked ? (Object(deMappings[dataElement.id])[key].to_concept_code +
                                             ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + '))
                                             : (Object(deMappings[dataElement.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + ')))
 
-                                        : ''
+                                        : '' ): ''
                                     }
+                                    
                                   </div></Grid>
                                 <Grid item xs={3} >
                                   <FormControlLabel
@@ -2451,7 +2464,7 @@ Compare selected data elements
                             </TabPanel>
                             {pdhDerivatives = []}
                             {derivedCoC = []}
-                          </div>
+                          {/* </div> */}
 
                         </ErrorBoundary>
                       </ExpansionPanelDetails>
@@ -2461,7 +2474,7 @@ Compare selected data elements
                 </div>
 
               ))}
-              {/* </ErrorBoundary> */}
+              {/* </ErrorBoundary> */} 
               {/* </Parent> */}
 
               <table>
@@ -2505,7 +2518,7 @@ Compare selected data elements
 
                     <div className={classes.compareRow} >
 
-                      <ErrorBoundary>
+                      {/* <ErrorBoundary> */}
                         {
                           selectedDatim.map(datim => {
                             !deMappings[datim.id] ? getMappings(datim.id) : ''
@@ -2768,7 +2781,7 @@ Compare selected data elements
 
                           })
                         }
-                      </ErrorBoundary>
+                      {/* </ErrorBoundary> */}
                     </div>
 
 
