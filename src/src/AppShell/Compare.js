@@ -312,7 +312,7 @@ const useStyles = makeStyles(theme => ({
     color: '#ffffff',
     border: '1px solid #ffffff',
     padding: '1em',
-    textAlign: 'center',
+    textAlign: 'left',
     alignItems: 'center',
     borderBottom: 0,
     justifyContent: 'center',
@@ -476,33 +476,266 @@ export default function Compare() {
 
   let deMappings = {}
   let de = {}
+  let dataElements = {}
   const [selectedDatim, setSelectedDatim] = React.useState([])
   const [mappings, setMappings] = React.useState([])
+  const [dataElementMatrix, setDataElementMatrix] = React.useState({})
 
   useEffect(() => {
     async function loadData() {
       let tempDEs = []
       for (let i = 1; i <= [...params.keys()].length; i++) {
-        if(params.get('id' + i)){
-        await getMappings(params.get('id' + i))
+        if (params.get('id' + i)) {
+          await getMappings(params.get('id' + i))
         }
         if (de[params.get('id' + i)]) {
           tempDEs.push(de[params.get('id' + i)])
         }
 
       }
-      Object.keys(deMappings).map(
-        key => {
-          console.log(key)
-        })
+
       setSelectedDatim(tempDEs);
       setMappings(deMappings);
+      Object.values(tempDEs).map(
+        value => {
+          if (dataElements['Short Name']) {
+            let shortNames = Array.from(dataElements['Short Name'])
+            shortNames.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            dataElements['Short Name'] = shortNames
+          } else {
+            let shortNames = []
+            shortNames.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            dataElements['Short Name'] = shortNames
+          }
+          if (dataElements['Code']) {
+            let codes = Array.from(dataElements['Code'])
+            codes.push(value.names[2] ? (value.names[2].name) : 'N/A')
+            dataElements['Code'] = codes
+          } else {
+            let codes = []
+            codes.push(value.names[2] ? (value.names[2].name) : 'N/A')
+            dataElements['Code'] = codes
+          }
+          if (dataElements['Description']) {
+            let descriptions = Array.from(dataElements['Description'])
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            dataElements['Description'] = descriptions
+          } else {
+            let descriptions = []
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            dataElements['Description'] = descriptions
+          }
+          if (dataElements['UID']) {
+            let ids = Array.from(dataElements['UID'])
+            ids.push(value.id ? value.id : "N/A")
+            dataElements['UID'] = ids
+          } else {
+            let ids = []
+            ids.push(value.id ? value.id : "N/A")
+            dataElements['UID'] = ids
+          }
+          if (dataElements['Source']) {
+            let ids = Array.from(dataElements['Source'])
+            ids.push(value.extras ? value.extras.source : "N/A")
+            dataElements['Source'] = ids
+          } else {
+            let ids = []
+            ids.push(value.extras ? value.extras.source : "N/A")
+            dataElements['Source'] = ids
+          }
+          if (dataElements['Data Type']) {
+            let types = Array.from(dataElements['Data Type'])
+            types.push(value.datatype ? value.datatype : "N/A")
+            dataElements['Data Type'] = types
+          } else {
+            let types = []
+            types.push(value.datatype ? value.datatype : "N/A")
+            dataElements['Data Type'] = types
+          }
+          if (dataElements['Domain Type']) {
+            let types = Array.from(dataElements['Domain Type'])
+            types.push(value.extras ? value.extras.domainType : "N/A")
+            dataElements['Domain Type'] = types
+          } else {
+            let types = []
+            types.push(value.extras ? value.extras.domainType : "N/A")
+            dataElements['Domain Type'] = types
+          }
+          if (dataElements['Value Type']) {
+            let types = Array.from(dataElements['Value Type'])
+            types.push(value.extras ? value.extras.valueType : "N/A")
+            dataElements['Value Type'] = types
+          } else {
+            let types = []
+            types.push(value.extras ? value.extras.valueType : "N/A")
+            dataElements['Value Type'] = types
+          }
+          if (dataElements['Aggregation Type']) {
+            let types = Array.from(dataElements['Aggregation Type'])
+            types.push(value.extras ? value.extras.aggregationType : "N/A")
+            dataElements['Aggregation Type'] = types
+          } else {
+            let types = []
+            types.push(value.extras ? value.extras.aggregationType : "N/A")
+            dataElements['Aggregation Type'] = types
+          }
+          if (dataElements['Applicable Periods']) {
+            let types = Array.from(dataElements['Applicable Periods'])
+            types.push(
+              value.extras['Applicable Periods'] ? (value.extras['Applicable Periods'].length > 0 ? (Object.keys(value.extras['Applicable Periods']).map(
+
+                key =>
+
+                  value.extras['Applicable Periods'][key] + ", "
+
+              )
+              ) : 'N/A') : 'N/A')
+              dataElements['Applicable Periods'] = types
+          } else {
+            let types = []
+            types.push(
+              value.extras['Applicable Periods'] ? (value.extras['Applicable Periods'].length > 0 ? (Object.keys(value.extras['Applicable Periods']).map(
+
+                key =>
+
+                  value.extras['Applicable Periods'][key] + ", "
+
+              )
+              ) : 'N/A') : 'N/A')
+            dataElements['Applicable Periods'] = types
+          }
+          if (dataElements['Display Name']) {
+            let types = Array.from(dataElements['Display Name'])
+            types.push(value.display_name)
+            dataElements['Display Name'] = types
+          } else {
+            let types = []
+            types.push(value.display_name)
+            dataElements['Display Name'] = types
+          }
+        }
+      )
+      setDataElementMatrix(dataElements)
     }
     loadData();
 
   }, [])
 
+  const table = function () {
+    //!deMappings[datim.id] ? getMappings(datim.id) : ''
+    return (
+      <div className={classes.compareRowColumn} key={Math.random()}>
+        <ExpansionPanel className={classes.expandPanel}>
+          <ExpansionPanelSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3b-content"
+            id="panel3b-header"
+          //onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
+          >
 
+            <Table className={classes.comboTable} aria-label="simple table">
+              <TableBody>
+                <TableRow><TableCell></TableCell>
+                  {dataElementMatrix['Display Name'] ? (dataElementMatrix['Display Name']).map(
+                    name =>
+
+                      // {/* <div className={classes.compareCardSummary}> */}
+                      // {/* <div className={classes.compareTitle}> */}
+                      // {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
+                      <TableCell>
+                        <div className={`${classes.compareTitleColumn} ${classes.fixedTop}`}>
+                          {name}
+                        </div></TableCell>
+                    //   {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
+                    // {/* </div> */}    
+                  ) : ''}
+                </TableRow>
+                {Object.keys(dataElementMatrix).map(
+                  key =>
+                    <TableRow>
+                      <TableCell><strong>{key}</strong></TableCell>
+                      {Object.values(dataElementMatrix[key]).map(value =>
+                        <TableCell>{value}</TableCell>
+                      )}
+                    </TableRow>
+                )
+                }
+                {/* <div className={classes.tableContainer} key={Math.random()}>
+               {/* data element Disaggregations */}
+                {/* <strong>Disaggregations</strong>:<br />  */}
+
+                {/* <Table className={classes.table} aria-label="simple table">
+                 <TableHead> */}
+                 <TableRow key={Math.random()} style={{verticalAlign: 'top'}}>
+                 <TableCell></TableCell>
+                  <TableCell style={{textAlign: 'right'}}><h3><strong>Disaggregations</strong></h3></TableCell>
+                  <TableCell></TableCell>
+                  </TableRow>
+                  <TableRow><TableCell></TableCell>
+                  {dataElementMatrix['Display Name'] ? (dataElementMatrix['Display Name']).map(
+                    name =>
+                      <TableCell>
+                        <div className={`${classes.compareTitleColumn} ${classes.fixedTop}`}>
+                          {name}
+                        </div></TableCell> 
+                  ) : ''}
+                </TableRow>
+                <TableRow key={Math.random()} style={{verticalAlign: 'top'}}>
+                  <TableCell></TableCell>
+                  {/* <TableCell>
+                     <TableCell>Name</TableCell>
+                     <TableCell>Code</TableCell>
+                   </TableCell>
+                   <TableCell>
+                     <TableCell>Name</TableCell>
+                     <TableCell>Code</TableCell>
+                   </TableCell> */}
+                  {/* </TableHead>
+                 <TableBody > */}
+                  {selectedDatim.map(datim =>
+                    // !deMappings[datim.id] ? getMappings(datim.id) : ''
+                    <TableCell>
+                      <TableRow >
+                            <TableCell><strong>Name</strong></TableCell>
+                            <TableCell><strong>Code</strong></TableCell>
+                            </TableRow> 
+                    {(mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
+
+                      key =>
+                        Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
+                          
+                            
+                            <TableRow key={Math.random()} >
+                              <TableCell component="th" scope="row">
+                                {Object(mappings[datim.id])[key].to_concept_name}
+                              </TableCell>
+                              <TableCell component="th" scope="row">
+                                {Object(mappings[datim.id])[key].to_concept_code}
+                              </TableCell>
+                            </TableRow>
+                          
+                        ) : ''
+                    ) : ''}
+                    </TableCell>
+                  )}
+                  {/* </TableBody>
+              </Table> */}
+                </TableRow>
+                {/* </div> */}
+              </TableBody>
+            </Table>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classes.panelDetail}>
+
+
+
+
+
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </div>
+    )
+  }
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogMessage, setDialogMessage] = React.useState('');
   const [errorDisplay, setErrorDisplay] = useState(null)
@@ -523,11 +756,10 @@ export default function Compare() {
   };
 
   const goBack = () => {
-    console.log("params.get('dataElementDetail') " + params.get('dataElementDetail'))
-    if(params.get('dataElementDetail')){
+    if (params.get('dataElementDetail')) {
       history.push('/codelist?dataElementid=' + params.get('id1'))
-    }else{
-    history.goBack()
+    } else {
+      history.goBack()
     }
   }
   const styles = theme => ({
@@ -680,262 +912,175 @@ export default function Compare() {
 
   };
 
-  const buildTable = function(){
-    let table = []
-    var i;
-    for( i=0; i< selectedDatim.length; i++){
-      table.push(
-        <div className={classes.compareRowColumn} key={Math.random()}>
-          <div className={classes.fixedTop}>
-            {/* <div className={classes.compareCardSummary}> */}
-            <div className={classes.compareTitle}>
-              {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
-              <div className={classes.compareTitleColumn}>{selectedDatim[i].display_name}</div>
-              {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
-            </div>
-          </div>
-          <ExpansionPanel className={classes.expandPanel}>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel3b-content"
-              id="panel3b-header"
-             // onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
-            >
-
-              <Table className={classes.comboTable} aria-label="simple table">
-                <TableBody>
-                  <TableRow>
-                    <TableCell><strong>Short Name</strong></TableCell>
-                    <TableCell>{selectedDatim[i].names[1] ? (selectedDatim[i].names[1].name) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Code</strong></TableCell>
-                    <TableCell>{selectedDatim[i].names[2] ? (selectedDatim[i].names[2].name) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.comboTable}>
-                    <TableCell><strong>Description</strong></TableCell>
-                    <TableCell>{(selectedDatim[i].descriptions) ? selectedDatim[i].descriptions[0].description : "N/A"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>UID</strong></TableCell>
-                    <TableCell>{selectedDatim[i].id ? (selectedDatim[i].id) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Source</strong></TableCell>
-                    <TableCell>{selectedDatim[i].extras.source ? (selectedDatim[i].extras.source) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Data Type</strong></TableCell>
-                    <TableCell>{selectedDatim[i].datatype ? (selectedDatim[i].datatype) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Domain Type</strong></TableCell>
-                    <TableCell>{selectedDatim[i].extras.domainType ? (selectedDatim[i].extras.domainType) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Value Type</strong></TableCell>
-                    <TableCell>{selectedDatim[i].extras.valueType ? (selectedDatim[i].extras.valueType) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Aggregation Type</strong></TableCell>
-                    <TableCell>{selectedDatim[i].extras.aggregationType ? (selectedDatim[i].extras.aggregationType) : 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Applicable Periods</strong></TableCell>
-                    <TableCell>
-                      {
-                        selectedDatim[i].extras['Applicable Periods'] ? (selectedDatim[i].extras['Applicable Periods'].length > 0 ? (Object.keys(selectedDatim[i].extras['Applicable Periods']).map(
-
-                          key =>
-
-                          selectedDatim[i].extras['Applicable Periods'][key] + ", "
-
-                        )
-                        ) : 'N/A') : 'N/A'
-                      }
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell><strong>Result/Target</strong></TableCell>
-                    <TableCell>{selectedDatim[i].extras.resultTarget ? selectedDatim[i].extras.resultTarget : 'N/A'}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              </ExpansionPanelSummary></ExpansionPanel></div>
-        )
-      }   
-      return table
-  };
+  
   return (
-      <ErrorBoundary>
-          <Grid container >
-            <Grid item xs={12}>
+    <ErrorBoundary>
+      <Grid container >
+        <Grid item xs={12}>
 
-              {/* <div className={classes.fixedTop}> */}
-              <div >
-                {/* <NavLink to="/codelist"> */}
-                <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
-                  id="backButton"> Back</Button>
-                {/* </NavLink> */}
-                <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
-                {/* comparison panel title */}
-                {/* <div className={classes.compareTitle}>
+          <div className={classes.fixedTop}>
+              {/* <NavLink to="/codelist"> */}
+              <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
+                id="backButton"> Back</Button>
+              {/* </NavLink> */}
+              <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
+              {/* comparison panel title */}
+              {/* <div className={classes.compareTitle}>
                   {DATIM ? <div className={classes.compareTitleColumn}>DATIM</div> : ''}
                   {PDH ? <div className={classes.compareTitleColumn}>PDH</div> : ''}
                   {MOH ? <div className={classes.compareTitleColumn}>MOH</div> : ''}
                 </div> */}
-              </div>
+          </div>
+          {errorDisplay !== null ?
+            <div className={classes.errorMessage}>{errorDisplay}</div>
+            : null}
 
-              {errorDisplay !== null ?
-                <div className={classes.errorMessage}>{errorDisplay}</div>
-                : null}
+          {/* datim row */}
 
-              {/* datim row */}
+          <div className={classes.compareRow} >
 
-              <div className={classes.compareRow} >
+            {
+              table()
+              // selectedDatim.map(datim => {
+              //   !deMappings[datim.id] ? getMappings(datim.id) : ''
+              //   return (
+              //     <div className={classes.compareRowColumn} key={Math.random()}>
+              //       <div className={classes.fixedTop}>
+              //         {/* <div className={classes.compareCardSummary}> */}
+              //         <div className={classes.compareTitle}>
+              //           {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
+              //           <div className={classes.compareTitleColumn}>{datim.display_name}</div>
+              //           {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
+              //         </div>
+              //       </div>
+              //       <ExpansionPanel className={classes.expandPanel}>
+              //         <ExpansionPanelSummary
+              //           expandIcon={<ExpandMoreIcon />}
+              //           aria-controls="panel3b-content"
+              //           id="panel3b-header"
+              //           onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
+              //         >
 
-                {
-                  //buildTable()
-                  selectedDatim.map(datim => {
-                    !deMappings[datim.id] ? getMappings(datim.id) : ''
-                    return (
-                      <div className={classes.compareRowColumn} key={Math.random()}>
-                        <div className={classes.fixedTop}>
-                          {/* <div className={classes.compareCardSummary}> */}
-                          <div className={classes.compareTitle}>
-                            {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
-                            <div className={classes.compareTitleColumn}>{datim.display_name}</div>
-                            {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
-                          </div>
-                        </div>
-                        <ExpansionPanel className={classes.expandPanel}>
-                          <ExpansionPanelSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel3b-content"
-                            id="panel3b-header"
-                            onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
-                          >
+              //           <Table className={classes.comboTable} aria-label="simple table">
+              //             <TableBody>
+              //               <TableRow>
+              //                 <TableCell><strong>Short Name</strong></TableCell>
+              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Code</strong></TableCell>
+              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow className={classes.comboTable}>
+              //                 <TableCell><strong>Description</strong></TableCell>
+              //                 <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "N/A"}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>UID</strong></TableCell>
+              //                 <TableCell>{datim.id ? (datim.id) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Source</strong></TableCell>
+              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Data Type</strong></TableCell>
+              //                 <TableCell>{datim.datatype ? (datim.datatype) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Domain Type</strong></TableCell>
+              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Value Type</strong></TableCell>
+              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Aggregation Type</strong></TableCell>
+              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : 'N/A'}</TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Applicable Periods</strong></TableCell>
+              //                 <TableCell>
+              //                   {
+              //                     datim.extras['Applicable Periods'] ? (datim.extras['Applicable Periods'].length > 0 ? (Object.keys(datim.extras['Applicable Periods']).map(
 
-                            <Table className={classes.comboTable} aria-label="simple table">
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell><strong>Short Name</strong></TableCell>
-                                  <TableCell>{datim.names[1] ? (datim.names[1].name) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Code</strong></TableCell>
-                                  <TableCell>{datim.names[2] ? (datim.names[2].name) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow className={classes.comboTable}>
-                                  <TableCell><strong>Description</strong></TableCell>
-                                  <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "N/A"}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>UID</strong></TableCell>
-                                  <TableCell>{datim.id ? (datim.id) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Source</strong></TableCell>
-                                  <TableCell>{datim.extras.source ? (datim.extras.source) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Data Type</strong></TableCell>
-                                  <TableCell>{datim.datatype ? (datim.datatype) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Domain Type</strong></TableCell>
-                                  <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Value Type</strong></TableCell>
-                                  <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Aggregation Type</strong></TableCell>
-                                  <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : 'N/A'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Applicable Periods</strong></TableCell>
-                                  <TableCell>
-                                    {
-                                      datim.extras['Applicable Periods'] ? (datim.extras['Applicable Periods'].length > 0 ? (Object.keys(datim.extras['Applicable Periods']).map(
+              //                       key =>
 
-                                        key =>
+              //                         datim.extras['Applicable Periods'][key] + ", "
 
-                                          datim.extras['Applicable Periods'][key] + ", "
+              //                     )
+              //                     ) : 'N/A') : 'N/A'
+              //                   }
+              //                 </TableCell>
+              //               </TableRow>
+              //               <TableRow>
+              //                 <TableCell><strong>Result/Target</strong></TableCell>
+              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : 'N/A'}</TableCell>
+              //               </TableRow>
+              //             </TableBody>
+              //           </Table>
 
-                                      )
-                                      ) : 'N/A') : 'N/A'
-                                    }
-                                  </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell><strong>Result/Target</strong></TableCell>
-                                  <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : 'N/A'}</TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                  
-                            {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
-                Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
+              //           {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
+              //   Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
 
-              </div> */}
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-                            <Route render={({ history }) => (
-                              <div className={classes.tableContainer} key={Math.random()}>
-                                {/* data element Disaggregations */}
-                                <strong>Disaggregations</strong>:<br />
-
-                                <Table className={classes.table} aria-label="simple table">
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>Name</TableCell>
-                                      <TableCell>Code</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody >
-                                    {
-                                      (mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
-
-                                        key =>
-                                        Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
-                                          <TableRow key={Math.random()}>
-                                            <TableCell component="th" scope="row">
-                                              {Object(mappings[datim.id])[key].to_concept_name}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                              {Object(mappings[datim.id])[key].to_concept_code}
-                                            </TableCell>
-                                          </TableRow>
-                                        ) : ''
-                                      ) : ''
-                                    }
-                                  </TableBody>
-                                </Table>
-                              </div>
-                            )}></Route>
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        <Grid container >
-                          <div></div>
-                        </Grid>
-                        {/* </div> */}
-                      </div>
-
-                    )
-
-                  })
-                 }
-
-              </div>
-            </Grid>
+              // </div> */}
+              //         </ExpansionPanelSummary>
+              //         <ExpansionPanelDetails className={classes.panelDetail}>
 
 
-          </Grid>
-      </ErrorBoundary>
+              //           <Route render={({ history }) => (
+              //             <div className={classes.tableContainer} key={Math.random()}>
+              //               {/* data element Disaggregations */}
+              //               <strong>Disaggregations</strong>:<br />
+
+              //               <Table className={classes.table} aria-label="simple table">
+              //                 <TableHead>
+              //                   <TableRow>
+              //                     <TableCell>Name</TableCell>
+              //                     <TableCell>Code</TableCell>
+              //                   </TableRow>
+              //                 </TableHead>
+              //                 <TableBody >
+              //                   {
+              //                     (mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
+
+              //                       key =>
+              //                         Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
+              //                           <TableRow key={Math.random()}>
+              //                             <TableCell component="th" scope="row">
+              //                               {Object(mappings[datim.id])[key].to_concept_name}
+              //                             </TableCell>
+              //                             <TableCell component="th" scope="row">
+              //                               {Object(mappings[datim.id])[key].to_concept_code}
+              //                             </TableCell>
+              //                           </TableRow>
+              //                         ) : ''
+              //                     ) : ''
+              //                   }
+              //                 </TableBody>
+              //               </Table>
+              //             </div>
+              //           )}></Route>
+              //         </ExpansionPanelDetails>
+              //       </ExpansionPanel>
+              //       <Grid container >
+              //         <div></div>
+              //       </Grid>
+              //       {/* </div> */}
+              //     </div>
+
+              //   )
+
+              // })
+            }
+
+          </div>
+        </Grid>
+
+
+      </Grid>
+    </ErrorBoundary>
   );
 }
 //}

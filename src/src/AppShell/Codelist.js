@@ -986,9 +986,7 @@ export default function Codelist() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    console.log("inside performCompare dataElementDetail " + dataElementDetail)
     var compareText = document.getElementById("compareSearch") ? document.getElementById("compareSearch").value : '';
-    console.log("inside performCompare compareText " + compareText)
     // if (!dataElementToCompare) {
     //   if (compareText !== '') {
     //     if (!de[compareText]) {
@@ -1013,7 +1011,6 @@ export default function Codelist() {
     } else {
       compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
     }
-    console.log('**  history.push(compareLink)')
     history.push(compareLink)
   }
 
@@ -1054,7 +1051,6 @@ export default function Codelist() {
   };
 
   const handleTableClick = e => {
-    console.log("inside handleTableClick")
     let ds = e.target.value;
     codeListJson.codeList.map(cl => {
       if (ds === cl.full_name) {
@@ -1081,8 +1077,6 @@ export default function Codelist() {
       indicator: i
     })
     values.dataSet = "All";
-    console.log(" values.fiscal " + values.fiscal)
-    console.log(" values.dataSet " + values.dataSet)
     setSource(s);
     if (s === "PDH") {
       setHiddenDataSet(true)
@@ -1098,7 +1092,6 @@ export default function Codelist() {
       setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
     }
     setExpanded(false);
-    console.log(" displaying " + dataElements.length + " results")
   }, [values.source]);
 
   //when fiscal changes
@@ -1119,8 +1112,6 @@ export default function Codelist() {
       indicator: i
     })
     values.dataSet = "All";
-    console.log(" values.fiscal " + values.fiscal)
-    console.log(" values.dataSet " + values.dataSet)
     if (values.fiscal === "All") {
       setPeriod("")
       setHiddenDataSet(true)
@@ -1167,10 +1158,6 @@ export default function Codelist() {
     setDataElementsData([])
     setCountOfValues(0)
 
-    console.log("Inside [values.dataSet] values.fiscal " + values.fiscal)
-    console.log(" values.dataSet " + values.dataSet)
-    console.log(" values.type " + values.type)
-
     if (values.dataSet === "All") {
       loadDataElementsByPeriod()
     }
@@ -1189,9 +1176,6 @@ export default function Codelist() {
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
-    console.log("Inside [values.type]  values.fiscal " + values.fiscal)
-    console.log(" values.dataSet " + values.dataSet)
-    console.log(" values.type " + values.type)
 
     let s = values.source
     let year = values.fiscal
@@ -1207,7 +1191,6 @@ export default function Codelist() {
         frequency: f,
         indicator: i
       })
-      console.log(" values.dataSet " + values.dataSet)
     }
     else {
       let element = document.getElementById("dataSet");
@@ -1220,7 +1203,6 @@ export default function Codelist() {
         frequency: f,
         indicator: i
       })
-      console.log(" values.dataSet " + values.dataSet)
     }
   }, [values.type]);
 
@@ -1229,7 +1211,6 @@ export default function Codelist() {
     // setDataElementsData([])
     // setCountOfValues(0)
 
-    console.log("Inside [values.frequency] values.frequency " + values.frequency)
 
 
     if (values.frequency === "All") {
@@ -1251,7 +1232,6 @@ export default function Codelist() {
   useEffect(() => {
     // setDataElementsData([])
     // setCountOfValues(0)
-    console.log("Inside [values.indicator] values.indicator " + values.indicator)
     if (values.indicator === "All") {
       setIndicatorQuery("")
     }
@@ -1330,7 +1310,6 @@ export default function Codelist() {
   };
 
   async function getDataElement(id) {
-    console.log("inside getDataElement")
     const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
@@ -1511,8 +1490,7 @@ export default function Codelist() {
         //get data element details of the selected data elements
 
         // eslint-disable-next-line array-callback-return
-        console.log("toggleDrawer dataElements")
-        console.log(selectedDataElement)
+    
         let temp = []
         Object.values(selectDataTemp).map(value => {
           temp.push(value)
@@ -1552,7 +1530,6 @@ export default function Codelist() {
 
   const toggleCompareDetailDrawer = (dataElementDetail, dataElement, side, open) => {
 
-    console.log(" inside toggleCompareDetailDrawer dataElement " + dataElement)
     toggleDetailDrawer('bottom', false)
     let temp = []
     temp.push(dataElementDetail);
@@ -1560,9 +1537,6 @@ export default function Codelist() {
     setSelectedDatim(temp);
     setCompare({ ...comparePanel, [DATIM]: true });
     setComparePanel({ ...comparePanel, [side]: open });
-
-    console.log(" selectedDatim.length " + selectedDatim.length)
-
   };
 
   // when values.dataSet === "All" && selectedDataElement.length ==0 disable the button
@@ -1644,7 +1618,6 @@ export default function Codelist() {
     setToolTipOpen(true);
   };
   const copyToClipboard = str => {
-    console.log("copied text" + str)
     const el = document.createElement('textarea');
     el.value = str;
     document.body.appendChild(el);
@@ -2274,7 +2247,6 @@ Compare selected data elements
                             <TabPanel value={panel} index={0} className={classes.tabPanel}>
                               <Grid container alignItems="center" justify="space-between">
                                 <Grid   >
-                                  {console.log('in TabPanel ' + deMappings[dataElement.id])}
                                   <div className={classes.tableContainer}>
                                     {
 
