@@ -828,32 +828,32 @@ export default function Codelist() {
       source_data_elements.map(source_data_element => {
         if (!derivedCoC[source_data_element.derived_category_option_combo_name]) {
           let derived_category_option_comboArray = [];
-          derived_category_option_comboArray.push(source_data_element.source_data_element_name)
+          derived_category_option_comboArray.push(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']')
           derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
         }
         else {
           let derived_category_option_comboArray = Array.from(derivedCoC[source_data_element.derived_category_option_combo_name]);
-          if (!derived_category_option_comboArray.includes(source_data_element.source_data_element_name)) {
-            derived_category_option_comboArray.push(source_data_element.source_data_element_name)
+          if (!derived_category_option_comboArray.includes(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']')) {
+            derived_category_option_comboArray.push(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']')
             derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
           }
 
         }
-        if (!pdhDerivatives[source_data_element.source_data_element_name]) {
+        if (!pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']']) {
           let source_data_element_nameArray = [];
           let source_category_option_combo_object = {}
           source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
-          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract
+          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + ' [' + source_data_element.source_category_option_combo_uid + ']|' + source_data_element.add_or_subtract
           source_data_element_nameArray.push(source_category_option_combo_object);
-          pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+          pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']'] = source_data_element_nameArray;
         }
         else {
-          let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name]);
+          let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']']);
           let source_category_option_combo_object = {}
           source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
-          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract
+          source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + ' [' + source_data_element.source_category_option_combo_uid + ']|' + source_data_element.add_or_subtract
           source_data_element_nameArray.push(source_category_option_combo_object);
-          pdhDerivatives[source_data_element.source_data_element_name] = source_data_element_nameArray;
+          pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid +']'] = source_data_element_nameArray;
         }
 
         // derivatives.descendents.map(
@@ -2422,14 +2422,14 @@ Compare selected data elements
                                 {
                                   Object.keys(derivedCoC).map(
                                     key =>
-                                      <TreeItem key={key} nodeId={key} label={key} expanded>
+                                      <TreeItem key={key} nodeId={key} label={"Derived COC: " + key} expanded>
                                         {Object.values(derivedCoC[key]).map(
                                           value =>
-                                            <TreeItem nodeId={value} label={value}>
+                                            <TreeItem nodeId={value} label={"Source Data Element: " + value}>
                                               {Object.values(pdhDerivatives[value]).map(
                                                 coc =>
                                                   key === coc.derivedDisag ?
-                                                    <TreeItem nodeId={coc.sourceDisag} label={(coc.sourceDisag.split('|')[0] + ' ............................... ' + (coc.sourceDisag.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
+                                                    <TreeItem nodeId={coc.sourceDisag} label={"Source COC: " +(coc.sourceDisag.split('|')[0] + ' ............................... ' + (coc.sourceDisag.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
                                                     </TreeItem>
                                                     : ''
                                               )}
