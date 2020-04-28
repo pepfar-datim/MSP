@@ -2403,13 +2403,14 @@ Compare selected data elements
                                       )
                                     }
                                     </TableBody> */}
+                                    <Grid item xs={12} className={classes.comboTable}>
                               {dataElement.extras.source_data_elements ?
                                 <TreeView
                                   className={classes.derivatives}
                                   defaultCollapseIcon={<ExpandMoreIcon />}
                                   // defaultExpanded={['1', '5', '6']}
                                   defaultExpandIcon={<ChevronRightIcon />}
-                                  style={{ overflow: 'scroll', width: '600px' }}
+                                  style={{ overflow: 'scroll', width: '800px' }}
                                 >
                                   {
                                     Object.keys(derivedCoC).map(
@@ -2433,6 +2434,7 @@ Compare selected data elements
                                   }
 
                                 </TreeView> : 'There are no derivations for this selection'}
+                                </Grid>
                             </TabPanel>
                             {pdhDerivatives = []}
                             {derivedCoC = []}
