@@ -477,6 +477,7 @@ export default function Compare() {
   let deMappings = {}
   let de = {}
   let dataElements = {}
+  let valuesExist = false
   const [selectedDatim, setSelectedDatim] = React.useState([])
   const [mappings, setMappings] = React.useState([])
   const [dataElementMatrix, setDataElementMatrix] = React.useState({})
@@ -500,20 +501,20 @@ export default function Compare() {
         value => {
           if (dataElements['Short Name']) {
             let shortNames = Array.from(dataElements['Short Name'])
-            shortNames.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            shortNames.push(value.names[1] ? (value.names[1].name) : "N/A")
             dataElements['Short Name'] = shortNames
           } else {
             let shortNames = []
-            shortNames.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            shortNames.push(value.names[1] ? (value.names[1].name) : "N/A")
             dataElements['Short Name'] = shortNames
           }
           if (dataElements['Code']) {
             let codes = Array.from(dataElements['Code'])
-            codes.push(value.names[2] ? (value.names[2].name) : 'N/A')
+            codes.push(value.names[2] ? (value.names[2].name) : "N/A")
             dataElements['Code'] = codes
           } else {
             let codes = []
-            codes.push(value.names[2] ? (value.names[2].name) : 'N/A')
+            codes.push(value.names[2] ? (value.names[2].name) : "N/A")
             dataElements['Code'] = codes
           }
           if (dataElements['Description']) {
@@ -542,6 +543,24 @@ export default function Compare() {
             let ids = []
             ids.push(value.extras ? value.extras.source : "N/A")
             dataElements['Source'] = ids
+          }
+          if (dataElements['Type']) {
+            let ids = Array.from(dataElements['Type'])
+            ids.push(value.concept_class ? value.concept_class : "N/A")
+            dataElements['Type'] = ids
+          } else {
+            let ids = []
+            ids.push(value.concept_class ? value.concept_class : "N/A")
+            dataElements['Type'] = ids
+          }
+          if (dataElements['Indicator']) {
+            let ids = Array.from(dataElements['Indicator'])
+            ids.push(value.extras.Indicator ? value.extras.Indicator : "N/A")
+            dataElements['Indicator'] = ids
+          } else {
+            let ids = []
+            ids.push(value.extras.Indicator ? value.extras.Indicator : "N/A")
+            dataElements['Indicator'] = ids
           }
           if (dataElements['Data Type']) {
             let types = Array.from(dataElements['Data Type'])
@@ -589,7 +608,7 @@ export default function Compare() {
                   value.extras['Applicable Periods'][key] + ", "
 
               )
-              ) : 'N/A') : 'N/A')
+              ) : "N/A") : "N/A")
               dataElements['Applicable Periods'] = types
           } else {
             let types = []
@@ -601,7 +620,7 @@ export default function Compare() {
                   value.extras['Applicable Periods'][key] + ", "
 
               )
-              ) : 'N/A') : 'N/A')
+              ) : "N/A") : "N/A")
             dataElements['Applicable Periods'] = types
           }
           if (dataElements['Display Name']) {
@@ -1006,11 +1025,11 @@ export default function Compare() {
               //             <TableBody>
               //               <TableRow>
               //                 <TableCell><strong>Short Name</strong></TableCell>
-              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Code</strong></TableCell>
-              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow className={classes.comboTable}>
               //                 <TableCell><strong>Description</strong></TableCell>
@@ -1018,27 +1037,27 @@ export default function Compare() {
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>UID</strong></TableCell>
-              //                 <TableCell>{datim.id ? (datim.id) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.id ? (datim.id) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Source</strong></TableCell>
-              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Data Type</strong></TableCell>
-              //                 <TableCell>{datim.datatype ? (datim.datatype) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.datatype ? (datim.datatype) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Domain Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Value Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Aggregation Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : "N/A"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Applicable Periods</strong></TableCell>
@@ -1051,13 +1070,13 @@ export default function Compare() {
               //                         datim.extras['Applicable Periods'][key] + ", "
 
               //                     )
-              //                     ) : 'N/A') : 'N/A'
+              //                     ) : "N/A") : "N/A"
               //                   }
               //                 </TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Result/Target</strong></TableCell>
-              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : 'N/A'}</TableCell>
+              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : "N/A"}</TableCell>
               //               </TableRow>
               //             </TableBody>
               //           </Table>
