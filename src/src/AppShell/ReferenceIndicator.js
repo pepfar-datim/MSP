@@ -40,7 +40,7 @@ import Select from '@material-ui/core/Select';
 import {getConfig} from '../config.js';
 import {sortJSON} from '../util.js';
 import {getCodeListMap} from '../currentCodelist.js'
-import IndicatorDetail from './IndicatorDetail';
+import ReferenceIndicatorDetail from './ReferenceIndicatorDetail';
 import DataElementDetail from './DataElementDetail';
 import Shortcut from './Shortcut';
 
@@ -1108,7 +1108,7 @@ return (
      
       {/* indicator details */}
       <TabPanel value={panel} index={INDICATOR_PANEL} className={classes.tabPanel}>    
-        <IndicatorDetail currentIndicator={currentIndicator} versionMap={versionMap} classes={classes}  indicatorDetailLoading={indicatorDetailLoading}  />           
+        <ReferenceIndicatorDetail currentIndicator={currentIndicator} versionMap={versionMap} classes={classes}  indicatorDetailLoading={indicatorDetailLoading}  />           
       </TabPanel>
 
 

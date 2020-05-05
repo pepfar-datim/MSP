@@ -9,8 +9,10 @@ import Codelist from './AppShell/Codelist';
 import Sidebar from './Components/Sidebar';
 import About from './AppShell/About';
 import NotFound from './AppShell/NotFound';
-import Indicator from './AppShell/Indicator';
+import ReferenceIndicator from './AppShell/ReferenceIndicator';
+import Indicators from './AppShell/Indicators';
 import Compare from './AppShell/Compare';
+import CompareIndicators from './AppShell/CompareIndicators';
 import {StateProvider} from './ContextSetup';
 
 import clsx from 'clsx';
@@ -156,12 +158,14 @@ export default function App() {
                     <Redirect from="/home" to="/" /> 
                     <Route exact path="/" component={Welcome} />              
                     <Route path="/codelist" component={Codelist} />             
-                    <Route path="/indicator" component={Indicator} /> 
-                    <Route path="/codelist/indicator" component={Indicator} />
+                    <Route path="/referenceIndicator" component={ReferenceIndicator} /> 
+                    <Route path="/indicators" component={Indicators} /> 
+                    <Route path="/codelist/indicator" component={ReferenceIndicator} />
                     <Route path="/about" component={About} />
                     <Route exact path="/index.html" component={Welcome} />                    
-                    <Route path="/indicator/:id" component={Indicator} /> 
+                    <Route path="/referenceIndicator/:id" component={ReferenceIndicator} /> 
                     <Route path="/compare" component={Compare} /> 
+                    <Route path="/compareIndicators" component={CompareIndicators} />
                     <Route component={NotFound} />
                   </Switch>
             </main>          
