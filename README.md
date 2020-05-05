@@ -27,6 +27,10 @@ export OCL_DOMAIN=qa.openconceptlab.org #default
 docker-compose up
 ```
 
+# Development
+
+- To avoid build failures - any changes to `package.json` should be followed by `yarn install` and the new `yarn.lock` file should be committed as well. 
+
 ## License
 This project is licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License.You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 
