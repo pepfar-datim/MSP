@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, {useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import * as headings from '../Styles/Text';
 import Button from '@material-ui/core/Button';
@@ -13,11 +13,19 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {useStateValue} from '../ContextSetup';
 import { NavLink } from 'react-router-dom';
 
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import * as d3 from 'd3';
 
+import csvData from '../data/MER_updates.csv';
 
+import {convertMarkdown} from '../util.js';
+import {getConfig} from '../config.js';
+
+const versionMap = getConfig().versionMap;
 
 const useStyles = makeStyles(() => ({
     button:{
@@ -72,7 +80,32 @@ const useStyles = makeStyles(() => ({
       marginLeft:"65px",
       paddingRight:"5px",
       marginBottom:"40px"
-    }
+    },
+    formControl:{
+      width: '150px',      
+    },
+    selectIcon:{
+      fill: '#D55804',
+    },
+    select: {
+      '&:before': {
+          borderColor: '#D55804',
+          borderWidth: '2px'
+      },
+      '&:after': {
+          borderColor: '#D55804',
+          borderWidth: '2px'
+      }
+    },
+    actionButton: {
+      marginLeft: '10px',
+      marginTop: '12px',     
+      '&:hover, &:focus': {
+        backgroundColor: '#C1A783',
+        color: '#000000'
+      }
+    },
+    
     
 }));
 
@@ -108,41 +141,76 @@ function a11yProps(index) {
   };
 }
 
-
-//get global variables from context
 export const WhatIsNewHome =() =>{
   
-    const classes = useStyles();
-    const [{ data_Elements, newIndicators, newDisaggregations, siteAndSNUattributes, reportFrequencyChanges,  modifyExistIndicators, indicatorDefinitionClarifications, modifyExistDisaggregations, retiredIndicators, retiredDisaggregations }, dispatch] = useStateValue();
-
-    //console.log(props)
+    const classes = useStyles();    
+    const [init, setInit]= useState(false);
+    const [versionSelected, setVersion]= useState("");    
+    const [versions, setVersions] = useState([]);
+    const [jsonData, setJsonData] = useState([]);
+    const [versionToListMap, setVersionToListMap] = React.useState(new Map());
+    const [panelToListMap, setPanelToListMap] = React.useState(new Map());
     
-//update the indicator details and matched data-element when select indicator
-const updateIndicator = indicator_name =>() =>{
- 
- dispatch({
-   type: 'changeIndicatorName',
-   indicatorName: indicator_name
- })
-  //match indicator details
- 
+    const loadData = async ()=> {      
+      try {       
+          d3.csv(csvData).then(function(data) {
+          console.log(data);          
+          let versionToListMapTemp = new Map();
+          let panelToListMapTemp = new Map();
+        
+          Object.keys(data).map(                         
+            (key, index) => {             
+              const item = data[key];             
+              if (item['MER Version'] && !versions.includes(item['MER Version'])){
+                versions.push(item['MER Version']);
+              }
+              let categoryList = new Set();
+              let versionList = new Set();
+              let categoryListForPanel = new Set();
+              if (versionToListMapTemp.has(item['MER Version'])){
+                categoryList = versionToListMapTemp.get(item['MER Version']);                 
+              }                 
+              let tab = getPanelFromItemTab(item['Tab']);
+              if (panelToListMapTemp.has(tab)){
+                categoryListForPanel = panelToListMapTemp.get(tab);                 
+              }                        
+              versionList.add(item['MER Version']);
+              categoryList.add(item['List']);
+              categoryListForPanel.add(item['List']);
+              versionToListMapTemp.set(item['MER Version'], categoryList); 
+              if (tab !== "") {
+                panelToListMapTemp.set(tab, categoryListForPanel); 
+              }
+             return null;             
+            }
+            );
+                
+            versions.sort(function(a, b){return b-a}); // descending
+            setVersions(versions);
+            setVersion(versions[0]);
+            setJsonData(data);
+            setVersionToListMap(versionToListMapTemp);
+            setPanelToListMap(panelToListMapTemp);
+        }).catch(function(err) {
+          throw err;
+        })       
+      }catch (e){
+        console.log("error:" + e.message);        
+      }
+    }
 
-  //match data element of this indicator
-  const match = [];
-  data_Elements.map(data_Element => {
-  if((data_Element.name).includes(indicator_name)){
-    match.push(data_Element);
-  }
-  return true;
-});
-//  setMatchDataElements(match);
-dispatch({
- type: 'changeMatchDataElements',
- matchDataElements: match
-})
-}
+    useEffect(() => {             
+      setInit(true);  
+      if (init) {
+        loadData(); 
+      }        
+    }, [init]);
+    
 
-
+    const handleFilterChange = event => {
+      event.persist();
+      setVersion( event.target.value);        
+    };
 
      //set initial panel state and panel handle change function
      const [panel, setPanel] = React.useState(0);
@@ -150,308 +218,149 @@ dispatch({
        setPanel(newPanel);
      };
 
- 
+     let versionLabelPrevious = "";
+     let guidanceDownloadURL = "";
+     versionMap.map(   
+        item => {         
+          if (item.version.indexOf(versionSelected) > 0 ) {  
+            versionLabelPrevious = item.fromText;
+            guidanceDownloadURL = item.guidanceDownloadURL;
+          }
+          return null;
+      });  
+     
     return(
         <div className={classes.home}>
            <Grid container alignItems="center"  >
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={7}>
             <headings.H1>KEY UPDATES AND CHANGES</headings.H1>
             <div className={classes.divider}></div>
             </Grid>
-          <Grid item xs={12} md={4}>
-            <Button variant="outlined" href ='https://www.state.gov/wp-content/uploads/2019/10/PEPFAR-MER-Indicator-Reference-Guide-Version-2.4-FY20.pdf'color="primary" className={classes.button}>
-            Download MER Guidance v2.4
-            </Button>          
+          <Grid item xs={12} md={5}>
+
+            <form autoComplete="off">
+              <Grid item xs={12}  className={classes.filter} >
+                <FormControl className={classes.formControl}>
+                  <InputLabel htmlFor="source">Version</InputLabel>
+                  <Select
+                    native
+                    value={versionSelected}
+                    onChange={handleFilterChange}
+                    className={classes.select}
+                    inputProps={{
+                      name: 'version',
+                      id: 'version',
+                      classes: {
+                        icon: classes.selectIcon
+                      }
+                    }}
+                  >                   
+                    { versions.map(key => <option key={key} value={key} >{"MER " + key}</option>)}                    
+                  </Select>
+                </FormControl>                
+                <Button variant="outlined" href={guidanceDownloadURL} color="primary"  className={classes.actionButton}
+                disabled={guidanceDownloadURL === null || guidanceDownloadURL === "" ? true : false}
+                >
+                Download MER Guidance {"V" + versionSelected}
+                </Button>          
+              </Grid>
+          </form>
+
           </Grid>
+         
           <Grid item xs={12} md={4}>
-            <headings.H4 className={classes.subtitle}>MER 2.3 to MER 2.4</headings.H4>
+                  <headings.H4 className={classes.subtitle}>MER {versionLabelPrevious} to MER {versionSelected}</headings.H4>
           </Grid>
         <p>Through the past 3 years of quarterly, site-level monitoring, PEPFAR programs have used data to improve 
           implementation. Changes to the MER highlight key program areas (e.g., index testing services) that should 
           be taken to scale.</p>
 
+
          {/* indicator tabs */}
          <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-          <Tab label="NEW ADDITIONS TO MER 2.4" {...a11yProps(0)} />
-          <Tab label="ADJUSTMENTS FROM MER 2.3" {...a11yProps(1)} />
-          <Tab label="REMOVALS FROM MER 2.3" {...a11yProps(2)} />
+          <Tab label={"NEW ADDITIONS TO MER " + versionSelected} {...a11yProps(0)} />
+          <Tab label={"ADJUSTMENTS FROM " + versionLabelPrevious} {...a11yProps(1)} />
+          <Tab label={"REMOVALS FROM " + versionLabelPrevious}  {...a11yProps(2)} />
         </Tabs>
 
-         {/* NEW ADDITIONS TO MER 2.3 */}
-      <TabPanel value={panel} index={0} className={classes.tabPanel}>
-
-         {/* NEW INIDCATORS */}
-      <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-               
-              >
-               New Indicators
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {newIndicators.map(newIndicator =>{
-                  return(
-                <div className={classes.itemContainer}  key={newIndicator.name + Math.random()}>               
-                    <NavLink className={classes.itemTitle}  to={"/indicator/" + newIndicator.name} href={`/indicator/${newIndicator.name}`}>{newIndicator.name}</NavLink>
-
-                {Object.keys(Object(newIndicator.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(newIndicator.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
-        {/* NEW DISAGGREGATIONS */}
-       <ExpansionPanel className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1b-content"
-                id="panel1b-header"
-               
-              >
-               New Disaggregations
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {newDisaggregations.map(newDisaggregation =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                    <NavLink className={classes.itemTitle}  to={"/indicator/" + newDisaggregation.name} href={`/indicator/${newDisaggregation.name}`}>{newDisaggregation.name}</NavLink>
-                {/* <Button onClick={updateIndicator(newDisaggregation.name)} className={classes.itemTitle}>{newDisaggregation.name}</Button> */}
-                {Object.keys(Object(newDisaggregation.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(newDisaggregation.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
-        {/* Site and SNU Attributes */}
-        <ExpansionPanel className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1b-content"
-                id="panel1b-header"
-               
-              > Site and SNU Attributes
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {siteAndSNUattributes.map(siteAndSNUattribute =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                {Object.keys(Object(siteAndSNUattribute.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(siteAndSNUattribute.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-      </TabPanel>
-
-        {/* ADJUSTMENTS FROM MER 2.2 */}
+         {/* NEW ADDITIONS */}
+        <TabPanel value={panel} index={0} className={classes.tabPanel}>
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+        </TabPanel>
+        {/* ADJUSTMENTS  */}
         <TabPanel value={panel} index={1} className={classes.tabPanel}>
-
-        {/* CHANGES IN REPORTING FREQUENCY */}
-        <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2a-content"
-                id="panel2a-header"
-               
-              >
-               Changes in Reporting Frequency
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {reportFrequencyChanges.map(reportFrequencyChange =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                    <NavLink className={classes.itemTitle}  to={"/indicator/" + reportFrequencyChange.name} href={`/indicator/${reportFrequencyChange.name}`}>{reportFrequencyChange.name}</NavLink>
-                {/* <Button onClick={updateIndicator(reportFrequencyChange.name)} className={classes.itemTitle}>{reportFrequencyChange.name}</Button> */}
-                {Object.keys(Object(reportFrequencyChange.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(reportFrequencyChange.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-        {/* MODIFICATIONS TO EXISTING INDICATORS */}
-       <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2b-content"
-                id="panel2b-header"
-               
-              >
-               Modifications to Existing Indicators
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {modifyExistIndicators.map(modifyExistIndicator =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                <NavLink className={classes.itemTitle}  to={"/indicator/" + modifyExistIndicator.name} href={`/indicator/${modifyExistIndicator.name}`}>{modifyExistIndicator.name}</NavLink>
-                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistIndicator.name}</Button> */}
-                {Object.keys(Object(modifyExistIndicator.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(modifyExistIndicator.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-        {/* MODIFICATIONS TO EXISTING DISAGGREGATIONS */}
-       <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2c-content"
-                id="panel2c-header"
-               
-              >
-               Modifications to Existing Disaggregations
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {modifyExistDisaggregations.map(modifyExistDisaggregation =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                <NavLink className={classes.itemTitle}  to={"/indicator/" + modifyExistDisaggregation.name} href={`/indicator/${modifyExistDisaggregation.name}`}>{modifyExistDisaggregation.name}</NavLink>
-                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{modifyExistDisaggregation.name}</Button> */}
-                {Object.keys(Object(modifyExistDisaggregation.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(modifyExistDisaggregation.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-       {/* Indicator Definition Clarifications */}
-       <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2c-content"
-                id="panel2c-header"
-               
-              >
-               Indicator Definition Clarifications
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {indicatorDefinitionClarifications.map(indicatorDefinitionClarification =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                <NavLink className={classes.itemTitle}  to={"/indicator/" + indicatorDefinitionClarification.name} href={`/indicator/${indicatorDefinitionClarification.name}`}>{indicatorDefinitionClarification.name}</NavLink>
-                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{indicatorDefinitionClarification.name}</Button> */}
-                {Object.keys(Object(indicatorDefinitionClarification.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(indicatorDefinitionClarification.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-      </TabPanel>
-
-        {/* REMOVALS FROM MER 2.2 */}
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+        </TabPanel>
+        {/* REMOVALS  */}
         <TabPanel value={panel} index={2} className={classes.tabPanel}>
-
-         {/* RETIRED INDICATORS */}  
-        <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3a-content"
-                id="panel3a-header"
-               
-              >
-              Retired Indicators
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {retiredIndicators.map(retiredIndicator =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                <NavLink className={classes.itemTitle}  to={"/indicator/" + retiredIndicator.name} href={`/indicator/${retiredIndicator.name}`}>{retiredIndicator.name}</NavLink>
-                {/* <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{retiredIndicator.name}</Button> */}
-                {Object.keys(Object(retiredIndicator.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(retiredIndicator.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel>
-
-
-        {/* RETIRED DISAGGREGATIONS */}
-       {/* <ExpansionPanel defaultExpanded className={classes.expandPanel}>
-       <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3b-content"
-                id="panel3b-header"
-               
-              >
-              Retired Disaggregations
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.panelDetail}>
-
-                {retiredDisaggregations.map(retiredDisaggregation =>{
-                  return(
-                <div className={classes.itemContainer} key={Math.random()}>
-                <Button onClick={updateIndicator("VMMC_CIRC")} className={classes.itemTitle}>{retiredDisaggregation.name}</Button>
-                {Object.keys(Object(retiredDisaggregation.content)).map(
-                  key => <p className={classes.itemContent} key={Math.random()}>{Object(retiredDisaggregation.content)[key]}</p>
-                )}
-                </div>
-                  )
-                })}
-
-                
-            
-       </ExpansionPanelDetails>
-       </ExpansionPanel> */}
-
-      </TabPanel>
-
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+        </TabPanel>
         </Grid>
       </div>
-
     )
+}
+
+function getPanelFromItemTab(itemTab){      
+  let panel = "";
+  if (itemTab && itemTab.indexOf('New Addition') > -1) {
+    panel = 0;
+  } else if (itemTab && itemTab.indexOf('Adjustments') > -1) {
+    panel = 1;
+  }else if (itemTab && itemTab.indexOf('Removals') > -1) {
+    panel = 2;
+  }  
+  return panel;
+}
+
+export function  WhatsNewDetail(props) {   
+  const classes = useStyles();  
+  const list = props.panelToListMap.get(props.panel); 
+  let listWithData = props.versionToListMap.get(props.version);
+  var indicatorExpansionPanelList = []; 
+  let dataFound = false;
+
+  if (list){  
+    for (let category of list){      
+      if (listWithData && listWithData.has(category) ){
+        dataFound = true;
+        indicatorExpansionPanelList.push(
+          <ExpansionPanel key={"panel" + Math.random()} defaultExpanded className={classes.expandPanel}>
+            <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1b-content"
+                  key={"panel_summary" + Math.random}
+                  id="panel1b-header"               
+                > {category}
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails key={"panelDetail"+ Math.random()} className={classes.panelDetail}>
+              { 
+                props.jsonData.map(item =>{
+                return (
+                    (item["MER Version"] === props.version && item["List"] === category && getPanelFromItemTab(item["Tab"]) === props.panel) ?
+                      (
+                      <div className={classes.itemContainer} key={"data" +Math.random()}>
+                      {item["HasIndicatorLink"] && item["HasIndicatorLink"].toLowerCase() === 'true' ? 
+                          <NavLink className={classes.itemTitle}  to={"/referenceIndicator/" + item["Indicator"]} href={`/indicator/${item["Indicator"]}`}>{item["Indicator"]}</NavLink>  
+                          :<div className={classes.itemTitle}><span style={{color: '#000000'}}> {item["Indicator"]}</span></div>
+                        }
+                        <div className={classes.itemContent} dangerouslySetInnerHTML={{__html: convertMarkdown(item["Description"])}} />                    
+                        </div>
+                    ) 
+                  : null)}               
+                  )
+                }                               
+      </ExpansionPanelDetails>
+      </ExpansionPanel>
+        );
+      }
+    }
+}
+  if (!dataFound){
+    indicatorExpansionPanelList.push("N/A");
+  }
+  return (
+      <div>
+          {indicatorExpansionPanelList}
+      </div>      
+  )
 }

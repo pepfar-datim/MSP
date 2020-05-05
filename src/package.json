@@ -11,6 +11,7 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.49",
     "@material-ui/styles": "^4.3.0",
+    "d3": "^5.16.0",
     "http-proxy-middleware": "^1.0.3",
     "material-table": "^1.50.0",
     "material-ui-flat-pagination": "^4.0.0",

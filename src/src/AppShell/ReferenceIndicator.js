@@ -967,7 +967,7 @@ const useStyles = makeStyles(theme => ({
               return(
                 <div key={"group_" + index + indicator.id }  className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
                  {currentIndicator.name===indicator.name || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
-                  <NavLink  to={"/indicator/" + indicator.id} onClick={handleNavLinkChange}><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
+                  <NavLink  to={"/referenceIndicator/" + indicator.id} onClick={handleNavLinkChange}><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
                  }                                                
                 </div>
               )                 
