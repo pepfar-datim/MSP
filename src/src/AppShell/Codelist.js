@@ -2962,8 +2962,10 @@ Compare selected data elements
                                   if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
                                     name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
                                     code = deMappings[dataElementDetail.id][key].to_concept_code
+                                    if(de[deMappings[dataElementDetail.id][key].to_concept_code]){
                                     source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
                                     type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
+                                    }
                                   }
                                   else {
                                     let from_concept_url = deMappings[dataElementDetail.id][key].from_concept_url

@@ -555,11 +555,11 @@ export default function Compare() {
           }
           if (dataElements['Indicator']) {
             let ids = Array.from(dataElements['Indicator'])
-            ids.push(value.extras.Indicator ? value.extras.Indicator : "N/A")
+            ids.push(value.extras.indicator ? value.extras.indicator : "N/A")
             dataElements['Indicator'] = ids
           } else {
             let ids = []
-            ids.push(value.extras.Indicator ? value.extras.Indicator : "N/A")
+            ids.push(value.extras.indicator ? value.extras.indicator : "N/A")
             dataElements['Indicator'] = ids
           }
           if (dataElements['Data Type']) {
@@ -573,29 +573,29 @@ export default function Compare() {
           }
           if (dataElements['Domain Type']) {
             let types = Array.from(dataElements['Domain Type'])
-            types.push(value.extras ? value.extras.domainType : "N/A")
+            types.push(value.extras.domainType ? value.extras.domainType : "N/A")
             dataElements['Domain Type'] = types
           } else {
             let types = []
-            types.push(value.extras ? value.extras.domainType : "N/A")
+            types.push(value.extras.domainType ? value.extras.domainType : "N/A")
             dataElements['Domain Type'] = types
           }
           if (dataElements['Value Type']) {
             let types = Array.from(dataElements['Value Type'])
-            types.push(value.extras ? value.extras.valueType : "N/A")
+            types.push(value.extras.valueType ? value.extras.valueType : "N/A")
             dataElements['Value Type'] = types
           } else {
             let types = []
-            types.push(value.extras ? value.extras.valueType : "N/A")
+            types.push(value.extras.valueType ? value.extras.valueType : "N/A")
             dataElements['Value Type'] = types
           }
           if (dataElements['Aggregation Type']) {
             let types = Array.from(dataElements['Aggregation Type'])
-            types.push(value.extras ? value.extras.aggregationType : "N/A")
+            types.push(value.extras.aggregationType ? value.extras.aggregationType : "N/A")
             dataElements['Aggregation Type'] = types
           } else {
             let types = []
-            types.push(value.extras ? value.extras.aggregationType : "N/A")
+            types.push(value.extras.aggregationType ? value.extras.aggregationType : "N/A")
             dataElements['Aggregation Type'] = types
           }
           if (dataElements['Applicable Periods']) {
