@@ -228,6 +228,13 @@ export const WhatIsNewHome =() =>{
           }
           return null;
       });  
+      let headerText = "";
+      if (versionLabelPrevious !== "") {
+        headerText = versionLabelPrevious + " to MER " + versionSelected;
+      }else {
+        headerText =  "MER " + versionSelected;
+      }
+
      
     return(
         <div className={classes.home}>
@@ -269,7 +276,7 @@ export const WhatIsNewHome =() =>{
           </Grid>
          
           <Grid item xs={12} md={4}>
-                  <headings.H4 className={classes.subtitle}>MER {versionLabelPrevious} to MER {versionSelected}</headings.H4>
+                  <headings.H4 className={classes.subtitle}>{headerText}</headings.H4>
           </Grid>
         <p>Through the past 3 years of quarterly, site-level monitoring, PEPFAR programs have used data to improve 
           implementation. Changes to the MER highlight key program areas (e.g., index testing services) that should 
