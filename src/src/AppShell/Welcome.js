@@ -192,6 +192,13 @@ export default function Welcome(){
 
         <Grid container>
         <Grid item xs={12} md={4}  className={classes.buttonContainer}>
+      <NavLink to="/referenceIndicator" activeClassName="sidebarActive" className={classes.buttonNav}>
+      <Button variant="contained" color="primary" className={classes.button}>
+      REFERENCE INDICATORS
+      </Button>
+      </NavLink>
+      </Grid>
+        <Grid item xs={12} md={4}  className={classes.buttonContainer}>
         <NavLink to="/codelist" activeClassName="sidebarActive" className={classes.buttonNav}>
         <Button variant="contained" color="primary" className={classes.button} >
         DATA ELEMENTS
@@ -205,13 +212,7 @@ export default function Welcome(){
       </Button>
       </NavLink>
       </Grid>
-      <Grid item xs={12} md={4}  className={classes.buttonContainer}>
-      <NavLink to="/referenceIndicator" activeClassName="sidebarActive" className={classes.buttonNav}>
-      <Button variant="contained" color="primary" className={classes.button}>
-      REFERENCE INDICATORS
-      </Button>
-      </NavLink>
-      </Grid>
+      
       </Grid>
 
       </Grid>
