@@ -209,7 +209,7 @@ export const WhatIsNewHome =() =>{
 
     const handleFilterChange = event => {
       event.persist();
-      setVersion( event.target.value);        
+      setVersion( event.target.value);          
     };
 
      //set initial panel state and panel handle change function
@@ -228,6 +228,7 @@ export const WhatIsNewHome =() =>{
           }
           return null;
       });  
+      
       let headerText = "";
       if (versionLabelPrevious !== "") {
         headerText = versionLabelPrevious + " to MER " + versionSelected;
@@ -265,7 +266,7 @@ export const WhatIsNewHome =() =>{
                     { versions.map(key => <option key={key} value={key} >{"MER " + key}</option>)}                    
                   </Select>
                 </FormControl>                
-                <Button variant="outlined" href={guidanceDownloadURL} color="primary"  className={classes.actionButton}
+                <Button variant="outlined" href={guidanceDownloadURL} color="primary"  className={classes.actionButton} download
                 disabled={guidanceDownloadURL === null || guidanceDownloadURL === "" ? true : false}
                 >
                 Download MER Guidance {"V" + versionSelected}
