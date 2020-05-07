@@ -2193,10 +2193,13 @@ Compare selected data elements
                             <Grid container alignItems="center" justify="space-between">
                               <Grid   >
                                 <div className={classes.tableContainer}>
+                                  <strong>Numerator: </strong>
                                   {
-
-
-                                    checked ? dataElement.extras.numerator : dataElement.extras.numeratorReadableFormula
+                                  checked ? dataElement.extras.numerator : dataElement.extras.numeratorReadableFormula
+                                  }<br></br><br></br>
+                                  <strong>Denominator: </strong>
+                                  {
+                                  checked ? dataElement.extras.denominator : dataElement.extras.denominatorReadableFormula
                                   }
                                 </div></Grid>
                               <Grid item xs={3} >
@@ -2796,11 +2799,11 @@ Compare selected data elements
                             <TableCell><strong>Indicator Groups</strong></TableCell>
                             <TableCell>
                             {
-                                          dataElementDetail.extras['indicatorGroups'] ? (dataElementDetail.extras['indicatorGroups'].length > 0 ? (Object.values(dataElementDetail.extras['indicatorGroups']).map(
+                                          dataElementDetail.extras.indicatorGroups ? (dataElementDetail.extras.indicatorGroups.length > 0 ? (Object.values(dataElementDetail.extras.indicatorGroups).map(
 
                                             value =>
 
-                                              value.names + ", "
+                                              value.name + ", "
 
                                           )
                                           ) : 'N/A') : 'N/A'
