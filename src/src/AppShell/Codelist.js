@@ -1015,9 +1015,9 @@ export default function Codelist() {
 
     let compareLink = ''
     if (!dataElementToCompare) {
-      if (compareText !== '') {
+      // if (compareText !== '') {
         compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
-      }
+      //}
     } else {
       compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
     }

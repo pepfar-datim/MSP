@@ -1023,9 +1023,8 @@ export default function Codelist() {
 
     let compareLink = ''
     if (!dataElementToCompare) {
-      if (compareText !== '') {
         compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + compareText + '&indicatorDetail=true'
-      }
+
     } else {
       compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&indicatorDetail=true'
     }
@@ -2814,6 +2813,7 @@ Compare selected data elements
                       </Table> : ''}
                   </Grid>
                   {/* <Grid item xs={6}  > */}
+                  <ErrorBoundary>
                   <Grid item xs={6}  >
                     <div>
                       <div className={classes.heroContainer}>
@@ -2934,6 +2934,7 @@ Compare selected data elements
                       </Table>
                     </div>
                   </Grid>
+                  </ErrorBoundary>
                   {/* </Grid> */}
                   {/* </Grid> */}
                   {/* </Dialog> */}
