@@ -1067,7 +1067,7 @@ return (
 
     {/* indicator groups */}
     <div key="sidebarGroup" className={classes.sidebarGroup}>
-      <p className={classes.sidebarSubtitle}>INDICATOR GROUPS</p>
+      <p className={classes.sidebarSubtitle}>Reference Indicator Groups</p>     
       {indGrouploading ? 
           <div>
               <LinearProgress mode="indeterminate" />
@@ -1101,7 +1101,7 @@ return (
       
       {/* indicator tabs */}    
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-        <Tab label="INDICATOR DETAILS" {...a11yProps(0)} />
+        <Tab label="REFERENCE INDICATOR DETAILS" {...a11yProps(0)} />
         <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
       </Tabs>
 
