@@ -897,6 +897,7 @@ export default function Codelist() {
     right: false,
   });
   const [dropDownName, setDropDownName] = React.useState("");
+  const [exportDataElement, setExportDataElement] = React.useState("");
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogMessage, setDialogMessage] = React.useState('');
@@ -1409,6 +1410,13 @@ export default function Codelist() {
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setDropDownName(buttonName);
 
+  };
+
+   function exportMenu(buttonName, id) {
+    event = event || window.event;
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+    setDropDownName(buttonName);
+    setExportDataElement(id)
 
   };
   const popOpen = Boolean(anchorEl);
@@ -1422,6 +1430,11 @@ export default function Codelist() {
     setDownloadValue(event.target.value);
   };
 
+  const [exportValue, setExportValue] = React.useState('HTML');
+  const handleExportChange = event => {
+    setExportValue(event.target.value);
+  };
+
   const performDownload = event => {
     const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
     let downloadURL = "";
@@ -1430,6 +1443,25 @@ export default function Codelist() {
     } else if (values.dataSet !== "All") {
       downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
     }
+    let downloadLink = document.createElement('a');
+    downloadLink.href = downloadURL;
+    if (downloadValue.trim() !== "CSV") {
+      downloadLink.setAttribute("target", "_blank");
+    }
+    downloadLink.setAttribute('download', "download");
+    downloadLink.click();
+    revokeDownloadLink(downloadLink.href);
+  }
+
+  const performExport = event => {
+    let downloadURL = "";
+    if(exportValue.trim() === 'OCL'){
+      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + exportDataElement;
+    }
+    else{
+      downloadURL = 'https://dev-de.datim.org/api/dataElements/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
+    }
+    console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
     if (downloadValue.trim() !== "CSV") {
@@ -2060,37 +2092,53 @@ Compare selected data elements
                             Download DATA
                         </Button>
                         </FormGroup>
-                      </FormControl> :
+                      </FormControl> : 
+                      <FormControl component="fieldset" className={classes.popOver}>
+                      <FormGroup>
+                        <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                        <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                        </RadioGroup>
+                        <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                        <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                          <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                        </RadioGroup>
+                        <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                          Download DATA
+                      </Button>
+                      </FormGroup>
+                    </FormControl> 
 
                       //  compare popover panel
-                      <FormControl component="fieldset" className={classes.popOver}>
+        //               <FormControl component="fieldset" className={classes.popOver}>
 
-                        <FormGroup>
+        //                 <FormGroup>
 
-                          <FormLabel component="legend" className={classes.formLegend}>Data Sources</FormLabel>
-                          <FormControlLabel
-                            control={<Checkbox checked={DATIM} style={{ color: '#D55804' }} onChange={handleCompareChange('DATIM')} value="DATIM" />}
-                            label="DATIM" disabled
-                          />
-                          <FormControlLabel
-                            control={<Checkbox checked={PDH} style={{ color: '#D55804' }} onChange={handleCompareChange('PDH')} value="PDH" />}
-                            label="PDH"
-                          />
-                          <FormControlLabel
-                            control={
-                              <Checkbox checked={MOH} style={{ color: '#D55804' }} onChange={handleCompareChange('MOH')} value="MOH" />
-                            }
-                            label="MOH"
-                          />
-                          <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={toggleDrawer('bottom', true)} >
-                            COMPARE SOURCES
-         </Button>
-                        </FormGroup>
-                      </FormControl>
+        //                   <FormLabel component="legend" className={classes.formLegend}>Data Sources</FormLabel>
+        //                   <FormControlLabel
+        //                     control={<Checkbox checked={DATIM} style={{ color: '#D55804' }} onChange={handleCompareChange('DATIM')} value="DATIM" />}
+        //                     label="DATIM" disabled
+        //                   />
+        //                   <FormControlLabel
+        //                     control={<Checkbox checked={PDH} style={{ color: '#D55804' }} onChange={handleCompareChange('PDH')} value="PDH" />}
+        //                     label="PDH"
+        //                   />
+        //                   <FormControlLabel
+        //                     control={
+        //                       <Checkbox checked={MOH} style={{ color: '#D55804' }} onChange={handleCompareChange('MOH')} value="MOH" />
+        //                     }
+        //                     label="MOH"
+        //                   />
+        //                   <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={toggleDrawer('bottom', true)} >
+        //                     COMPARE SOURCES
+        //  </Button>
+        //                 </FormGroup>
+        //               </FormControl>
 
                   }
-
-
 
 
                 </Popover>
@@ -2253,6 +2301,10 @@ Compare selected data elements
                           <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
                             View Data Element Details
                 </Button>
+                <Button variant="outlined" className={classes.actionButton} onClick={() => exportMenu("export", dataElement.id)} id="downloadButton" color="primary">
+                    <ActionButtonLabel> Export</ActionButtonLabel><GetAppIcon style={{ color: '#1D5893' }} />
+                    
+                  </Button>
                           {/* </ExpansionPanelActions> */}
                         </Grid>
 
