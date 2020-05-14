@@ -898,6 +898,7 @@ export default function Codelist() {
   });
   const [dropDownName, setDropDownName] = React.useState("");
   const [exportDataElement, setExportDataElement] = React.useState("");
+  const [exportSource, setExportSource] = React.useState("");
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogMessage, setDialogMessage] = React.useState('');
@@ -1412,11 +1413,12 @@ export default function Codelist() {
 
   };
 
-   function exportMenu(buttonName, id) {
+   function exportMenu(buttonName, id, source) {
     event = event || window.event;
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setDropDownName(buttonName);
     setExportDataElement(id)
+    setExportSource(source)
 
   };
   const popOpen = Boolean(anchorEl);
@@ -2095,13 +2097,15 @@ Compare selected data elements
                       </FormControl> : 
                       <FormControl component="fieldset" className={classes.popOver}>
                       <FormGroup>
-                        <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                        {exportSource === 'DATIM' ? 
+                        <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
+                         {exportSource === 'DATIM' ? 
                         <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
                           <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
                           <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
                           <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
                           <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
-                        </RadioGroup>
+                        </RadioGroup>  : '' } 
                         <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
                         <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
                           <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
@@ -2301,7 +2305,7 @@ Compare selected data elements
                           <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
                             View Data Element Details
                 </Button>
-                <Button variant="outlined" className={classes.actionButton} onClick={() => exportMenu("export", dataElement.id)} id="downloadButton" color="primary">
+                <Button variant="outlined" className={classes.actionButton} onClick={() => exportMenu("export", dataElement.id, dataElement.extras.source)} id="downloadButton" color="primary">
                     <ActionButtonLabel> Export</ActionButtonLabel><GetAppIcon style={{ color: '#1D5893' }} />
                     
                   </Button>
