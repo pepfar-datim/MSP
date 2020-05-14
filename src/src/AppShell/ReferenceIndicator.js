@@ -1010,7 +1010,8 @@ const useStyles = makeStyles(theme => ({
 return (
   
  <div className={classes.container}>
-  <Breadcrumb></Breadcrumb>
+  {/* <Breadcrumb></Breadcrumb> */}
+  <div style={{height: '30px'}}></div>
     {errorLoadIndicatorDetail!== null ? <div className={classes.errorMessage}>{errorLoadIndicatorDetail}</div> : null}
     {errorLoadDataElement!== null ? <div className={classes.errorMessage}>{errorLoadDataElement}</div> : null}
   <Grid container>

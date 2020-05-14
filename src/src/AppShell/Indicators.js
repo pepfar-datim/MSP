@@ -1629,7 +1629,7 @@ export default function Codelist() {
           <Grid container alignItems="center" >
             {<Grid item xs={12} md={7} >
               {/* <headings.H1>Data Elements</headings.H1> */}
-              <Breadcrumb></Breadcrumb>
+              {/* <Breadcrumb></Breadcrumb> */}
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
@@ -1718,7 +1718,7 @@ export default function Codelist() {
                     {/* denominator year filter */}
                     <Grid item xs={12} className={classes.filter} >
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="fiscal">Has denominator</InputLabel>
+                        <InputLabel htmlFor="fiscal">Has Denominator</InputLabel>
                         <Select
                           native
                           value={values.denom}

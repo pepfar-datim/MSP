@@ -1669,7 +1669,7 @@ export default function Codelist() {
           <Grid container alignItems="center" >
             {<Grid item xs={12} md={7} >
               {/* <headings.H1>Data Elements</headings.H1> */}
-              <Breadcrumb></Breadcrumb>
+              {/* <Breadcrumb></Breadcrumb> */}
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
