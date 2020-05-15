@@ -31,6 +31,7 @@ import Switch from '@material-ui/core/Switch';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TablePagination from '@material-ui/core/TablePagination';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 
 import FormControl from '@material-ui/core/FormControl';
@@ -269,6 +270,14 @@ const useStyles = makeStyles(theme => ({
     marginRight: '20px',
     marginTop: '10px',
     '&:hover, &:focus':{
+      backgroundColor: '#C1A783',
+      color: '#000000'
+    }
+  },
+  actionButton: {
+    marginLeft: '10px',
+    marginTop: '12px',     
+    '&:hover, &:focus': {
       backgroundColor: '#C1A783',
       color: '#000000'
     }
@@ -1006,6 +1015,11 @@ const useStyles = makeStyles(theme => ({
     }
   };
 
+  let downloadIndicatorURL = "";
+  if (currentIndicator) {
+    downloadIndicatorURL = "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/" + currentIndicator.id + "/";
+  }
+  
   //layout
 return (
   
@@ -1094,11 +1108,23 @@ return (
         : 
       <div>     
       
-      <headings.H1>{currentIndicator.name}     
-          <Chip style={{ backgroundColor: '#f7f4f0', float:"right"}}
-            variant="outlined" size="medium" label={ currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                    
-          />                     
-      </headings.H1>
+      <headings.H1>{currentIndicator.name}    
+       {downloadIndicatorURL !== "" && panel === 0 ?
+           <Button variant="outlined" href={downloadIndicatorURL} download={currentIndicator.id + ".json"} className={classes.actionButton} target="_black"
+           style={{ float:"right"}}
+           title={"Download reference indicator details for " + currentIndicator.id}
+          >
+            {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear} 
+            <GetAppIcon />
+           </Button>   
+       :
+          <Button variant="outlined"  color="primary"  className={classes.actionButton} disabled={true}
+          style={{ backgroundColor: '#eeeeee', float:"right"}}
+          >
+            {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}            
+          </Button>  
+       }       
+       </headings.H1>           
       
       {/* indicator tabs */}    
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
