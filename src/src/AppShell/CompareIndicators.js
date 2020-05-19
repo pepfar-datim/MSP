@@ -847,7 +847,7 @@ export default function Compare() {
             console.log(response);
             setErrorDisplay("Failed to fetch")
             throw new Error(
-              `Error when retrieving data element mappings ${response.status} ${response.statusText}`
+              `Error when retrieving indicator ${response.status} ${response.statusText}`
             );
           }
     
@@ -862,7 +862,7 @@ export default function Compare() {
           setDialogMessage(e.message)
           setDialogOpen(true)
           throw new Error(
-            `Error when retrieving data element  ${e.message}`
+            `Error when retrieving indicator  ${e.message}`
           );
         }
     
@@ -880,7 +880,7 @@ export default function Compare() {
               <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                 id="backButton"> Back</Button>
               {/* </NavLink> */}
-              <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
+              <h2 className={classes.comparisonPanelTitle}>INDICATOR COMPARISON</h2>
           </div>
           {errorDisplay !== null ?
             <div className={classes.errorMessage}>{errorDisplay}</div>

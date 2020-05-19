@@ -1371,6 +1371,14 @@ export default function Codelist() {
 
 
   };
+  // function exportMenu(buttonName, id, type) {
+  //   event = event || window.event;
+  //   setAnchorEl(anchorEl ? null : event.currentTarget);
+  //   setDropDownName(buttonName);
+  //   setExportDataElement(id)
+  //   setExportType(type)
+
+  // }; 
   const popOpen = Boolean(anchorEl);
   const popId = popOpen ? 'popover' : undefined;
   const popHandleClose = () => {
@@ -1383,13 +1391,20 @@ export default function Codelist() {
   };
 
   const performDownload = event => {
-    const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
     let downloadURL = "";
-    if (selectedDataElement.length > 0) {
-      downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
-    } else if (values.dataSet !== "All") {
-      downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
+    if (downloadValue.trim() === 'OCL') {
+      let UIDs = ''
+      Object.values(selectedDataElement).map(value => {
+        console.log(value)
+        UIDs = UIDs + '"' + value + '"OR'}
+      )
+      UIDs = UIDs.substring(0, UIDs.length - 2)
+      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
     }
+    else {
+        downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*'
+    }
+    console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
     if (downloadValue.trim() !== "CSV") {
@@ -1399,6 +1414,29 @@ export default function Codelist() {
     downloadLink.click();
     revokeDownloadLink(downloadLink.href);
   }
+  // const performExport = event => {
+  //   let downloadURL = "";
+  //   if (exportValue.trim() === 'OCL') {
+  //     let UIDs = ''
+  //     Object.keys(selectedDataElement).map(key => {
+  //       UIDs = UIDs + '"' + key + '"OR'}
+  //     )
+  //     UIDs = UIDs.substring(0, UIDs.length - 2)
+  //     downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
+  //   }
+  //   else {
+  //       downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + exportValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*'
+  //   }
+  //   console.log("downloadURL " + downloadURL)
+  //   let downloadLink = document.createElement('a');
+  //   downloadLink.href = downloadURL;
+  //   if (downloadValue.trim() !== "CSV") {
+  //     downloadLink.setAttribute("target", "_blank");
+  //   }
+  //   downloadLink.setAttribute('download', "download");
+  //   downloadLink.click();
+  //   revokeDownloadLink(downloadLink.href);
+  // }
 
   function revokeDownloadLink(href) {
     setTimeout(function () {
@@ -1439,11 +1477,11 @@ export default function Codelist() {
     if (open) {
       if (selectedDataElement.length > 3) {
         setDialogOpen(true);
-        setDialogMessage("You cannot compare more than 3 data elements at a time")
+        setDialogMessage("You cannot compare more than 3 indicators at a time")
       }
       else if (selectedDataElement.length < 2) {
         setDialogOpen(true);
-        setDialogMessage("Please select 2-3 data elements")
+        setDialogMessage("Please select 2-3 indicators")
       }
 
       else {
@@ -1505,19 +1543,25 @@ export default function Codelist() {
   };
 
   // when values.dataSet === "All" && selectedDataElement.length ==0 disable the button
-
+  getCompareLabel
   function getDownloadLabel() {
     let downloadLabel = "Download";
-    if (values.dataSet === "All") {
       if (selectedDataElement.length > 0) {
-        downloadLabel = "Download Selected Data Elements";
+        downloadLabel = "Download Selected Indicators";
       }
-    } else if (values.dataSet !== "" && values.dataSet !== "All") {
+     else {
+      downloadLabel = "Download Indicators"
+    }
+    return downloadLabel;
+  }
+
+  function getCompareLabel() {
+    let downloadLabel = "Compare";
       if (selectedDataElement.length > 0) {
-        downloadLabel = "Download Selected Data Elements";
-      } else {
-        downloadLabel = "Download Full Code List";
+        downloadLabel = "Compare Selected Indicators";
       }
+     else {
+      downloadLabel = "Compare Indicators"
     }
     return downloadLabel;
   }
@@ -1930,10 +1974,10 @@ export default function Codelist() {
                     <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
                     : null}
-                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
-                    <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel>
+                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 ? true : false}>
+                    <ActionButtonLabel> Download Indicators</ActionButtonLabel>
                     {
-                      selectedDataElement.length === 0 && values.dataSet === "All" ?
+                      selectedDataElement.length === 0 ?
                         <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
                     }
                   </Button>
@@ -1947,11 +1991,15 @@ Compare selected data elements
                   pathname: comparePage,
                   data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
                 }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}
-                  <Button variant="outlined" className={classes.actionButton}
+                  <Button variant="outlined" className={classes.actionButton} disabled={selectedDataElement.length < 2 ? true : false}
                     onClick={toggleDrawer('bottom', true)}
                     id="comparisonButton">
-                    <ActionButtonLabel>Compare selected indicators</ActionButtonLabel>
-                    <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                      <ActionButtonLabel> Compare Indicators</ActionButtonLabel>
+                    {
+                      selectedDataElement.length === 0 ?
+                        <CompareArrowsIcon style={{marginLeft: '2px' }}/> : <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                    }
+                    
                   </Button>
                   {/* </NavLink> */}
                 </div>
@@ -1999,16 +2047,19 @@ Compare selected data elements
                     dropDownName === "download" ?
                       <FormControl component="fieldset" className={classes.popOver}>
                         <FormGroup>
-                          <FormLabel component="legend" className={classes.formLegend}>Data Format</FormLabel>
-                          <RadioGroup aria-label="download" name="downloadRadio" value={downloadValue} onChange={handleDownloadChange}>
-                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
-                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
-                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
-                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                            <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                            <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
+                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                            </RadioGroup>
+                          <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                          <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
+                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
                           </RadioGroup>
                           <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
                             Download DATA
-                        </Button>
+                      </Button>
                         </FormGroup>
                       </FormControl> :
 

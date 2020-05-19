@@ -1290,7 +1290,7 @@ export default function Codelist() {
 
         async function (key) {
           let derivationId = ''
-          if (Object(deMappings[id])[key].map_type === 'Derived From') {
+          if (Object(deMappings[id])[key].map_type === 'Derived From' || Object(deMappings[id])[key].map_type === 'Replaces') {
              derivationId = Object(deMappings[id])[key].to_concept_code
             if (derivationId === id) {
               let from_concept_url = Object(deMappings[id])[key].from_concept_url
@@ -1301,19 +1301,20 @@ export default function Codelist() {
               derivationId = arr[arr.length - 1]
             }
           }
-          else if (Object(deMappings[id])[key].map_type === 'Replaces') {
-            derivationId = Object(deMappings[id])[key].to_concept_code
-           if (derivationId === id) {
-             let to_concept_url = Object(deMappings[id])[key].to_concept_url
-             if (to_concept_url.endsWith('/')) {
-              to_concept_url = to_concept_url.substring(0, to_concept_url.length - 1)
-             }
-             let arr = to_concept_url.split('/')
-             derivationId = arr[arr.length - 1]
-           }
-         }
+        //   else if (Object(deMappings[id])[key].map_type === 'Replaces') {
+        //     derivationId = Object(deMappings[id])[key].to_concept_code
+        //    if (derivationId === id) {
+        //     let from_concept_url = Object(deMappings[id])[key].from_concept_url
+        //     if (from_concept_url.endsWith('/')) {
+        //       from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+        //     }
+        //     let arr = from_concept_url.split('/')
+        //     derivationId = arr[arr.length - 1]
+        //    }
+        //  }
             if (!deMappings[derivationId]) {
               queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
+              console.log(" queryByDataElement " + queryMapping)
               response = await fetch(queryMapping);
               if (!response.ok) {
                 console.log(response);
@@ -1595,9 +1596,6 @@ export default function Codelist() {
     setDetailPanel({ ...detailPanel, [side]: open });
     if (!open) {
       setShowLinked(false)
-      setShowDerivesTo(false)
-      setShowReplaces(false)
-      console.log('showLinked : ' + showLinked)
       history.push('/codelist')
     }
 
@@ -1710,9 +1708,7 @@ export default function Codelist() {
     }
   };
 
-  const [showLinked, setShowLinked] = React.useState(false);
-  const [showDerivesTo, setShowDerivesTo] = React.useState(false);
-  const [showReplaces, setShowReplaces] = React.useState(false); 
+  const [showLinked, setShowLinked] = React.useState(false); 
 
   const renderTree = (nodes) => (
     <TreeItem key={nodes.derived_category_option_combo[0].id} nodeId={nodes.derived_category_option_combo[0].id} label={nodes.derived_category_option_combo[0].name}>
@@ -2765,137 +2761,6 @@ Compare selected data elements
                                   {/* )}></Route> */}
                                 </ExpansionPanelDetails>
                               </ExpansionPanel>
-
-                              {/* </div> */}
-
-
-
-
-                              {/* PDH row */}
-                              {/* 
-                          <div className={PDH ? classes.compareRowColumn : classes.hide}>
-
-
-                            {datim.pdh.length === 0 ? 'No matching PDH data element' : pdhDataElements.map(pdhDataElement => {
-                              if ((datim.pdh).includes(pdhDataElement.uid)) {
-                                return (
-                                  <ExpansionPanel className={classes.expandPanel} key={Math.random()}>
-                                    <ExpansionPanelSummary
-                                      expandIcon={<ExpandMoreIcon />}
-                                      aria-controls="panel3b-content"
-                                      id="panel3b-header"
-
-                                    > */}
-                              {/* <div className={classes.compareCardSummary}>
-                                        <div className={classes.compareCardText}>PDH Data Element: </div>
-                                        <div className={classes.compareCardName}>{pdhDataElement.name}</div>
-                                        <div className={classes.compareCardText}>PDH Data Element UID: <strong>{pdhDataElement.uid}</strong></div>
-                                        <div className={classes.compareCardText}>Derived Data Element? <strong>{pdhDataElement.derived}</strong></div>
-                                      </div>
-                                    </ExpansionPanelSummary>
-                                    <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-                                      <Route render={({ history }) => (
-                                        <div className={classes.tableContainer}>
-                                          {/* data element Disaggregations */}
-                              {/* <strong>PDH Disaggregations</strong>:<br />
-
-                                          <Table className={classes.table} aria-label="simple table"> */}
-                              {/* <TableHead>
-                                              <TableRow>
-                                                <TableCell>Disaggregations Name</TableCell>
-                                                <TableCell>Disaggregations Code</TableCell>
-                                              </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                              {
-                                                Object.keys(Object(pdhDataElement.combos)).map(
-                                                  key => <TableRow key={Math.random()}>
-                                                    <TableCell component="th" scope="row">
-                                                      {Object(pdhDataElement.combos)[key].name}
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row">
-                                                      {Object(pdhDataElement.combos)[key].code}
-                                                    </TableCell>
-                                                  </TableRow>
-
-                                                )
-                                              }
-                                            </TableBody>
-                                          </Table>
-                                        </div>)}></Route>
-                                    </ExpansionPanelDetails>
-                                  </ExpansionPanel>
-                                )
-                              }
-
-                              return true;
-                            })
-                            }
-                          </div> */}
-
-
-                              {/* MOH row */}
-                              {/* <div className={MOH ? classes.compareRowColumn : classes.hide}>
-
-                            {datim.moh.length === 0 ? 'No matching MOH data element' : mohDataElements.map(mohDataElement => {
-                              if ((datim.moh).includes(mohDataElement.uid)) {
-                                return (
-                                  <ExpansionPanel className={classes.expandPanel} key={Math.random()}>
-                                    <ExpansionPanelSummary
-                                      expandIcon={<ExpandMoreIcon />}
-                                      aria-controls="panel3b-content"
-                                      id="panel3b-header"
-
-                                    >
-                                      <div className={classes.compareCardSummary}>
-                                        <div className={classes.compareCardText}>MOH Data Element: </div>
-                                        <div className={classes.compareCardName}>{mohDataElement.name}</div>
-                                        <div className={classes.compareCardText}>MOH Data Element UID: <strong>{mohDataElement.uid}</strong></div>
-                                        <div className={classes.compareCardText}>Derived Data Element? <strong>{mohDataElement.derived}</strong></div>
-                                      </div>
-                                    </ExpansionPanelSummary>
-                                    <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-                                      <Route render={({ history }) => (
-                                        <div className={classes.tableContainer}>
-                                          {/* data element Disaggregations */}
-                              {/* <strong>MOH Disaggregations</strong>:<br />
-
-                                          <Table className={classes.table} aria-label="simple table">
-                                            <TableHead>
-                                              <TableRow>
-                                                <TableCell>Disaggregations Name</TableCell>
-                                                <TableCell>Disaggregations Code</TableCell>
-                                              </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                              {
-                                                Object.keys(Object(mohDataElement.combos)).map(
-                                                  key => <TableRow key={Math.random()}>
-                                                    <TableCell component="th" scope="row">
-                                                      {Object(mohDataElement.combos)[key].name}
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row">
-                                                      {Object(mohDataElement.combos)[key].code}
-                                                    </TableCell>
-                                                  </TableRow>
-
-                                                )
-                                              }
-                                            </TableBody>
-                                          </Table>
-                                        </div>)}></Route>
-                                    </ExpansionPanelDetails>
-                                  </ExpansionPanel>
-                                )
-                              }
-
-                              return true;
-                            })
-                            }*/}
                             </div>
 
                           )
@@ -2904,15 +2769,6 @@ Compare selected data elements
                       }
                       {/* </ErrorBoundary> */}
                     </div>
-
-
-
-
-
-
-
-
-
                   </Grid>
 
 
@@ -2924,8 +2780,6 @@ Compare selected data elements
               <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
                 <Grid container className={classes.comparePanelContainer} justify="space-between">
                 {setShowLinked(false)}
-      {setShowDerivesTo(false)}
-      {setShowReplaces(false)}
                   {/* <div className={classes.fixedTop}> */}
 
                   {/* <Grid container alignItems="center" justify="space-between"> */}
@@ -3056,8 +2910,6 @@ Compare selected data elements
                               <TableCell><strong>Linked Resources</strong></TableCell>
                               <TableCell></TableCell>
                             </TableRow> : ''}
-                          {showDerivesTo ?
-                            <strong style={{ marginLeft: '17px' }}>Derives To</strong> : ''}
 
                           {dataElementDetail ? (
                             (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
@@ -3065,14 +2917,15 @@ Compare selected data elements
                               function (key) {
                                 if (deMappings[dataElementDetail.id][key].map_type === "Derived From") {
                                   setShowLinked(true)
-                                  setShowDerivesTo(true)
                                   let name = ''
                                   let code = ''
                                   let source = ''
                                   let type = ''
+                                  let derives = ''
                                   if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
                                     name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
                                     code = deMappings[dataElementDetail.id][key].to_concept_code
+                                    derives = 'Derived From'
                                     if (de[deMappings[dataElementDetail.id][key].to_concept_code]) {
                                       source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
                                       type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
@@ -3089,14 +2942,19 @@ Compare selected data elements
                                     code = de[derivationId].id
                                     source = de[derivationId].extras.source
                                     type = de[derivationId].concept_class
+                                    derives = 'Derived To'
                                     console.log(name + code + source + type)
                                   }
                                   return (
                                     <TableRow>
+                                      
                                       <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
                                         <Grid container alignItems="center"
                                           //justify="space-between"
                                           spacing={2}>
+                                            <Grid item xs={12}  >
+                                           <strong>{derives}</strong> 
+                            </Grid>
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
@@ -3138,38 +2996,37 @@ Compare selected data elements
                           ) : ''
                           }
 
-{showReplaces ?
-                           <strong style={{ marginLeft: '17px' }}>Replaces</strong> : ''}
-
 {dataElementDetail ? (
                             (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
                               function (key) {
                                 if (deMappings[dataElementDetail.id][key].map_type === "Replaces") {
-                                  setShowReplaces(true)
                                   let name = ''
                                   let code = ''
                                   let source = ''
                                   let type = ''
+                                  let replaces = ''
                                   if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
                                     name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
                                     code = deMappings[dataElementDetail.id][key].to_concept_code
+                                    replaces = 'Replaces'
                                     if (de[deMappings[dataElementDetail.id][key].to_concept_code]) {
                                       source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
                                       type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
                                     }
                                   }
                                   else {
-                                    let to_concept_url = deMappings[dataElementDetail.id][key].to_concept_url
-                                    if (to_concept_url.endsWith('/')) {
-                                      to_concept_url = to_concept_url.substring(0, to_concept_url.length - 1)
+                                    let from_concept_url = deMappings[dataElementDetail.id][key].from_concept_url
+                                    if (from_concept_url.endsWith('/')) {
+                                      from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
                                     }
-                                    let arr = to_concept_url.split('/')
+                                    let arr = from_concept_url.split('/')
                                     let derivationId = arr[arr.length - 1]
                                     name = de[derivationId].display_name
                                     code = de[derivationId].id
                                     source = de[derivationId].extras.source
                                     type = de[derivationId].concept_class
+                                    replaces = 'Replaced By'
                                     console.log(name + code + source + type)
                                   }
                                   return (
@@ -3178,6 +3035,9 @@ Compare selected data elements
                                         <Grid container alignItems="center"
                                           //justify="space-between"
                                           spacing={2}>
+                                            <Grid item xs={12}  >
+                                           <strong>{replaces}</strong> 
+                            </Grid>
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
