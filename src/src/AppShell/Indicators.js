@@ -280,6 +280,12 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '2em'
 
   },
+  chip: {
+    marginTop: '5px', 
+    color: '#333333' ,
+   /* backgroundColor: '#ffffff',*/
+    fontSize: '12px'
+    },
   sidebarTitle: {
     textAlign: 'center',
     padding: '1em',
@@ -2143,7 +2149,7 @@ Compare selected data elements
                           spacing={1}>
                           <Grid item xs={9}  >
                             <Typography className={classes.heading}>
-                              <strong>{dataElement.display_name}</strong>
+                              {dataElement.display_name}
                             </Typography>
                           </Grid>
 
@@ -2158,33 +2164,19 @@ Compare selected data elements
                             label={"UID: " + dataElement.external_id}
                           //onClick={handleClick}
                           /></Grid> */}
-                          <Grid item xs={2} >
+                          <Grid item xs={2} md={3}>
                             <Tooltip disableFocusListener title="Click to copy UID">
-                              <Chip
-                                variant="outlined"
-                                size="small"
-                                style={{ color: '#4e4f4f', marginTop: '10px' }}
-                                label={"UID: " + dataElement.id}
+                            <span className={classes.chip}
                                 onClick={() => copyToClipboard(dataElement.id)}
-                              />
+                              >{"UID: " + dataElement.id}</span>
                             </Tooltip>
                           </Grid>
-                          <Grid item xs={2} >
-                            <Chip
-                              variant="outlined"
-                              size="small"
-                              style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#4e4f4f', marginTop: '10px' }}
-                              label={"Source: DATIM"}
-                              clickable
-                            /></Grid>
-                          <Grid item xs={2} >
-                            <Chip
-                              variant="outlined"
-                              size="small"
-                              style={{ marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#4e4f4f', marginTop: '10px' }}
-                              label={"Type: " + dataElement.concept_class}
-                              clickable
-                            /></Grid>
+                          <Grid item xs={2} md={3} >
+                          <span className={classes.chip}
+                              >{"Source: DATIM"}</span></Grid>
+                          <Grid item xs={2} md={3}>
+                          <span className={classes.chip}
+                              >{"Type: " + dataElement.concept_class}</span></Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
                       </ErrorBoundary>

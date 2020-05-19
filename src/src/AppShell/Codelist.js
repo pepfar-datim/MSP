@@ -254,8 +254,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '30px'
   },
   chip: {
-    marginRight: '5px'
-  },
+    marginTop: '5px', 
+    color: '#333333' ,
+   /* backgroundColor: '#ffffff',*/
+    fontSize: '12px'
+    },
   filterButton: {
     marginTop: '20px',
     marginBottom: '0px',
@@ -2181,7 +2184,7 @@ Compare selected data elements
                           spacing={1}>
                           <Grid item xs={9}  >
                             <Typography className={classes.heading}>
-                              <strong>{dataElement.display_name}</strong>
+                             {dataElement.display_name}
                             </Typography>
                           </Grid>
 
@@ -2196,33 +2199,23 @@ Compare selected data elements
                             label={"UID: " + dataElement.external_id}
                           //onClick={handleClick}
                           /></Grid> */}
-                          <Grid item xs={2} >
+                          <Grid item xs={2} md={3}>
                             <Tooltip disableFocusListener title="Click to copy UID">
-                              <Chip
-                                variant="outlined"
-                                size="small"
-                                style={{ color: '#4e4f4f', marginTop: '10px' }}
-                                label={"UID: " + dataElement.id}
+                              <span className={classes.chip}
                                 onClick={() => copyToClipboard(dataElement.id)}
-                              />
+                              >{"UID: " + dataElement.id}</span>
                             </Tooltip>
                           </Grid>
-                          <Grid item xs={2} >
-                            <Chip
-                              variant="outlined"
-                              size="small"
-                              style={{ marginLeft: '25px', backgroundColor: '#d8ebe0', color: '#4e4f4f', marginTop: '10px' }}
-                              label={"Source: " + dataElement.extras.source}
-                              clickable
-                            /></Grid>
-                          <Grid item xs={2} >
-                            <Chip
-                              variant="outlined"
-                              size="small"
-                              style={{ marginLeft: '25px', backgroundColor: '#c0b3c7', color: '#4e4f4f', marginTop: '10px' }}
-                              label={"Type: " + dataElement.concept_class}
-                              clickable
-                            /></Grid>
+                          <Grid item xs={2} md={3}>
+                          <span className={classes.chip}
+                                onClick={() => copyToClipboard(dataElement.id)}
+                              >{"Source: " + dataElement.extras.source}</span>
+                            </Grid>
+                          <Grid item xs={2} md={3}>
+                          <span className={classes.chip}
+                                onClick={() => copyToClipboard(dataElement.id)}
+                              >{"Type: " + dataElement.concept_class}</span>
+                            </Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
                       </ErrorBoundary>
@@ -2941,30 +2934,16 @@ Compare selected data elements
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px' }}
-                                              label={"UID: " + code}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
-                                              label={"Source: " + source}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
-                                              label={"Type: " + type}
-                                              clickable
-                                            /></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                                onClick={() => copyToClipboard(code)}
+                              >{"UID: " + code}</span></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                              >{"Source: " + source}</span></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                              >{"Type: " + type}</span>                                            </Grid>
                                         </Grid>
                                       </TableCell>
                                       <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
@@ -3024,30 +3003,16 @@ Compare selected data elements
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px' }}
-                                              label={"UID: " + code}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
-                                              label={"Source: " + source}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
-                                              label={"Type: " + type}
-                                              clickable
-                                            /></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                                onClick={() => copyToClipboard(code)}
+                              >{"UID: " + code}</span></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                              >{"Source: " + source}</span></Grid>
+                                          <Grid item xs={4} md={4} >
+                                          <span className={classes.chip}
+                              >{"Type: " + type}</span></Grid>
                                         </Grid>
                                       </TableCell>
                                       <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
