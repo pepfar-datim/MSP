@@ -243,11 +243,13 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
   },
   expansionPanelLeft:{
-    paddingBottom: '30px'
+    paddingBottom: '20px'
   },
   chip:{
-    marginTop: '10px', 
-    color: '#4e4f4f' 
+    marginTop: '5px', 
+    color: '#333333' ,
+   /* backgroundColor: '#ffffff',*/
+    fontSize: '12px'
   },
   filterButton:{
     marginBottom: '20px',
@@ -260,7 +262,7 @@ const useStyles = makeStyles(theme => ({
   },
   detailsButton: {
     marginTop: '10px',
-    marginBottom: '20px',
+    marginBottom: '0px',
     '&:hover, &:focus': {
       backgroundColor: '#C1A783',
       color: '#000000'
@@ -564,6 +566,7 @@ const useStyles = makeStyles(theme => ({
         }        
         return true;
       });
+      console.log(filteredByYearData);
       const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();           
       return distinctGroup;      
@@ -1019,6 +1022,77 @@ const useStyles = makeStyles(theme => ({
   if (currentIndicator) {
     downloadIndicatorURL = "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/" + currentIndicator.id + "/";
   }
+
+  function getDEdetailValue(dataElement, field){
+    let value = "";
+    if (field === "description" && dataElement.descriptions && dataElement.descriptions[0] && dataElement.descriptions[0].description ){
+      value = dataElement.descriptions[0].description;
+    }else if (field === "shortName" && dataElement.names && dataElement.names[1]){
+      value = dataElement.names[1].name;
+    }else if (field === "code" && dataElement.names && dataElement.names[2]){
+      value = dataElement.names[2].name;
+    }else if (field === "indicator" && dataElement.extras && dataElement.extras.indicator  ){
+      value = dataElement.extras.indicator;
+    }else if (field === "applicablePeriods" && dataElement.extras && dataElement.extras['Applicable Periods'] && dataElement.extras['Applicable Periods'].length > 0){                    
+      if (Array.isArray(dataElement.extras['Applicable Periods'])) {
+        dataElement.extras['Applicable Periods'].sort();
+      }
+      let peString = "", count = 0;
+      for (const x of dataElement.extras['Applicable Periods']){
+        peString +=  x;        
+        if (count < dataElement.extras['Applicable Periods'].length -1){
+          peString += ", ";
+        }
+        count++; 
+      }     
+      value = peString;
+    }else if (field === "resultTarget" && dataElement.extras && dataElement.extras.resultTarget && dataElement.extras.resultTarget !== ""){
+      value = dataElement.extras.resultTarget;
+    }else if (field === "datatype" && dataElement.datatype && dataElement.datatype !== ""){
+      value = dataElement.datatype;
+    }else if (field === "retired" && dataElement.retired && dataElement.retired !== ""){
+      value = dataElement.retired;
+    }
+    return value;
+  };
+
+  function renderDEdetail_old(dataElement, field){
+    const emptyString = "";
+    if (field === "description" && dataElement.descriptions[0] && dataElement.descriptions[0].description ){
+      return <span style={{paddingBottom: '2px'}}><strong>Description</strong>: {dataElement.descriptions[0].description}</span>    
+    }else if (field === "shortName" && dataElement.names && dataElement.names[1]){
+      return <span style={{paddingBottom: '2px'}}><strong>Short Name</strong>: {dataElement.names[1].name}</span>    
+    }else if (field === "code" && dataElement.names && dataElement.names[2]){
+      return <span style={{paddingBottom: '2px'}}><strong>Code</strong>: {dataElement.names[2].name}</span>    
+    }else if (field === "indicator" && dataElement.extras.indicator && dataElement.extras.indicator ){
+      return <span><strong>Indicator</strong>: {dataElement.extras.indicator}</span>    
+    }else if (field === "applicablePeriods" && dataElement.extras && dataElement.extras['Applicable Periods'] && dataElement.extras['Applicable Periods'].length > 0){                    
+      if (Array.isArray(dataElement.extras['Applicable Periods'])) {
+        dataElement.extras['Applicable Periods'].sort();
+      }
+      let peString = "", count = 0;
+      for (const x of dataElement.extras['Applicable Periods']){
+        peString +=  x;        
+        if (count < dataElement.extras['Applicable Periods'].length -1){
+          peString += ", ";
+        }
+        count++; 
+      }     
+      return <span><strong>Applicable Periods</strong>: {peString}</span>
+    }else if (field === "resultTarget" && dataElement.extras && dataElement.extras.resultTarget && dataElement.extras.resultTarget !== ""){
+      return <span><strong>Result/Target</strong>: {dataElement.extras.resultTarget}</span>
+    }else if (field === "datatype" && dataElement.datatype && dataElement.datatype !== ""){
+      return <span><strong>Data Type</strong>: {dataElement.datatype}</span>    
+    }else if (field === "retired" && dataElement.retired && dataElement.retired !== ""){
+      return <span><strong>Retired</strong>: {dataElement.retired}</span>    
+    }
+
+
+    return null;
+  };
+  
+  
+
   
   //layout
 return (
@@ -1157,17 +1231,17 @@ return (
 
             {/* data elements summary */}
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
-              <Grid container alignItems="center" justify="space-between">       
+              <Grid container alignItems="center" >       
                 <Grid item  xs={12} md={12}>         
                   <Typography className={classes.heading}> 
                   <strong>{dataElement.display_name}</strong>
                   </Typography>
                 </Grid>               
-                  <Grid item xs={12} md={3}  className={classes.chip}>                    
-                    <Chip variant="outlined"   size="small" label={"UID: " + dataElement.external_id} clickable />  
+                  <Grid item xs={12} md={3}  className={classes.chip}>                                        
+                    <span>{"UID: " + dataElement.external_id}</span>
                     </Grid>
                   <Grid item xs={12} md={3} className={classes.chip}>  
-                    <Chip variant="outlined"  style={{ backgroundColor: '#d8ebe0' }}  size="small" label={"Source: " + dataElement.extras.source} clickable />                                                                                         
+                    <span>{"Source: " + dataElement.extras.source} </span>                                                                                     
                   </Grid>
                   <Grid item xs={12} md={6} />
               </Grid>         
@@ -1176,14 +1250,88 @@ return (
             <DataElementDetail dataElementDetail={dataElementDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
           {/* data elements details */}
           <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-            <Grid container>
-            <Grid item  xs={12} className={classes.expansionPanelLeft}>
-              <Typography>
-                <strong>Description</strong>: {dataElement.descriptions ? dataElement.descriptions[0].description : "N/A"}              
-                {/* <strong>Code</strong>: <NavLink to="/indicator" activeClassName="sidebarActive" className={classes.buttonNav}>
-                {dataElement.indicatorName}
-                </NavLink> */}                       
-              </Typography>
+            <Grid container>           
+              <Grid item xs={12} >
+                <Table className={classes.comboTable} aria-label="simple table">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell style={{width: '20%'}} padding='none'><strong>Description</strong></TableCell>
+                      <TableCell padding='none'>
+                      {getDEdetailValue(dataElement, "description") !== "" ? getDEdetailValue(dataElement, "description")  : ""}  
+                      </TableCell>
+                  </TableRow>
+                  {
+                    getDEdetailValue(dataElement, "shortName") !== "" ?
+                    <TableRow>
+                    <TableCell  padding='none'><strong>Short Name</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "shortName")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }
+                  {
+                    getDEdetailValue(dataElement, "code") !== "" ?
+                    <TableRow>
+                    <TableCell padding='none'><strong>Code</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "code")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }                 
+                  {
+                    getDEdetailValue(dataElement, "indicator") !== "" ?
+                    <TableRow>
+                    <TableCell  padding='none'><strong>Indicator</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "indicator")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }
+                   {
+                    getDEdetailValue(dataElement, "applicablePeriods") !== "" ?
+                    <TableRow>
+                    <TableCell  padding='none'><strong>Applicable Periods</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "applicablePeriods")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }
+                  {
+                    getDEdetailValue(dataElement, "resultTarget") !== "" ?
+                    <TableRow>
+                    <TableCell padding='none'><strong>Result/Target</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "resultTarget")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }
+                  {
+                    getDEdetailValue(dataElement, "datatype") !== "" ?
+                    <TableRow>
+                    <TableCell style={{width: '30%'}} padding='none'><strong>Data Type</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "datatype")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }
+                  {
+                    getDEdetailValue(dataElement, "retired") !== "" ?
+                    <TableRow>
+                    <TableCell style={{width: '30%'}} padding='none'><strong>Retired</strong></TableCell>
+                    <TableCell padding='none'>
+                    {getDEdetailValue(dataElement, "retired")}
+                    </TableCell>
+                  </TableRow>
+                  : null
+                  }                  
+              </TableBody>
+            </Table>       
             </Grid>
 
             <Grid item xs={12} className={classes.expansionPanelLeft}>                        

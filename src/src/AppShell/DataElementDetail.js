@@ -24,8 +24,32 @@ export default function  DataElementDetail(props) {
                     <Table className={props.classes.comboTable} aria-label="simple table">
                         <TableBody>
                             <TableRow>
-                                <TableCell><strong>Name</strong></TableCell>
+                                <TableCell><strong>Display Name</strong></TableCell>
                                 <TableCell>{props.dataElementDetail.display_name ? (props.dataElementDetail.display_name) : 'N/A'}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell><strong>UID</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.external_id ? (props.dataElementDetail.external_id) : 'N/A'}</TableCell>
+                            </TableRow> 
+                            {
+                                props.dataElementDetail.retired && props.dataElementDetail.retired !== "" && props.dataElementDetail.retired === "true" ?
+                                    <TableRow>
+                                        <TableCell><strong>Retired</strong></TableCell>
+                                        <TableCell>{props.dataElementDetail.retired}</TableCell>
+                                    </TableRow> 
+                                : null
+                            }
+                            <TableRow>
+                                <TableCell><strong>Source</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.source ? (props.dataElementDetail.extras.source) : 'N/A'}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell><strong>Type</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.concept_class && props.dataElementDetail.extras.source ? (props.dataElementDetail.concept_class) : 'N/A'}</TableCell>
+                            </TableRow>
+                            <TableRow className={props.classes.comboTable}>
+                            <TableCell><strong>Description</strong></TableCell>
+                            <TableCell>{(props.dataElementDetail.descriptions && props.dataElementDetail.descriptions.length > 0) ? props.dataElementDetail.descriptions[0].description : "N/A"}</TableCell>
                             </TableRow>
                             <TableRow>
                             <TableCell><strong>Short Name</strong></TableCell>
@@ -35,34 +59,10 @@ export default function  DataElementDetail(props) {
                             <TableCell><strong>Code</strong></TableCell>
                             <TableCell>{props.dataElementDetail.names && props.dataElementDetail.names[2] ? (props.dataElementDetail.names[2].name) : 'N/A'}</TableCell>
                             </TableRow>
-                            <TableRow className={props.classes.comboTable}>
-                            <TableCell><strong>Description</strong></TableCell>
-                            <TableCell>{(props.dataElementDetail.descriptions && props.dataElementDetail.descriptions.length > 0) ? props.dataElementDetail.descriptions[0].description : "N/A"}</TableCell>
-                            </TableRow>
                             <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{props.dataElementDetail.external_id ? (props.dataElementDetail.external_id) : 'N/A'}</TableCell>
+                                <TableCell><strong>Indicator</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.indicator ? (props.dataElementDetail.extras.indicator) : 'N/A'}</TableCell>
                             </TableRow> 
-                            <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.source ? (props.dataElementDetail.extras.source) : 'N/A'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                            <TableCell><strong>Data Type</strong></TableCell>
-                            <TableCell>{props.dataElementDetail.datatype ? (props.dataElementDetail.datatype) : 'N/A'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><strong>Domain Type</strong></TableCell>
-                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.domainType ? (props.dataElementDetail.extras.domainType) : 'N/A'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><strong>Value Type</strong></TableCell>
-                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.valueType ? (props.dataElementDetail.extras.valueType) : 'N/A'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><strong>Aggregation Type</strong></TableCell>
-                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.aggregationType ? (props.dataElementDetail.extras.aggregationType) : 'N/A'}</TableCell>
-                            </TableRow>
                             <TableRow>
                                 <TableCell><strong>Applicable Periods</strong></TableCell>
                                 <TableCell>
@@ -80,6 +80,18 @@ export default function  DataElementDetail(props) {
                             <TableCell><strong>Result/Target</strong></TableCell>
                             <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.resultTarget ? props.dataElementDetail.extras.resultTarget : 'N/A'}</TableCell>
                             </TableRow>
+                            <TableRow>
+                                <TableCell><strong>Domain Type</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.domainType ? (props.dataElementDetail.extras.domainType) : 'N/A'}</TableCell>
+                            </TableRow>                                                                                    
+                            <TableRow>
+                                <TableCell><strong>Value Type</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.valueType ? (props.dataElementDetail.extras.valueType) : 'N/A'}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell><strong>Aggregation Type</strong></TableCell>
+                                <TableCell>{props.dataElementDetail.extras && props.dataElementDetail.extras.aggregationType ? (props.dataElementDetail.extras.aggregationType) : 'N/A'}</TableCell>
+                            </TableRow>                                                        
                         </TableBody>
                     </Table> : ''}
                 </Grid>
