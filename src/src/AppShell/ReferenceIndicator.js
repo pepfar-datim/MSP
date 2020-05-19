@@ -164,14 +164,15 @@ const useStyles = makeStyles(theme => ({
   filterContainer: {
     display: 'flex',
     flexGrow: 1,
-    paddingBottom: '20px',
+    paddingBottom: '0',
     flexDirection: 'column'
   },
   filter: {
     paddingLeft: '20px',
     paddingRight: '20px',
-    minHeight: '50px',
-    marginBottom:'1em'
+    minHeight: '20px',
+    marginBottom:'0',
+    paddingBottom: '0'
   },
   searchForm:{
     display: 'flex',
@@ -235,7 +236,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: '1px solid #C1A783',
   },
   expansionPanelDetails:{
-    paddingTop: '30px'
+    paddingTop: '10px'
   },
   comboTable:{
     boxShadow: 'none',
@@ -292,40 +293,48 @@ const useStyles = makeStyles(theme => ({
   sidebar:{
     margin: '0em',
     marginRight: '2em'
-
   },
   sidebarTitle:{
     textAlign: 'center',
-    padding: '1em',
-    marginBottom: '0 !important'
+    paddingBottom: '10px',
+    marginBottom: '0 !important',
+    marginTop: '2px',
+    paddingTop: '10px'
   },
   sidebarExpandTitle:{
     fontSize: '1em',
     lineHeight:'1.4em',
     fontWeight: 'normal',
     color: '#000000',
-    margin: 0
+    margin: '0',
+    padding: '0'
+
   },
-  sidebarGroup:{
-    
+  sidebarGroup:{  
+    padding: '0',
+    marging: '0'
    },
    sidebarSubtitle:{
-    textAlign: 'center'
+    textAlign: 'center',    
    },
    indicatorList:{
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    paddingBottom: '2px'
    },
    indicatorListItem:{
-     paddingBottom: '1em',
-     cursor: 'pointer'
+     paddingBottom: '3px',
+     cursor: 'pointer',
+     '&:hover, &:focus':{   
+      backgroundColor: '#eeeeee'
+    }
    },
    indicatorListItemUnclickable:{
-    paddingBottom: '1em',
+    paddingBottom: '3px',
     cursor: 'default' 
   },
    indicatorListItemActive:{
-    paddingBottom: '1em',
+    paddingBottom: '3px',
     cursor: 'pointer',
     fontWeight:'bold'
   },
@@ -1056,40 +1065,6 @@ const useStyles = makeStyles(theme => ({
     return value;
   };
 
-  function renderDEdetail_old(dataElement, field){
-    const emptyString = "";
-    if (field === "description" && dataElement.descriptions[0] && dataElement.descriptions[0].description ){
-      return <span style={{paddingBottom: '2px'}}><strong>Description</strong>: {dataElement.descriptions[0].description}</span>    
-    }else if (field === "shortName" && dataElement.names && dataElement.names[1]){
-      return <span style={{paddingBottom: '2px'}}><strong>Short Name</strong>: {dataElement.names[1].name}</span>    
-    }else if (field === "code" && dataElement.names && dataElement.names[2]){
-      return <span style={{paddingBottom: '2px'}}><strong>Code</strong>: {dataElement.names[2].name}</span>    
-    }else if (field === "indicator" && dataElement.extras.indicator && dataElement.extras.indicator ){
-      return <span><strong>Indicator</strong>: {dataElement.extras.indicator}</span>    
-    }else if (field === "applicablePeriods" && dataElement.extras && dataElement.extras['Applicable Periods'] && dataElement.extras['Applicable Periods'].length > 0){                    
-      if (Array.isArray(dataElement.extras['Applicable Periods'])) {
-        dataElement.extras['Applicable Periods'].sort();
-      }
-      let peString = "", count = 0;
-      for (const x of dataElement.extras['Applicable Periods']){
-        peString +=  x;        
-        if (count < dataElement.extras['Applicable Periods'].length -1){
-          peString += ", ";
-        }
-        count++; 
-      }     
-      return <span><strong>Applicable Periods</strong>: {peString}</span>
-    }else if (field === "resultTarget" && dataElement.extras && dataElement.extras.resultTarget && dataElement.extras.resultTarget !== ""){
-      return <span><strong>Result/Target</strong>: {dataElement.extras.resultTarget}</span>
-    }else if (field === "datatype" && dataElement.datatype && dataElement.datatype !== ""){
-      return <span><strong>Data Type</strong>: {dataElement.datatype}</span>    
-    }else if (field === "retired" && dataElement.retired && dataElement.retired !== ""){
-      return <span><strong>Retired</strong>: {dataElement.retired}</span>    
-    }
-
-
-    return null;
-  };
   
   
 
@@ -1106,7 +1081,7 @@ return (
   {/* sidebar */}
   <Grid item xs={12} md={3}>      
     <Shortcut ></Shortcut>
-    <Paper className={classes.sidebar}>
+    <Paper className={classes.sidebar} >
     <h4 className={classes.sidebarTitle}>Reference Indicator Filters</h4>
     {/* filters */}
     <form className={classes.filterContainer} autoComplete="off">
@@ -1234,7 +1209,7 @@ return (
               <Grid container alignItems="center" >       
                 <Grid item  xs={12} md={12}>         
                   <Typography className={classes.heading}> 
-                  <strong>{dataElement.display_name}</strong>
+                   {dataElement.display_name}
                   </Typography>
                 </Grid>               
                   <Grid item xs={12} md={3}  className={classes.chip}>                                        
