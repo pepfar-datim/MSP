@@ -247,7 +247,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '20px'
   },
   chip:{
-    marginTop: '5px', 
+    marginTop: '1px', 
     color: '#333333' ,
    /* backgroundColor: '#ffffff',*/
     fontSize: '12px'
