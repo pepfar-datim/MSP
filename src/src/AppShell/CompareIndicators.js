@@ -498,74 +498,74 @@ export default function Compare() {
         value => {
           if (dataElements['Indicator Name']) {
             let shortNames = Array.from(dataElements['Indicator Name'])
-            shortNames.push(value.names[0] ? (value.names[0].name) : 'N/A')
+            shortNames.push(value.names[0] ? (value.names[0].name) : '--')
             dataElements['Indicator Name'] = shortNames
           } else {
             let shortNames = []
-            shortNames.push(value.names[0] ? (value.names[0].name) : 'N/A')
+            shortNames.push(value.names[0] ? (value.names[0].name) : '--')
             dataElements['Indicator Name'] = shortNames
           }
           if (dataElements['Short Name']) {
             let codes = Array.from(dataElements['Short Name'])
-            codes.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            codes.push(value.names[1] ? (value.names[1].name) : '--')
             dataElements['Short Name'] = codes
           } else {
             let codes = []
-            codes.push(value.names[1] ? (value.names[1].name) : 'N/A')
+            codes.push(value.names[1] ? (value.names[1].name) : '--')
             dataElements['Short Name'] = codes
           }
           if (dataElements['Indicator Description']) {
             let descriptions = Array.from(dataElements['Indicator Description'])
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
             dataElements['Indicator Description'] = descriptions
           } else {
             let descriptions = []
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
             dataElements['Indicator Description'] = descriptions
           }
           if (dataElements['Numerator Description']) {
             let ids = Array.from(dataElements['Numerator Description'])
-            ids.push(value.extras ? value.extras.numeratorDescription : "N/A")
+            ids.push(value.extras ? value.extras.numeratorDescription : "--")
             dataElements['Numerator Description'] = ids
           } else {
             let ids = []
-            ids.push(value.extras.numeratorDescription ? value.extras.numeratorDescription : "N/A")
+            ids.push(value.extras.numeratorDescription ? value.extras.numeratorDescription : "--")
             dataElements['Numerator Description'] = ids
           }
           if (dataElements['Denominator Description']) {
             let ids = Array.from(dataElements['Denominator Description'])
-            ids.push(value.extras ? value.extras.denominatorDescription : "N/A")
+            ids.push(value.extras ? value.extras.denominatorDescription : "--")
             dataElements['Denominator Description'] = ids
           } else {
             let ids = []
-            ids.push(value.extras ? value.extras.denominatorDescription : "N/A")
+            ids.push(value.extras ? value.extras.denominatorDescription : "--")
             dataElements['Denominator Description'] = ids
           }
           if (dataElements['Numerator']) {
             let types = Array.from(dataElements['Numerator'])
-            types.push(value.extras ? value.extras.numerator : "N/A")
+            types.push(value.extras ? value.extras.numerator : "--")
             dataElements['Numerator'] = types
           } else {
             let types = []
-            types.push(value.extras ? value.extras.numerator : "N/A")
+            types.push(value.extras ? value.extras.numerator : "--")
             dataElements['Numerator'] = types
           }
           if (dataElements['Denominator']) {
             let types = Array.from(dataElements['Denominator'])
-            types.push(value.extras ? value.extras.denominator : "N/A")
+            types.push(value.extras ? value.extras.denominator : "--")
             dataElements['Denominator'] = types
           } else {
             let types = []
-            types.push(value.extras ? value.extras.denominator : "N/A")
+            types.push(value.extras ? value.extras.denominator : "--")
             dataElements['Denominator'] = types
           }
           if (dataElements['UID']) {
             let types = Array.from(dataElements['UID'])
-            types.push(value.id ? value.id : "N/A")
+            types.push(value.id ? value.id : "--")
             dataElements['UID'] = types
           } else {
             let types = []
-            types.push(value.id ? value.id : "N/A")
+            types.push(value.id ? value.id : "--")
             dataElements['UID'] = types
           }
           if (dataElements['Source']) {
@@ -596,7 +596,7 @@ export default function Compare() {
                   key.name + ", "
 
               )
-              ) : 'N/A') : 'N/A')
+              ) : '--') : '--')
               dataElements['Indicator Groups'] = types
           } else {
             let types = []
@@ -608,7 +608,7 @@ export default function Compare() {
                   key.name + ", "
 
               )
-              ) : 'N/A') : 'N/A')
+              ) : '--') : '--')
             dataElements['Indicator Groups'] = types
           }
         }

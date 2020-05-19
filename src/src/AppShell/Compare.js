@@ -501,101 +501,101 @@ export default function Compare() {
         value => {
           if (dataElements['Short Name']) {
             let shortNames = Array.from(dataElements['Short Name'])
-            shortNames.push(value.names[1] ? (value.names[1].name) : "N/A")
+            shortNames.push(value.names[1] ? (value.names[1].name) : "--")
             dataElements['Short Name'] = shortNames
           } else {
             let shortNames = []
-            shortNames.push(value.names[1] ? (value.names[1].name) : "N/A")
+            shortNames.push(value.names[1] ? (value.names[1].name) : "--")
             dataElements['Short Name'] = shortNames
           }
           if (dataElements['Code']) {
             let codes = Array.from(dataElements['Code'])
-            codes.push(value.names[2] ? (value.names[2].name) : "N/A")
+            codes.push(value.names[2] ? (value.names[2].name) : "--")
             dataElements['Code'] = codes
           } else {
             let codes = []
-            codes.push(value.names[2] ? (value.names[2].name) : "N/A")
+            codes.push(value.names[2] ? (value.names[2].name) : "--")
             dataElements['Code'] = codes
           }
           if (dataElements['Description']) {
             let descriptions = Array.from(dataElements['Description'])
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
             dataElements['Description'] = descriptions
           } else {
             let descriptions = []
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "N/A")
+            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
             dataElements['Description'] = descriptions
           }
           if (dataElements['UID']) {
             let ids = Array.from(dataElements['UID'])
-            ids.push(value.id ? value.id : "N/A")
+            ids.push(value.id ? value.id : "--")
             dataElements['UID'] = ids
           } else {
             let ids = []
-            ids.push(value.id ? value.id : "N/A")
+            ids.push(value.id ? value.id : "--")
             dataElements['UID'] = ids
           }
           if (dataElements['Source']) {
             let ids = Array.from(dataElements['Source'])
-            ids.push(value.extras ? value.extras.source : "N/A")
+            ids.push(value.extras ? value.extras.source : "--")
             dataElements['Source'] = ids
           } else {
             let ids = []
-            ids.push(value.extras ? value.extras.source : "N/A")
+            ids.push(value.extras ? value.extras.source : "--")
             dataElements['Source'] = ids
           }
           if (dataElements['Type']) {
             let ids = Array.from(dataElements['Type'])
-            ids.push(value.concept_class ? value.concept_class : "N/A")
+            ids.push(value.concept_class ? value.concept_class : "--")
             dataElements['Type'] = ids
           } else {
             let ids = []
-            ids.push(value.concept_class ? value.concept_class : "N/A")
+            ids.push(value.concept_class ? value.concept_class : "--")
             dataElements['Type'] = ids
           }
           if (dataElements['Indicator']) {
             let ids = Array.from(dataElements['Indicator'])
-            ids.push(value.extras.indicator ? value.extras.indicator : "N/A")
+            ids.push(value.extras.indicator ? value.extras.indicator : "--")
             dataElements['Indicator'] = ids
           } else {
             let ids = []
-            ids.push(value.extras.indicator ? value.extras.indicator : "N/A")
+            ids.push(value.extras.indicator ? value.extras.indicator : "--")
             dataElements['Indicator'] = ids
           }
           if (dataElements['Data Type']) {
             let types = Array.from(dataElements['Data Type'])
-            types.push(value.datatype ? value.datatype : "N/A")
+            types.push(value.datatype ? value.datatype : "--")
             dataElements['Data Type'] = types
           } else {
             let types = []
-            types.push(value.datatype ? value.datatype : "N/A")
+            types.push(value.datatype ? value.datatype : "--")
             dataElements['Data Type'] = types
           }
           if (dataElements['Domain Type']) {
             let types = Array.from(dataElements['Domain Type'])
-            types.push(value.extras.domainType ? value.extras.domainType : "N/A")
+            types.push(value.extras.domainType ? value.extras.domainType : "--")
             dataElements['Domain Type'] = types
           } else {
             let types = []
-            types.push(value.extras.domainType ? value.extras.domainType : "N/A")
+            types.push(value.extras.domainType ? value.extras.domainType : "--")
             dataElements['Domain Type'] = types
           }
           if (dataElements['Value Type']) {
             let types = Array.from(dataElements['Value Type'])
-            types.push(value.extras.valueType ? value.extras.valueType : "N/A")
+            types.push(value.extras.valueType ? value.extras.valueType : "--")
             dataElements['Value Type'] = types
           } else {
             let types = []
-            types.push(value.extras.valueType ? value.extras.valueType : "N/A")
+            types.push(value.extras.valueType ? value.extras.valueType : "--")
             dataElements['Value Type'] = types
           }
           if (dataElements['Aggregation Type']) {
             let types = Array.from(dataElements['Aggregation Type'])
-            types.push(value.extras.aggregationType ? value.extras.aggregationType : "N/A")
+            types.push(value.extras.aggregationType ? value.extras.aggregationType : "--")
             dataElements['Aggregation Type'] = types
           } else {
             let types = []
-            types.push(value.extras.aggregationType ? value.extras.aggregationType : "N/A")
+            types.push(value.extras.aggregationType ? value.extras.aggregationType : "--")
             dataElements['Aggregation Type'] = types
           }
           if (dataElements['Applicable Periods']) {
@@ -608,7 +608,7 @@ export default function Compare() {
                   value.extras['Applicable Periods'][key] + ", "
 
               )
-              ) : "N/A") : "N/A")
+              ) : "--") : "--")
               dataElements['Applicable Periods'] = types
           } else {
             let types = []
@@ -620,7 +620,7 @@ export default function Compare() {
                   value.extras['Applicable Periods'][key] + ", "
 
               )
-              ) : "N/A") : "N/A")
+              ) : "--") : "--")
             dataElements['Applicable Periods'] = types
           }
           if (dataElements['Display Name']) {
@@ -1025,39 +1025,39 @@ export default function Compare() {
               //             <TableBody>
               //               <TableRow>
               //                 <TableCell><strong>Short Name</strong></TableCell>
-              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Code</strong></TableCell>
-              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow className={classes.comboTable}>
               //                 <TableCell><strong>Description</strong></TableCell>
-              //                 <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "N/A"}</TableCell>
+              //                 <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>UID</strong></TableCell>
-              //                 <TableCell>{datim.id ? (datim.id) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.id ? (datim.id) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Source</strong></TableCell>
-              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Data Type</strong></TableCell>
-              //                 <TableCell>{datim.datatype ? (datim.datatype) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.datatype ? (datim.datatype) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Domain Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Value Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Aggregation Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : "N/A"}</TableCell>
+              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : "--"}</TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Applicable Periods</strong></TableCell>
@@ -1070,13 +1070,13 @@ export default function Compare() {
               //                         datim.extras['Applicable Periods'][key] + ", "
 
               //                     )
-              //                     ) : "N/A") : "N/A"
+              //                     ) : "--") : "--"
               //                   }
               //                 </TableCell>
               //               </TableRow>
               //               <TableRow>
               //                 <TableCell><strong>Result/Target</strong></TableCell>
-              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : "N/A"}</TableCell>
+              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : "--"}</TableCell>
               //               </TableRow>
               //             </TableBody>
               //           </Table>

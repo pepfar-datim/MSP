@@ -2663,39 +2663,39 @@ Compare selected data elements
                                     <TableBody>
                                       <TableRow>
                                         <TableCell><strong>Short Name</strong></TableCell>
-                                        <TableCell>{datim.names[1] ? (datim.names[1].name) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.names[1] ? (datim.names[1].name) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Code</strong></TableCell>
-                                        <TableCell>{datim.names[2] ? (datim.names[2].name) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.names[2] ? (datim.names[2].name) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow className={classes.comboTable}>
                                         <TableCell><strong>Description</strong></TableCell>
-                                        <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "N/A"}</TableCell>
+                                        <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "--"}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>UID</strong></TableCell>
-                                        <TableCell>{datim.id ? (datim.id) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.id ? (datim.id) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Source</strong></TableCell>
-                                        <TableCell>{datim.extras.source ? (datim.extras.source) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.extras.source ? (datim.extras.source) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Data Type</strong></TableCell>
-                                        <TableCell>{datim.datatype ? (datim.datatype) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.datatype ? (datim.datatype) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Domain Type</strong></TableCell>
-                                        <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Value Type</strong></TableCell>
-                                        <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Aggregation Type</strong></TableCell>
-                                        <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : 'N/A'}</TableCell>
+                                        <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : '--'}</TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Applicable Periods</strong></TableCell>
@@ -2708,13 +2708,13 @@ Compare selected data elements
                                                 datim.extras['Applicable Periods'][key] + ", "
 
                                             )
-                                            ) : 'N/A') : 'N/A'
+                                            ) : '--') : '--'
                                           }
                                         </TableCell>
                                       </TableRow>
                                       <TableRow>
                                         <TableCell><strong>Result/Target</strong></TableCell>
-                                        <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : 'N/A'}</TableCell>
+                                        <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : '--'}</TableCell>
                                       </TableRow>
                                     </TableBody>
                                   </Table>
@@ -2808,39 +2808,39 @@ Compare selected data elements
                         <TableBody>
                           <TableRow>
                             <TableCell><strong>Short Name</strong></TableCell>
-                            <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Code</strong></TableCell>
-                            <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : '--'}</TableCell>
                           </TableRow>
                           <TableRow className={classes.comboTable}>
                             <TableCell><strong>Description</strong></TableCell>
-                            <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "N/A"}</TableCell>
+                            <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "--"}</TableCell>
                           </TableRow>
                           {/* <TableRow>
                                 <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{dataElement.id ? (dataElement.id) : 'N/A'}</TableCell>
+                                <TableCell>{dataElement.id ? (dataElement.id) : '--'}</TableCell>
                               </TableRow> */}
                           {/* <TableRow>
                                 <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : 'N/A'}</TableCell>
+                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : '--'}</TableCell>
                               </TableRow> */}
                           <TableRow>
                             <TableCell><strong>Data Type</strong></TableCell>
-                            <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : '--'}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Domain Type</strong></TableCell>
-                            <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : '--'}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Value Type</strong></TableCell>
-                            <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : '--'}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Aggregation Type</strong></TableCell>
-                            <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : '--'}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Applicable Periods</strong></TableCell>
@@ -2853,13 +2853,13 @@ Compare selected data elements
                                     dataElementDetail.extras['Applicable Periods'][key] + ", "
 
                                 )
-                                ) : 'N/A') : 'N/A'
+                                ) : '--') : '--'
                               }
                             </TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell><strong>Result/Target</strong></TableCell>
-                            <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : 'N/A'}</TableCell>
+                            <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table> : ''}
