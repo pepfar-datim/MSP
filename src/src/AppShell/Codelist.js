@@ -1012,21 +1012,6 @@ export default function Codelist() {
       return;
     }
     var compareText = document.getElementById("compareSearch") ? document.getElementById("compareSearch").value : '';
-    // if (!dataElementToCompare) {
-    //   if (compareText !== '') {
-    //     if (!de[compareText]) {
-    //       await getDataElement(compareText);
-    //     }
-    //     console.log("inside performCompare dataElement " + de[compareText])
-    //     toggleCompareDetailDrawer(dataElementDetail, de[compareText], 'bottom', true)
-    //   }
-    // } else {
-    //   if (!de[dataElementToCompare]) {
-    //     await getDataElement(dataElementToCompare);
-    //   }
-    //   console.log("inside performCompare dataElement " + de[dataElementToCompare])
-    //   toggleCompareDetailDrawer(dataElementDetail, de[dataElementToCompare], 'bottom', true)
-    // }
 
     let compareLink = ''
     if (!dataElementToCompare) {
@@ -1555,13 +1540,6 @@ export default function Codelist() {
 
       else {
         setCompare({ ...comparePanel, [DATIM]: true });
-        //setComparePanel({ ...comparePanel, [side]: open });
-
-        //const selectDataTemp = [];
-
-        //get data element details of the selected data elements
-
-        // eslint-disable-next-line array-callback-return
 
         let temp = []
         Object.values(selectDataTemp).map(value => {
@@ -2151,32 +2129,6 @@ Compare selected data elements
                         </FormGroup>
                       </FormControl>
 
-                    //  compare popover panel
-                    //               <FormControl component="fieldset" className={classes.popOver}>
-
-                    //                 <FormGroup>
-
-                    //                   <FormLabel component="legend" className={classes.formLegend}>Data Sources</FormLabel>
-                    //                   <FormControlLabel
-                    //                     control={<Checkbox checked={DATIM} style={{ color: '#D55804' }} onChange={handleCompareChange('DATIM')} value="DATIM" />}
-                    //                     label="DATIM" disabled
-                    //                   />
-                    //                   <FormControlLabel
-                    //                     control={<Checkbox checked={PDH} style={{ color: '#D55804' }} onChange={handleCompareChange('PDH')} value="PDH" />}
-                    //                     label="PDH"
-                    //                   />
-                    //                   <FormControlLabel
-                    //                     control={
-                    //                       <Checkbox checked={MOH} style={{ color: '#D55804' }} onChange={handleCompareChange('MOH')} value="MOH" />
-                    //                     }
-                    //                     label="MOH"
-                    //                   />
-                    //                   <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={toggleDrawer('bottom', true)} >
-                    //                     COMPARE SOURCES
-                    //  </Button>
-                    //                 </FormGroup>
-                    //               </FormControl>
-
                   }
 
 
@@ -2713,6 +2665,21 @@ Compare selected data elements
                                         </TableCell>
                                       </TableRow>
                                       <TableRow>
+                                        <TableCell><strong>Code List Membership</strong></TableCell>
+                                        <TableCell>
+                                          {
+                                            datim.extras.codelists ? (datim.extras.codelists.length > 0 ? (Object.keys(datim.extras.codelists).map(
+
+                                              key =>
+
+                                                datim.extras.codelists[key].name + ", "
+
+                                            )
+                                            ) : '--') : '--'
+                                          }
+                                        </TableCell>
+                                      </TableRow>
+                                      <TableRow>
                                         <TableCell><strong>Result/Target</strong></TableCell>
                                         <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : '--'}</TableCell>
                                       </TableRow>
@@ -2857,6 +2824,22 @@ Compare selected data elements
                               }
                             </TableCell>
                           </TableRow>
+                          <TableRow>
+                                        <TableCell><strong>Code List Membership</strong></TableCell>
+                                        <TableCell>
+                                          {
+                                            dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
+
+                                              key =>
+
+                                              dataElementDetail.extras.codelists[key].name + ", "
+
+                                            )
+                                            ) : '--') : '--'
+                                          }
+                                        </TableCell>
+                                      </TableRow>
+                                      <TableRow></TableRow>
                           <TableRow>
                             <TableCell><strong>Result/Target</strong></TableCell>
                             <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
