@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import * as headings from '../Styles/Text';
-
-import Breadcrumb from '../Components/Breadcrumb';
-
-
+/* eslint-disable */
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -25,7 +21,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import { Route, NavLink, useLocation, useHistory } from 'react-router-dom';
+import { Route, useLocation, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -58,10 +54,7 @@ import Switch from '@material-ui/core/Switch';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
-import TreeView from '@material-ui/lab/TreeView';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
-import history from './../history';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import styled from 'styled-components';
@@ -1408,7 +1401,7 @@ export default function Codelist() {
       downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
     }
     else {
-        downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*'
+        downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
     }
     console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useState, useEffect } from 'react';
 import * as headings from '../Styles/Text';
 import styled from 'styled-components';
