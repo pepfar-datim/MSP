@@ -63,447 +63,447 @@ import styled from 'styled-components';
 
 const useStyles = makeStyles(theme => ({
     margin: {
-      margin: theme.spacing(1),
-      backgroundColor: '#fcfcfc'
+        margin: theme.spacing(1),
+        backgroundColor: '#fcfcfc'
     },
     hide: {
-      display: 'none'
+        display: 'none'
     },
     container: {
-      maxWidth: '1800px',
-      margin: '0 auto',
-      paddingTop: '30px',
-      paddingLeft: '15px',
-      paddingRight: '15px',
-      height: '2000px'
+        maxWidth: '1600px',
+        margin: '0 auto',
+        paddingTop: '30px',
+        paddingLeft: '15px',
+        paddingRight: '15px',
+        height: '2000px'
     },
     heroContainer: {
-      margin: '0 auto',
-      backgroundColor: '#eeeeee',
-      padding: '20px',
-      width: '350px'
+        margin: '0 auto',
+        backgroundColor: '#eeeeee',
+        padding: '20px',
+        width: '350px'
     },
     root: {
-      width: '100%',
-      overflowX: 'auto',
+        width: '100%',
+        overflowX: 'auto',
     },
     chipContainer: {
-      marginRight: '10px'
+        marginRight: '10px'
     },
     absolute: {
-      position: 'absolute',
-      bottom: theme.spacing(2),
-      right: theme.spacing(3),
+        position: 'absolute',
+        bottom: theme.spacing(2),
+        right: theme.spacing(3),
     },
     formControl: {
-      width: '100%'
+        width: '100%'
     },
     filterContainer: {
-      display: 'flex',
-      paddingBottom: '20px'
+        display: 'flex',
+        paddingBottom: '20px'
     },
     searchForm: {
-      display: 'flex',
-      justifyContent: 'flex-end'
+        display: 'flex',
+        justifyContent: 'flex-end'
     },
     inputField: {
-      width: '100%',
-      backgroundColor: '#ffffff'
+        width: '100%',
+        backgroundColor: '#ffffff'
     },
     cssOutlinedInput: {
-      '&$cssFocused $notchedOutline': {
-        borderColor: `'#D55804' !important`,
-        borderWidth: '2px',
-      }
-  
+        '&$cssFocused $notchedOutline': {
+            borderColor: `'#D55804' !important`,
+            borderWidth: '2px',
+        }
+
     },
     popOver: {
-      padding: '20px',
-      minWidth: '200px'
+        padding: '20px',
+        minWidth: '200px'
     },
     fieldset: {
-      borderRadius: '25px',
-      borderColor: '#f0eee9',
-      borderStyle: 'dotted'
+        borderRadius: '25px',
+        borderColor: '#f0eee9',
+        borderStyle: 'dotted'
     },
     cssFocused: {},
-  
+
     notchedOutline: {
-      borderWidth: '2px',
-      borderColor: '#D55804 !important'
+        borderWidth: '2px',
+        borderColor: '#D55804 !important'
     },
     floatingLabelFocusStyle: {
-      '&$focused': {
-        color: '#D55804 !important'
-      }
+        '&$focused': {
+            color: '#D55804 !important'
+        }
     },
     iconButton: {
-      padding: '10px',
-      borderRadius: '5px',
-      marginLeft: '-10px'
-  
+        padding: '10px',
+        borderRadius: '5px',
+        marginLeft: '-10px'
+
     },
     select: {
-      //width: '300px',
-      '&:before': {
-        borderColor: '#D55804',
-        borderWidth: '2px'
-      },
-      '&:after': {
-        borderColor: '#D55804',
-        borderWidth: '2px'
-      }
+        //width: '300px',
+        '&:before': {
+            borderColor: '#D55804',
+            borderWidth: '2px'
+        },
+        '&:after': {
+            borderColor: '#D55804',
+            borderWidth: '2px'
+        }
     },
     selectIcon: {
-      fill: '#D55804'
+        fill: '#D55804'
     },
     checkbox: {
-      color: '#D55804',
+        color: '#D55804',
     },
     changeBox: {
-      padding: '20px',
-      marginLeft: '15px',
-      marginRight: '15px'
+        padding: '20px',
+        marginLeft: '15px',
+        marginRight: '15px'
     },
     changeBoxTitle: {
-      color: '#920E0E'
+        color: '#920E0E'
     },
     detailsDialogBar: {
-      position: 'relative',
+        position: 'relative',
     },
     detailsDialogTitle: {
-      marginLeft: theme.spacing(2),
-      flex: 1,
+        marginLeft: theme.spacing(2),
+        flex: 1,
     },
     expansionPanelSummary: {
-      borderBottom: '1px solid #C1A783',
-      color: '#000000',
+        borderBottom: '1px solid #C1A783',
+        color: '#000000',
     },
     expansionPanelDetails: {
-      paddingTop: '30px',
-      flexDirection: 'column',
-      color: '#000000'
+        paddingTop: '30px',
+        flexDirection: 'column',
+        color: '#000000'
     },
     comboTable: {
-      boxShadow: 'none',
-      border: 'none',
-      maxWidth: '100%',
+        boxShadow: 'none',
+        border: 'none',
+        maxWidth: '100%',
     },
     expansionPanelLeft: {
-      paddingBottom: '30px'
+        paddingBottom: '30px'
     },
     chip: {
-      marginRight: '5px'
+        marginRight: '5px'
     },
     filterButton: {
-      marginTop: '20px',
-      marginBottom: '0px',
-      width: '100%',
-  
-      '&:hover, &:focus': {
-        backgroundColor: '#C1A783',
-        color: '#000000'
-      }
+        marginTop: '20px',
+        marginBottom: '0px',
+        width: '100%',
+
+        '&:hover, &:focus': {
+            backgroundColor: '#C1A783',
+            color: '#000000'
+        }
     },
     downloadButton: {
-      marginRight: '20px',
-      marginTop: '10px',
-      '&:hover, &:focus': {
-        backgroundColor: '#C1A783',
-        color: '#000000'
-      }
+        marginRight: '20px',
+        marginTop: '10px',
+        '&:hover, &:focus': {
+            backgroundColor: '#C1A783',
+            color: '#000000'
+        }
     },
     formLegend: {
-      color: 'rgba(0, 0, 0, 0.87)',
-      fontSize: '1.2em',
-      marginBottom: '10px'
+        color: 'rgba(0, 0, 0, 0.87)',
+        fontSize: '1.2em',
+        marginBottom: '10px'
     },
     sidebar: {
-      //width: '350px',
-      margin: '0em',
-      marginRight: '2em',
-      paddingBottom: '2em'
-  
+        //width: '350px',
+        margin: '0em',
+        marginRight: '2em',
+        paddingBottom: '2em'
+
     },
     sidebarTitle: {
-      textAlign: 'center',
-      padding: '1em',
-      marginBottom: '0 !important'
+        textAlign: 'center',
+        padding: '1em',
+        marginBottom: '0 !important'
     },
     sidebarContainer: {
-      paddingTop: 0
+        paddingTop: 0
     },
     sidebarExpandTitle: {
-      fontSize: '1em',
-      lineHeight: '1.4em',
-      fontWeight: 'normal',
-      color: '#000000',
-      margin: 0
+        fontSize: '1em',
+        lineHeight: '1.4em',
+        fontWeight: 'normal',
+        color: '#000000',
+        margin: 0
     },
     sidebarGroup: {
-  
+
     },
     sidebarSubtitle: {
-      textAlign: 'center'
+        textAlign: 'center'
     },
     dataElementContent: {
-      paddingLeft: '1em',
-      paddingBottom: '50px'
-  
+        paddingLeft: '1em',
+        paddingBottom: '50px'
+
     },
     errorMessage: {
-      textAlign: 'center',
-      color: '#FF0000',
-      marginBottom: '0 !important'
+        textAlign: 'center',
+        color: '#FF0000',
+        marginBottom: '0 !important'
     },
     closeComparePanel: {
-      float: 'right',
-      margin: '1em',
-      cursor: 'pointer',
-      //padding: '10px',
-      border: '1px solid #111111',
-      //borderRadius: '50%',
-      marginTop: '20px'
+        float: 'right',
+        margin: '1em',
+        cursor: 'pointer',
+        //padding: '10px',
+        border: '1px solid #111111',
+        //borderRadius: '50%',
+        marginTop: '20px'
     },
     actionButton: {
-      marginLeft: '20px',
-      marginTop: '20px',
-      marginBottom: '20px',
-      '&:hover, &:focus': {
-        backgroundColor: '#C1A783',
-        color: '#000000'
-      }
+        marginLeft: '20px',
+        marginTop: '20px',
+        marginBottom: '20px',
+        '&:hover, &:focus': {
+            backgroundColor: '#C1A783',
+            color: '#000000'
+        }
     },
     detailsButton: {
-      marginTop: '10px',
-      marginBottom: '20px',
-      '&:hover, &:focus': {
-        backgroundColor: '#C1A783',
-        color: '#000000'
-      }
+        marginTop: '10px',
+        marginBottom: '20px',
+        '&:hover, &:focus': {
+            backgroundColor: '#C1A783',
+            color: '#000000'
+        }
     },
     panelDetails: {
-      flexDirection: 'column'
+        flexDirection: 'column'
     },
     comparePanelContainer: {
-      //maxWidth: '1200px',
-      margin: '0 auto',
-      height: '100vh'
+        //maxWidth: '1200px',
+        margin: '0 auto',
+        height: '100vh'
     },
     dataElementContainer: {
     },
     disaggregationContainer: {
-      marginTop: '1em',
-      backgroundColor: '#eeeeee',
-      border: 0
+        marginTop: '1em',
+        backgroundColor: '#eeeeee',
+        border: 0
     },
     tabDashboard: {
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row-reverse',
-      justifyContent: 'space-between'
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between'
     },
     toggleFilters: {
-      marginTop: '15px',
-      color: "#1d5893 !important",
-      padding: 0,
-  
-      '&:hover, &:focus': {
-        background: 'transparent'
-      }
+        marginTop: '15px',
+        color: "#1d5893 !important",
+        padding: 0,
+
+        '&:hover, &:focus': {
+            background: 'transparent'
+        }
     },
     historyButton: {
-      backgroundColor: '#C1A783',
-      color: '#000000',
-      marginBottom: '1em',
-      marginTop: '1em',
-  
-      '&:hover, &:focus': {
-        color: '#000000'
-      }
+        backgroundColor: '#C1A783',
+        color: '#000000',
+        marginBottom: '1em',
+        marginTop: '1em',
+
+        '&:hover, &:focus': {
+            color: '#000000'
+        }
     },
-  
+
     comparisonPanelTitle: {
-      color: '#303030',
-      fontSize: '30px',
-      textAlign: 'center',
-      fontFamily: 'EB Garamond !important',
-      fontWeight: 400,
-      paddingLeft: '30px',
-      paddingRight: '30px',
-      paddingTop: '20px',
-      textTransform: 'uppercase'
+        color: '#303030',
+        fontSize: '30px',
+        textAlign: 'center',
+        fontFamily: 'EB Garamond !important',
+        fontWeight: 400,
+        paddingLeft: '30px',
+        paddingRight: '30px',
+        paddingTop: '20px',
+        textTransform: 'uppercase'
     },
     fixedTop: {
-      top: 0,
-      width: '100%',
-      zIndex: 99,
-      position: 'sticky',
-      backgroundColor: '#ffffff'
+        top: 0,
+        width: '100%',
+        zIndex: 99,
+        position: 'sticky',
+        backgroundColor: '#ffffff'
     },
     compareTitle: {
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row'
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row'
     },
     compareTitleColumn: {
-      flex: 1,
-      color: '#ffffff',
-      border: '1px solid #ffffff',
-      padding: '1em',
-      textAlign: 'left',
-      alignItems: 'center',
-      borderBottom: 0,
-      justifyContent: 'center',
-      backgroundColor: '#062133'
+        flex: 1,
+        color: '#ffffff',
+        border: '1px solid #ffffff',
+        padding: '1em',
+        textAlign: 'left',
+        alignItems: 'center',
+        borderBottom: 0,
+        justifyContent: 'center',
+        backgroundColor: '#062133'
     },
     compareRow: {
-      //width: '100%',
-      display: 'flex',
-      paddingTop: '1em',
-      borderBottom: '1px solid #062133',
-      flexDirection: 'row',
-      backgroundColor: '#f8f8f8',
-  
-      '&:nth-child(even)': {
-        backgroundColor: '#eeeeee'
-      }
+        //width: '100%',
+        display: 'flex',
+        paddingTop: '1em',
+        borderBottom: '1px solid #062133',
+        flexDirection: 'row',
+        backgroundColor: '#f8f8f8',
+
+        '&:nth-child(even)': {
+            backgroundColor: '#eeeeee'
+        }
     },
     compareColumn: {
-      width: '100%',
-      display: 'flex',
-      paddingTop: '1em',
-      borderBottom: '1px solid #062133',
-      flexDirection: 'column',
-      backgroundColor: '#f8f8f8',
-  
-      '&:nth-child(even)': {
-        backgroundColor: '#eeeeee'
-      }
+        width: '100%',
+        display: 'flex',
+        paddingTop: '1em',
+        borderBottom: '1px solid #062133',
+        flexDirection: 'column',
+        backgroundColor: '#f8f8f8',
+
+        '&:nth-child(even)': {
+            backgroundColor: '#eeeeee'
+        }
     },
     compareRowColumn: {
-      flex: 1,
-      margin: '1em',
-      marginBottom: '80px'
+        flex: 1,
+        margin: '1em',
+        marginBottom: '80px'
     },
     compareCardSummary: {
-      flexDirection: 'column'
+        flexDirection: 'column'
     },
     compareCardName: {
-      fontWeight: 'bold',
-      wordBreak: 'break-all'
+        fontWeight: 'bold',
+        wordBreak: 'break-all'
     },
     compareCardText: {
-      fontWeight: 300,
-      paddingBottom: '5px',
-      paddingTop: '5px'
+        fontWeight: 300,
+        paddingBottom: '5px',
+        paddingTop: '5px'
     },
-  
-  
-  
+
+
+
     search: {
-      padding: '6px 4px',
-      display: 'flex',
-      alignItems: 'center',
-      width: '100%',
-      border: '2px solid #D55804',
-      /*borderColor: `'#D55804' !important`,
-      borderWidth: '2px',*/
+        padding: '6px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        border: '2px solid #D55804',
+        /*borderColor: `'#D55804' !important`,
+        borderWidth: '2px',*/
     },
     compare: {
-      padding: '6px 4px',
-      display: 'flex',
-      alignItems: 'left',
-      width: '150px',
-      //border: '2px solid #D55804',
-      /*borderColor: `'#D55804' !important`,
-      borderWidth: '2px',*/
+        padding: '6px 4px',
+        display: 'flex',
+        alignItems: 'left',
+        width: '150px',
+        //border: '2px solid #D55804',
+        /*borderColor: `'#D55804' !important`,
+        borderWidth: '2px',*/
     },
     input: {
-      marginLeft: theme.spacing(1),
-      flex: 1,
+        marginLeft: theme.spacing(1),
+        flex: 1,
     },
     searchButton: {
-      padding: 10,
+        padding: 10,
     },
-  
+
     [theme.breakpoints.down('md')]: {
-      actionButton: {
-        fontSize: '0.7em'
-      }
+        actionButton: {
+            fontSize: '0.7em'
+        }
     },
     filter: {
-      marginBottom: '1em'
+        marginBottom: '1em'
     },
     formulaButton: {
-      marginTop: '1em',
-      backgroundColor: '#eeeeee',
-      border: 0
+        marginTop: '1em',
+        backgroundColor: '#eeeeee',
+        border: 0
     },
     tabContainer: {
-      borderBottom: '1px solid #C1A783',
-      width: '100%'
+        borderBottom: '1px solid #C1A783',
+        width: '100%'
     },
     bigIndicator: {
-      backgroundColor: '#C1A783'
+        backgroundColor: '#C1A783'
     },
     [theme.breakpoints.down('sm')]: {
-      // styles
-      filterContainer: {
-        display: 'block',
-      },
-      formControl: {
-        width: '100%'
-      },
-      root: {
-        width: '95vw'
-      },
-      tableContainer: {
-        maxWidth: "85vw"
-      },
-      filter: {
-  
-        paddingRight: '0px'
-      },
-      heading: {
-        wordBreak: 'break-all'
-      },
-      sidebar: {
-        marginRight: 0
-      },
-      dataElementContent: {
-        paddingLeft: '0em',
-        paddingTop: '1em'
-  
-      },
-      tabDashboard: {
-        flexDirection: 'column'
-      },
-      actionButton: {
-        width: '90vw',
-        fontSize: '1em'
-      },
-      compareRow: {
-        flexDirection: 'column'
-      },
-      comparisonPanelTitle: {
-        margin: 0,
-        padding: '30px',
-        borderBottom: '2px solid #061233'
-      },
-      compareTitle: {
-        display: 'none'
-      },
-      gridList: {
-        width: 300
-      }
-  
+        // styles
+        filterContainer: {
+            display: 'block',
+        },
+        formControl: {
+            width: '100%'
+        },
+        root: {
+            width: '95vw'
+        },
+        tableContainer: {
+            maxWidth: "85vw"
+        },
+        filter: {
+
+            paddingRight: '0px'
+        },
+        heading: {
+            wordBreak: 'break-all'
+        },
+        sidebar: {
+            marginRight: 0
+        },
+        dataElementContent: {
+            paddingLeft: '0em',
+            paddingTop: '1em'
+
+        },
+        tabDashboard: {
+            flexDirection: 'column'
+        },
+        actionButton: {
+            width: '90vw',
+            fontSize: '1em'
+        },
+        compareRow: {
+            flexDirection: 'column'
+        },
+        comparisonPanelTitle: {
+            margin: 0,
+            padding: '30px',
+            borderBottom: '2px solid #061233'
+        },
+        compareTitle: {
+            display: 'none'
+        },
+        gridList: {
+            width: 300
+        }
+
     }
-  
-  
-  
-  
-  }));
+
+
+
+
+}));
 let deMappings = {}
 let de = {}
 export default function DataElementDetails() {
@@ -561,9 +561,9 @@ export default function DataElementDetails() {
             }
             // if the data element has linkages, retrieve those as well
             await getDerivatives(id)
-            console.log("*********** getDerivatives done" )
+            console.log("*********** getDerivatives done")
             setDELoading(false)
-            
+
         } catch (e) {
             console.log("error:" + e.message);
             setError(e.message);
@@ -589,35 +589,35 @@ export default function DataElementDetails() {
                         //derivationId = Object(deMappings[id])[key].from_concept_code
                     }
                 }
-                if(derivationId){
-                UIDs = UIDs + '"' + derivationId + '"OR'
+                if (derivationId) {
+                    UIDs = UIDs + '"' + derivationId + '"OR'
                 }
             }
         )
         UIDs = UIDs.substring(0, UIDs.length - 2)
-                if (UIDs) {
-                    let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=' + UIDs;
-                    console.log(" queryByDataElement " + queryMapping)
-                    let response = await fetch(queryMapping);
-                    if (!response.ok) {
-                        console.log(response);
-                        setErrorDisplay("Failed to fetch")
-                        throw new Error(
-                            `Error when retrieving data element mappings ${response.status} ${response.statusText}`
-                        );
-                    }
-                    let jsonData = await response.json()
-                    //console.log(jsonData)
-                    // let sortedData = {}
-                    // if(jsonData.mappings){
-                    // sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
-                    // }
-                    // deMappings[derivationId] = sortedData
-                    //setDataElementMapping(deMappings[derivationId]);
-                        console.log("do i ever come here ??????????????????")
-                        setDataElements(jsonData)
-                    }
-                
+        if (UIDs) {
+            let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=' + UIDs;
+            console.log(" queryByDataElement " + queryMapping)
+            let response = await fetch(queryMapping);
+            if (!response.ok) {
+                console.log(response);
+                setErrorDisplay("Failed to fetch")
+                throw new Error(
+                    `Error when retrieving data element mappings ${response.status} ${response.statusText}`
+                );
+            }
+            let jsonData = await response.json()
+            //console.log(jsonData)
+            // let sortedData = {}
+            // if(jsonData.mappings){
+            // sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+            // }
+            // deMappings[derivationId] = sortedData
+            //setDataElementMapping(deMappings[derivationId]);
+            console.log("do i ever come here ??????????????????")
+            setDataElements(jsonData)
+        }
+
     }
 
     const sortJSONByKey = function (data, key, direction) {
@@ -671,303 +671,306 @@ export default function DataElementDetails() {
 
     return (
         <Route render={(history) => (
-            <div className={classes.container}>
-            {deloading ?
-                <div>
-                    <LinearProgress mode="indeterminate" />
-                    <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data element details ...</div>
-                </div> : 
-                   (
-            <Grid container className={classes.comparePanelContainer} justify="space-between">
-                
-                        <Grid item xs={6}  >
-                            <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
-                        </Grid>
-                        <Grid item xs={6}  >
-                            <CloseIcon onClick={goBack} className={classes.closeComparePanel}>add_circle</CloseIcon>
-                        </Grid>
-                        <Grid item xs={6}  >
-                            {dataElementDetail && dataElementMapping ?
-                                <Table className={classes.comboTable} style={{ marginRight: '20px' }} aria-label="simple table">
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell><strong>Short Name</strong></TableCell>
-                                            <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Code</strong></TableCell>
-                                            <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow className={classes.comboTable}>
-                                            <TableCell><strong>Description</strong></TableCell>
-                                            <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "--"}</TableCell>
-                                        </TableRow>
-                                        {/* <TableRow>
+            <div  className={classes.container} >
+                {deloading ?
+                    <div>
+                        <LinearProgress mode="indeterminate" />
+                        <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data element details ...</div>
+                    </div> :
+                    (
+                        <Grid container direction={'column'}  spacing={1}>
+
+                            <Grid container style={{ height: '100px' }}>
+                                <Grid item xs={6} style={{ height: '100px' }} >
+                                    <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
+                                </Grid>
+                                <Grid item xs={6} style={{ height: '100px' }} >
+                                    <CloseIcon onClick={goBack} className={classes.closeComparePanel}>add_circle</CloseIcon>
+                                </Grid>
+                            </Grid>
+                            <Grid container>
+                                <Grid item xs={6}  >
+                                    {dataElementDetail && dataElementMapping ?
+                                        <Table className={classes.comboTable} style={{ marginRight: '20px' }} aria-label="simple table">
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell><strong>Short Name</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Code</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow className={classes.comboTable}>
+                                                    <TableCell><strong>Description</strong></TableCell>
+                                                    <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "--"}</TableCell>
+                                                </TableRow>
+                                                {/* <TableRow>
                                 <TableCell><strong>UID</strong></TableCell>
                                 <TableCell>{dataElement.id ? (dataElement.id) : '--'}</TableCell>
                               </TableRow> */}
-                                        {/* <TableRow>
+                                                {/* <TableRow>
                                 <TableCell><strong>Source</strong></TableCell>
                                 <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : '--'}</TableCell>
                               </TableRow> */}
-                                        <TableRow>
-                                            <TableCell><strong>Data Type</strong></TableCell>
-                                            <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Domain Type</strong></TableCell>
-                                            <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Value Type</strong></TableCell>
-                                            <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Aggregation Type</strong></TableCell>
-                                            <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : '--'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Applicable Periods</strong></TableCell>
-                                            <TableCell>
-                                                {
-                                                    dataElementDetail.extras['Applicable Periods'] ? (dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElementDetail.extras['Applicable Periods']).map(
+                                                <TableRow>
+                                                    <TableCell><strong>Data Type</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Domain Type</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Value Type</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Aggregation Type</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : '--'}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Applicable Periods</strong></TableCell>
+                                                    <TableCell>
+                                                        {
+                                                            dataElementDetail.extras['Applicable Periods'] ? (dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElementDetail.extras['Applicable Periods']).map(
 
-                                                        key =>
+                                                                key =>
 
-                                                            dataElementDetail.extras['Applicable Periods'][key] + ", "
+                                                                    dataElementDetail.extras['Applicable Periods'][key] + ", "
 
-                                                    )
-                                                    ) : '--') : '--'
-                                                }
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Code List Membership</strong></TableCell>
-                                            <TableCell>
-                                                {
-                                                    dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
+                                                            )
+                                                            ) : '--') : '--'
+                                                        }
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Code List Membership</strong></TableCell>
+                                                    <TableCell>
+                                                        {
+                                                            dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
 
-                                                        key =>
+                                                                key =>
 
-                                                            dataElementDetail.extras.codelists[key].name + ", "
+                                                                    dataElementDetail.extras.codelists[key].name + ", "
 
-                                                    )
-                                                    ) : '--') : '--'
-                                                }
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow></TableRow>
-                                        <TableRow>
-                                            <TableCell><strong>Result/Target</strong></TableCell>
-                                            <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table> : ''}
-                        </Grid>
-                        <Grid item xs={6}  >
-                            <div>
-                                <div className={classes.heroContainer}>
-                                    <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
+                                                            )
+                                                            ) : '--') : '--'
+                                                        }
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow></TableRow>
+                                                <TableRow>
+                                                    <TableCell><strong>Result/Target</strong></TableCell>
+                                                    <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table> : ''}
+                                </Grid>
+                                <Grid item xs={6}  >
                                     <div>
-                                        <GridList cellHeight={60} className={classes.gridList} cols={2}>
-                                            <GridListTile >
-                                                <Paper component="form" className={classes.compare}>
-                                                    <InputBase
-                                                        className={classes.input}
-                                                        //inputProps={{ 'aria-label': 'search data elements' }}
-                                                        id="compareSearch"
-                                                        key="compareSearch"
-                                                        onKeyDown={handleKeyPressCompare}
-                                                        onChange={handleCompareInputChange}
-                                                        value={compareInputText}
-                                                    />
-                                                </Paper>
-                                            </GridListTile>
-                                            <GridListTile>
-                                                <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
-                                                    COMPARE
+                                        <div className={classes.heroContainer}>
+                                            <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
+                                            <div>
+                                                <GridList cellHeight={60} className={classes.gridList} cols={2}>
+                                                    <GridListTile >
+                                                        <Paper component="form" className={classes.compare}>
+                                                            <InputBase
+                                                                className={classes.input}
+                                                                //inputProps={{ 'aria-label': 'search data elements' }}
+                                                                id="compareSearch"
+                                                                key="compareSearch"
+                                                                onKeyDown={handleKeyPressCompare}
+                                                                onChange={handleCompareInputChange}
+                                                                value={compareInputText}
+                                                            />
+                                                        </Paper>
+                                                    </GridListTile>
+                                                    <GridListTile>
+                                                        <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
+                                                            COMPARE
                             </Button>
-                                            </GridListTile>
-                                        </GridList>
-                                        <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter a Data Element UID</i></div>
-                                    </div>
+                                                    </GridListTile>
+                                                </GridList>
+                                                <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter a Data Element UID</i></div>
+                                            </div>
 
-                                </div>
-                                {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''}
-                            </div>
-                            <div>
-                                {/* {dataElementDetail ? (
+                                        </div>
+                                        {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''}
+                                    </div>
+                                    <div>
+                                        {/* {dataElementDetail ? (
                             (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
                               key =>  */}
-                                <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
-                                    <TableBody>
+                                        <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
+                                            <TableBody>
 
-                                        {showLinked ?
-                                            <TableRow>
-                                                <TableCell><strong>Linked Resources</strong></TableCell>
-                                                <TableCell></TableCell>
-                                            </TableRow> : ''}
-                                        {dataElementDetail ? console.log(dataElementDetail.id) : ''}
-                                        {dataElementDetail ? (
-                                            dataElementMapping ? Object.keys(Object(dataElementMapping)).map(
+                                                {showLinked ?
+                                                    <TableRow>
+                                                        <TableCell><strong>Linked Resources</strong></TableCell>
+                                                        <TableCell></TableCell>
+                                                    </TableRow> : ''}
+                                                {dataElementDetail ? console.log(dataElementDetail.id) : ''}
+                                                {dataElementDetail ? (
+                                                    dataElementMapping ? Object.keys(Object(dataElementMapping)).map(
 
-                                                function (key) {
-                                                    if (dataElementMapping[key].map_type === "Derived From") {
-                                                        setShowLinked(true)
-                                                        let name = ''
-                                                        let code = ''
-                                                        let source = ''
-                                                        let type = ''
-                                                        let derives = ''
-                                                        if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
-                                                            name = Object(dataElementMapping)[key].to_concept_name
-                                                            code = dataElementMapping[key].to_concept_code
-                                                            derives = 'Derived From'
-                                                            if (de[dataElementMapping[key].to_concept_code]) {
-                                                                source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                type = de[dataElementMapping[key].to_concept_code].concept_class
-                                                            }
-                                                        }
-                                                        else {
-                                                            let from_concept_url = dataElementMapping[key].from_concept_url
-                                                            if (from_concept_url.endsWith('/')) {
-                                                                from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-                                                            }
-                                                            let arr = from_concept_url.split('/')
-                                                            let derivationId = arr[arr.length - 1]
-                                                            //derivationId = dataElementMapping[key].from_concept_code
-                                                            console.log(dataElements)
-                                                            //console.log(de)
-                                                            console.log(derivationId)
-                                                            let derived = {}
-                                                            Object.values(Object(dataElements)).map(
-                                                                value => {
-                                                                if(value.id === derivationId){
-                                                                    derived = value
+                                                        function (key) {
+                                                            if (dataElementMapping[key].map_type === "Derived From") {
+                                                                setShowLinked(true)
+                                                                let name = ''
+                                                                let code = ''
+                                                                let source = ''
+                                                                let type = ''
+                                                                let derives = ''
+                                                                if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
+                                                                    name = Object(dataElementMapping)[key].to_concept_name
+                                                                    code = dataElementMapping[key].to_concept_code
+                                                                    derives = 'Derived From'
+                                                                    if (de[dataElementMapping[key].to_concept_code]) {
+                                                                        source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                        type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                    }
                                                                 }
-                                                            }
-                                                            )
-                                                            console.log(derived)
-                                                            name = derived.display_name
-                                                            code = derived.id
-                                                            source = derived.extras.source
-                                                            type = derived.concept_class
-                                                            derives = 'Derived To'
-                                                            console.log(name + code + source + type)
-                                                        }
-                                                        return (
-                                                            <TableRow>
+                                                                else {
+                                                                    let from_concept_url = dataElementMapping[key].from_concept_url
+                                                                    if (from_concept_url.endsWith('/')) {
+                                                                        from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                                                    }
+                                                                    let arr = from_concept_url.split('/')
+                                                                    let derivationId = arr[arr.length - 1]
+                                                                    //derivationId = dataElementMapping[key].from_concept_code
+                                                                    console.log(dataElements)
+                                                                    //console.log(de)
+                                                                    console.log(derivationId)
+                                                                    let derived = {}
+                                                                    Object.values(Object(dataElements)).map(
+                                                                        value => {
+                                                                            if (value.id === derivationId) {
+                                                                                derived = value
+                                                                            }
+                                                                        }
+                                                                    )
+                                                                    console.log(derived)
+                                                                    name = derived.display_name
+                                                                    code = derived.id
+                                                                    source = derived.extras.source
+                                                                    type = derived.concept_class
+                                                                    derives = 'Derived To'
+                                                                    console.log(name + code + source + type)
+                                                                }
+                                                                return (
+                                                                    <TableRow>
 
-                                                                <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
-                                                                    <Grid container alignItems="center"
-                                                                        //justify="space-between"
-                                                                        spacing={2}>
-                                                                        <Grid item xs={12}  >
-                                                                            <strong>{derives}</strong>
-                                                                        </Grid>
-                                                                        <Grid item xs={12}  >
-                                                                            {name}
-                                                                        </Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                                onClick={() => copyToClipboard(code)}
-                                                                            >{"UID: " + code}</span></Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                            >{"Source: " + source}</span></Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                            >{"Type: " + type}</span>                                            </Grid>
-                                                                    </Grid>
-                                                                </TableCell>
-                                                                <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
-                                                                    <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
-                                                                        COMPARE
+                                                                        <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
+                                                                            <Grid container alignItems="center"
+                                                                                //justify="space-between"
+                                                                                spacing={2}>
+                                                                                <Grid item xs={12}  >
+                                                                                    <strong>{derives}</strong>
+                                                                                </Grid>
+                                                                                <Grid item xs={12}  >
+                                                                                    {name}
+                                                                                </Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                        onClick={() => copyToClipboard(code)}
+                                                                                    >{"UID: " + code}</span></Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                    >{"Source: " + source}</span></Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                    >{"Type: " + type}</span>                                            </Grid>
+                                                                            </Grid>
+                                                                        </TableCell>
+                                                                        <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                                                            <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
+                                                                                COMPARE
                                     </Button>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                }) : ''
-                                        ) : ''
-                                        }
-
-                                        {dataElementDetail ? (
-                                            (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
-
-                                                function (key) {
-                                                    if (dataElementMapping[key].map_type === "Replaces") {
-                                                        let name = ''
-                                                        let code = ''
-                                                        let source = ''
-                                                        let type = ''
-                                                        let replaces = ''
-                                                        if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
-                                                            name = Object(dataElementMapping)[key].to_concept_name
-                                                            code = dataElementMapping[key].to_concept_code
-                                                            replaces = 'Replaces'
-                                                            if (de[dataElementMapping[key].to_concept_code]) {
-                                                                source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
                                                             }
-                                                        }
-                                                        else {
-                                                            let from_concept_url = dataElementMapping[key].from_concept_url
-                                                            if (from_concept_url.endsWith('/')) {
-                                                                from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-                                                            }
-                                                            let arr = from_concept_url.split('/')
-                                                            let derivationId = arr[arr.length - 1]
-                                                            //derivationId = dataElementMapping[key].from_concept_code
-                                                            name = de[derivationId].display_name
-                                                            code = de[derivationId].id
-                                                            source = de[derivationId].extras.source
-                                                            type = de[derivationId].concept_class
-                                                            replaces = 'Replaced By'
-                                                            console.log(name + code + source + type)
-                                                        }
-                                                        return (
-                                                            <TableRow>
-                                                                <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
-                                                                    <Grid container alignItems="center"
-                                                                        //justify="space-between"
-                                                                        spacing={2}>
-                                                                        <Grid item xs={12}  >
-                                                                            <strong>{replaces}</strong>
-                                                                        </Grid>
-                                                                        <Grid item xs={12}  >
-                                                                            {name}
-                                                                        </Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                                onClick={() => copyToClipboard(code)}
-                                                                            >{"UID: " + code}</span></Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                            >{"Source: " + source}</span></Grid>
-                                                                        <Grid item xs={4} md={4} >
-                                                                            <span className={classes.chip}
-                                                                            >{"Type: " + type}</span></Grid>
-                                                                    </Grid>
-                                                                </TableCell>
-                                                                <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
-                                                                    <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
-                                                                        COMPARE
+                                                        }) : ''
+                                                ) : ''
+                                                }
+
+                                                {dataElementDetail ? (
+                                                    (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
+
+                                                        function (key) {
+                                                            if (dataElementMapping[key].map_type === "Replaces") {
+                                                                let name = ''
+                                                                let code = ''
+                                                                let source = ''
+                                                                let type = ''
+                                                                let replaces = ''
+                                                                if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
+                                                                    name = Object(dataElementMapping)[key].to_concept_name
+                                                                    code = dataElementMapping[key].to_concept_code
+                                                                    replaces = 'Replaces'
+                                                                    if (de[dataElementMapping[key].to_concept_code]) {
+                                                                        source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                        type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    let from_concept_url = dataElementMapping[key].from_concept_url
+                                                                    if (from_concept_url.endsWith('/')) {
+                                                                        from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                                                    }
+                                                                    let arr = from_concept_url.split('/')
+                                                                    let derivationId = arr[arr.length - 1]
+                                                                    //derivationId = dataElementMapping[key].from_concept_code
+                                                                    name = de[derivationId].display_name
+                                                                    code = de[derivationId].id
+                                                                    source = de[derivationId].extras.source
+                                                                    type = de[derivationId].concept_class
+                                                                    replaces = 'Replaced By'
+                                                                    console.log(name + code + source + type)
+                                                                }
+                                                                return (
+                                                                    <TableRow>
+                                                                        <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
+                                                                            <Grid container alignItems="center"
+                                                                                //justify="space-between"
+                                                                                spacing={2}>
+                                                                                <Grid item xs={12}  >
+                                                                                    <strong>{replaces}</strong>
+                                                                                </Grid>
+                                                                                <Grid item xs={12}  >
+                                                                                    {name}
+                                                                                </Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                        onClick={() => copyToClipboard(code)}
+                                                                                    >{"UID: " + code}</span></Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                    >{"Source: " + source}</span></Grid>
+                                                                                <Grid item xs={4} md={4} >
+                                                                                    <span className={classes.chip}
+                                                                                    >{"Type: " + type}</span></Grid>
+                                                                            </Grid>
+                                                                        </TableCell>
+                                                                        <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                                                            <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
+                                                                                COMPARE
                                     </Button>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                }) : ''
-                                        ) : ''
-                                        }
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                            }
+                                                        }) : ''
+                                                ) : ''
+                                                }
 
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </Grid> 
-  </Grid> ) }
-  </div>
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </Grid></Grid>
+                        </Grid>)}
+            </div>
 
         )
         } />)
