@@ -475,7 +475,6 @@ export default function Compare() {
   let deMappings = {}
   let de = {}
   let dataElements = {}
-  let valuesExist = false
   const [selectedDatim, setSelectedDatim] = React.useState([])
   const [mappings, setMappings] = React.useState([])
   const [dataElementMatrix, setDataElementMatrix] = React.useState({})
@@ -815,7 +814,7 @@ export default function Compare() {
 
   const goBack = () => {
     if (params.get('dataElementDetail')) {
-      history.push('/codelist?dataElementid=' + params.get('id1'))
+      history.push('/dataElementDetail?id=' + params.get('id1'))
     } else {
       history.goBack()
     }
@@ -982,12 +981,6 @@ export default function Compare() {
                 id="backButton"> Back</Button>
               {/* </NavLink> */}
               <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
-              {/* comparison panel title */}
-              {/* <div className={classes.compareTitle}>
-                  {DATIM ? <div className={classes.compareTitleColumn}>DATIM</div> : ''}
-                  {PDH ? <div className={classes.compareTitleColumn}>PDH</div> : ''}
-                  {MOH ? <div className={classes.compareTitleColumn}>MOH</div> : ''}
-                </div> */}
           </div>
           {errorDisplay !== null ?
             <div className={classes.errorMessage}>{errorDisplay}</div>
@@ -999,138 +992,6 @@ export default function Compare() {
 
             {
               table()
-              // selectedDatim.map(datim => {
-              //   !deMappings[datim.id] ? getMappings(datim.id) : ''
-              //   return (
-              //     <div className={classes.compareRowColumn} key={Math.random()}>
-              //       <div className={classes.fixedTop}>
-              //         {/* <div className={classes.compareCardSummary}> */}
-              //         <div className={classes.compareTitle}>
-              //           {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
-              //           <div className={classes.compareTitleColumn}>{datim.display_name}</div>
-              //           {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
-              //         </div>
-              //       </div>
-              //       <ExpansionPanel className={classes.expandPanel}>
-              //         <ExpansionPanelSummary
-              //           expandIcon={<ExpandMoreIcon />}
-              //           aria-controls="panel3b-content"
-              //           id="panel3b-header"
-              //           onClick={() => !deMappings[datim.id] ? getMappings(datim.id) : ''}
-              //         >
-
-              //           <Table className={classes.comboTable} aria-label="simple table">
-              //             <TableBody>
-              //               <TableRow>
-              //                 <TableCell><strong>Short Name</strong></TableCell>
-              //                 <TableCell>{datim.names[1] ? (datim.names[1].name) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Code</strong></TableCell>
-              //                 <TableCell>{datim.names[2] ? (datim.names[2].name) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow className={classes.comboTable}>
-              //                 <TableCell><strong>Description</strong></TableCell>
-              //                 <TableCell>{(datim.descriptions) ? datim.descriptions[0].description : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>UID</strong></TableCell>
-              //                 <TableCell>{datim.id ? (datim.id) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Source</strong></TableCell>
-              //                 <TableCell>{datim.extras.source ? (datim.extras.source) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Data Type</strong></TableCell>
-              //                 <TableCell>{datim.datatype ? (datim.datatype) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Domain Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.domainType ? (datim.extras.domainType) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Value Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.valueType ? (datim.extras.valueType) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Aggregation Type</strong></TableCell>
-              //                 <TableCell>{datim.extras.aggregationType ? (datim.extras.aggregationType) : "--"}</TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Applicable Periods</strong></TableCell>
-              //                 <TableCell>
-              //                   {
-              //                     datim.extras['Applicable Periods'] ? (datim.extras['Applicable Periods'].length > 0 ? (Object.keys(datim.extras['Applicable Periods']).map(
-
-              //                       key =>
-
-              //                         datim.extras['Applicable Periods'][key] + ", "
-
-              //                     )
-              //                     ) : "--") : "--"
-              //                   }
-              //                 </TableCell>
-              //               </TableRow>
-              //               <TableRow>
-              //                 <TableCell><strong>Result/Target</strong></TableCell>
-              //                 <TableCell>{datim.extras.resultTarget ? datim.extras.resultTarget : "--"}</TableCell>
-              //               </TableRow>
-              //             </TableBody>
-              //           </Table>
-
-              //           {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
-              //   Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
-
-              // </div> */}
-              //         </ExpansionPanelSummary>
-              //         <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-              //           <Route render={({ history }) => (
-              //             <div className={classes.tableContainer} key={Math.random()}>
-              //               {/* data element Disaggregations */}
-              //               <strong>Disaggregations</strong>:<br />
-
-              //               <Table className={classes.table} aria-label="simple table">
-              //                 <TableHead>
-              //                   <TableRow>
-              //                     <TableCell>Name</TableCell>
-              //                     <TableCell>Code</TableCell>
-              //                   </TableRow>
-              //                 </TableHead>
-              //                 <TableBody >
-              //                   {
-              //                     (mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
-
-              //                       key =>
-              //                         Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
-              //                           <TableRow key={Math.random()}>
-              //                             <TableCell component="th" scope="row">
-              //                               {Object(mappings[datim.id])[key].to_concept_name}
-              //                             </TableCell>
-              //                             <TableCell component="th" scope="row">
-              //                               {Object(mappings[datim.id])[key].to_concept_code}
-              //                             </TableCell>
-              //                           </TableRow>
-              //                         ) : ''
-              //                     ) : ''
-              //                   }
-              //                 </TableBody>
-              //               </Table>
-              //             </div>
-              //           )}></Route>
-              //         </ExpansionPanelDetails>
-              //       </ExpansionPanel>
-              //       <Grid container >
-              //         <div></div>
-              //       </Grid>
-              //       {/* </div> */}
-              //     </div>
-
-              //   )
-
-              // })
             }
 
           </div>

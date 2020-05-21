@@ -14,6 +14,7 @@ import ReferenceIndicator from './AppShell/ReferenceIndicator';
 import Indicators from './AppShell/Indicators';
 import Compare from './AppShell/Compare';
 import CompareIndicators from './AppShell/CompareIndicators';
+import DataElementDetails from './AppShell/DataElementDetails';
 import {StateProvider} from './ContextSetup';
 
 import clsx from 'clsx';
@@ -157,7 +158,8 @@ export default function App() {
                   <Switch>           
                     <Redirect from="/home" to="/" /> 
                     <Route exact path="/" component={Welcome} />              
-                    <Route path="/codelist" component={Codelist} />             
+                    <Route path="/codelist" component={Codelist} />
+                    <Route path="/dataElementDetail" component={DataElementDetails} />              
                     <Route path="/referenceIndicator" component={ReferenceIndicator} /> 
                     <Route path="/indicators" component={Indicators} /> 
                     <Route path="/codelist/indicator" component={ReferenceIndicator} />

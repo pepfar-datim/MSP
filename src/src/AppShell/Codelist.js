@@ -60,6 +60,7 @@ import history from './../history';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import styled from 'styled-components';
+import DataElementDetail from './DataElementDetail';
 
 //tab panel function
 function TabPanel(props) {
@@ -1569,8 +1570,11 @@ export default function Codelist() {
       return;
     }
     setDataElementDetail(dataElement);
-    setDetailPanel({ ...detailPanel, [side]: open });
-    if (!open) {
+    //setDetailPanel({ ...detailPanel, [side]: open });
+    if(open){
+      history.push('/dataElementDetail?id=' + dataElement.id)
+    }
+    else {
       setShowLinked(false)
       history.push('/codelist')
     }
