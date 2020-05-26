@@ -47,7 +47,7 @@ export default function  Shortcut(props) {
     let location = useLocation();        
     const classes = useStyles();
     return (
-        <div>
+        <div style={{marginTop: '10px'}}>
         {location.pathname && location.pathname.includes("/referenceIndicator")  ?
             <Paper className={classes.sidebar}>
                 <Grid container>   

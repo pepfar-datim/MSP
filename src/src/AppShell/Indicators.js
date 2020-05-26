@@ -2188,7 +2188,22 @@ Compare selected data elements
 
                         </Grid>
                         <Grid item xs={12} className={classes.expansionPanelLeft}>
-                          <strong>Description: </strong> {(dataElement.descriptions) ? dataElement.descriptions[0].description : "--"}
+                          <strong>Indicator Groups: </strong> {
+                                          dataElement.extras.indicatorGroups ? (dataElement.extras.indicatorGroups.length > 0 ? (Object.values(dataElement.extras.indicatorGroups).map(
+
+                                            value =>
+
+                                              value.name + ", "
+
+                                          )
+                                          ) : '--') : '--'
+                                        }
+                                        <br></br><br></br>
+                           <strong>Data Type: </strong> {dataElement.datatype ? dataElement.datatype : '--'}
+                           <br></br><br></br>
+                           <strong>Numerator Description: </strong> {dataElement.extras.numeratorDescription ? dataElement.extras.numeratorDescription : '--'}
+                           <br></br><br></br>
+                           <strong>Denominator Description: </strong> {dataElement.extras.denominatorDescription ? dataElement.extras.denominatorDescription : '--'}
                         </Grid>
 
                         <Grid item xs={12} className={classes.expansionPanelLeft}>

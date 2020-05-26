@@ -250,11 +250,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '30px'
   },
   chip: {
-    marginTop: '5px', 
-    color: '#333333' ,
-   /* backgroundColor: '#ffffff',*/
+    marginTop: '5px',
+    color: '#333333',
+    /* backgroundColor: '#ffffff',*/
     fontSize: '12px'
-    },
+  },
   filterButton: {
     marginTop: '20px',
     marginBottom: '0px',
@@ -473,7 +473,8 @@ const useStyles = makeStyles(theme => ({
     border: '2px solid #D55804',
     /*borderColor: `'#D55804' !important`,
     borderWidth: '2px',*/
-    marginTop: '15px'
+    marginTop: '10px',
+    marginLeft: '15px'
   },
   compare: {
     padding: '6px 4px',
@@ -1275,7 +1276,7 @@ export default function Codelist() {
         async function (key) {
           let derivationId = ''
           if (Object(deMappings[id])[key].map_type === 'Derived From' || Object(deMappings[id])[key].map_type === 'Replaces') {
-             derivationId = Object(deMappings[id])[key].to_concept_code
+            derivationId = Object(deMappings[id])[key].to_concept_code
             if (derivationId === id) {
               let from_concept_url = Object(deMappings[id])[key].from_concept_url
               if (from_concept_url.endsWith('/')) {
@@ -1285,37 +1286,37 @@ export default function Codelist() {
               derivationId = arr[arr.length - 1]
             }
           }
-        //   else if (Object(deMappings[id])[key].map_type === 'Replaces') {
-        //     derivationId = Object(deMappings[id])[key].to_concept_code
-        //    if (derivationId === id) {
-        //     let from_concept_url = Object(deMappings[id])[key].from_concept_url
-        //     if (from_concept_url.endsWith('/')) {
-        //       from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-        //     }
-        //     let arr = from_concept_url.split('/')
-        //     derivationId = arr[arr.length - 1]
-        //    }
-        //  }
-            if (!deMappings[derivationId]) {
-              queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
-              console.log(" queryByDataElement " + queryMapping)
-              response = await fetch(queryMapping);
-              if (!response.ok) {
-                console.log(response);
-                setErrorDisplay("Failed to fetch")
-                throw new Error(
-                  `Error when retrieving data element mappings ${response.status} ${response.statusText}`
-                );
-              }
-              jsonData = await response.json()
-              sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
-              deMappings[derivationId] = sortedData
-              setDataElementMapping(deMappings[derivationId]);
-              if (!de[derivationId]) {
-                de[derivationId] = jsonData
-              }
+          //   else if (Object(deMappings[id])[key].map_type === 'Replaces') {
+          //     derivationId = Object(deMappings[id])[key].to_concept_code
+          //    if (derivationId === id) {
+          //     let from_concept_url = Object(deMappings[id])[key].from_concept_url
+          //     if (from_concept_url.endsWith('/')) {
+          //       from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+          //     }
+          //     let arr = from_concept_url.split('/')
+          //     derivationId = arr[arr.length - 1]
+          //    }
+          //  }
+          if (!deMappings[derivationId]) {
+            queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
+            console.log(" queryByDataElement " + queryMapping)
+            response = await fetch(queryMapping);
+            if (!response.ok) {
+              console.log(response);
+              setErrorDisplay("Failed to fetch")
+              throw new Error(
+                `Error when retrieving data element mappings ${response.status} ${response.statusText}`
+              );
             }
-          
+            jsonData = await response.json()
+            sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+            deMappings[derivationId] = sortedData
+            setDataElementMapping(deMappings[derivationId]);
+            if (!de[derivationId]) {
+              de[derivationId] = jsonData
+            }
+          }
+
         }
       )
     } catch (e) {
@@ -1571,7 +1572,7 @@ export default function Codelist() {
     }
     setDataElementDetail(dataElement);
     //setDetailPanel({ ...detailPanel, [side]: open });
-    if(open){
+    if (open) {
       history.push('/dataElementDetail?id=' + dataElement.id)
     }
     else {
@@ -1688,13 +1689,7 @@ export default function Codelist() {
     }
   };
 
-  const [showLinked, setShowLinked] = React.useState(false); 
-
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes.derived_category_option_combo[0].id} nodeId={nodes.derived_category_option_combo[0].id} label={nodes.derived_category_option_combo[0].name}>
-      {Array.isArray(nodes.source_data_element_name) ? nodes.source_data_element_name.map((node) => renderTree(node)) : null}
-    </TreeItem>
-  );
+  const [showLinked, setShowLinked] = React.useState(false);
 
   return (
     <Route render={(history) => (
@@ -1722,23 +1717,6 @@ export default function Codelist() {
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
-              {/* search bar */}
-              <Paper component="form" className={classes.search}>
-                <InputBase
-                  className={classes.input}
-                  placeholder="Search Data Elements"
-                  inputProps={{ 'aria-label': 'search data elements' }}
-                  id="inputSearch"
-                  key="inputSearch"
-                  onKeyDown={handleKeyPress}
-                  onChange={handleSearchInputChange}
-                  value={searchInputText}
-                />
-
-                <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
             </Grid>
           </Grid>
           {/* </div> */}
@@ -2023,35 +2001,52 @@ export default function Codelist() {
             <Grid item xs={12} md={9} className={classes.dataElementContent}>
 
               {/* dashboard, including download, compare, select all buttons */}
+
+
               <div className={classes.tabDashboard}>
-                <div>
-                  {selectedDataElement && selectedDataElement.length > 0 ?
+                <div >
+                  <div style={{ flexDirection: 'row', display: 'flex' }} >
+
+
+                    {/* {selectedDataElement && selectedDataElement.length > 0 ?
                     <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
-                    : null}
-                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
-                    <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel>
-                    {
-                      selectedDataElement.length === 0 && values.dataSet === "All" ?
-                        <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
-                    }
-                  </Button>
-                  {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
+                    : null} */}
+                    <div>
+                      <Tooltip disableFocusListener title="Download Selected Data Elements">
+                        <i>
+                          <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                            {/* <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel> */}
+                            {
+                              selectedDataElement.length === 0 && values.dataSet === "All" ?
+                                <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
+                            }
+                          </Button></i></Tooltip></div>
+                    {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
 </Button> */}
 
-                  {/* <NavLink to={{
+                    {/* <NavLink to={{
                   //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
                   pathname: comparePage,
                   data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
                 }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}
-                  <Button variant="outlined" className={classes.actionButton}
-                    onClick={toggleDrawer('bottom', true)}
-                    id="comparisonButton">
-                    <ActionButtonLabel>Compare selected data elements</ActionButtonLabel>
-                    <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
-                  </Button>
+                    <div >
+                      <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Data Elements">
+                        <i >
+                          <Button variant="outlined" className={classes.actionButton} 
+                            onClick={toggleDrawer('bottom', true)}
+                            id="comparisonButton"
+                            disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}>
+                            {/* <ActionButtonLabel>Compare selected data elements</ActionButtonLabel> */}
+                            {
+                              selectedDataElement.length < 2 || selectedDataElement.length > 3 ?
+                                <CompareArrowsIcon /> : <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                            }
+                          </Button>
+                        </i>
+                      </Tooltip></div></div>
                   {/* </NavLink> */}
                 </div>
 
@@ -2071,12 +2066,32 @@ Compare selected data elements
                     </DialogActions>
                   </Dialog>
                 </div>
+                <div style={{ flexDirection: 'row', display: 'flex' }} >
+                  <div>
+                    <Tooltip disableFocusListener title="Select">
+                      <Checkbox variant="outlined" className={classes.actionButton} onClick={selectAll} size="large" style={{ marginLeft: '12px' }}>
+                        Select All
+                        </Checkbox>
+                    </Tooltip>
+                  </div>
+                  <div style={{width: '400px'}}> 
+                    <Paper component="form" className={classes.search}>
+                      <InputBase
+                        className={classes.input}
+                        placeholder="Search Data Elements"
+                        inputProps={{ 'aria-label': 'search data elements' }}
+                        id="inputSearch"
+                        key="inputSearch"
+                        onKeyDown={handleKeyPress}
+                        onChange={handleSearchInputChange}
+                        value={searchInputText}
+                      />
 
-                {/* <Button variant="outlined" className={classes.actionButton} onClick={selectAll} id="downloadButton">
-                Select All
-</Button> */}
-
-
+                      <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
+                        <SearchIcon />
+                      </IconButton>
+                    </Paper></div>
+                </div>
                 {/* popover panel */}
                 <Popover
                   id={popId}
@@ -2183,7 +2198,7 @@ Compare selected data elements
                           spacing={1}>
                           <Grid item xs={9}  >
                             <Typography className={classes.heading}>
-                             {dataElement.display_name}
+                              {dataElement.display_name}
                             </Typography>
                           </Grid>
 
@@ -2206,15 +2221,15 @@ Compare selected data elements
                             </Tooltip>
                           </Grid>
                           <Grid item xs={2} md={3}>
-                          <span className={classes.chip}
-                                onClick={() => copyToClipboard(dataElement.id)}
-                              >{"Source: " + dataElement.extras.source}</span>
-                            </Grid>
+                            <span className={classes.chip}
+                              onClick={() => copyToClipboard(dataElement.id)}
+                            >{"Source: " + dataElement.extras.source}</span>
+                          </Grid>
                           <Grid item xs={2} md={3}>
-                          <span className={classes.chip}
-                                onClick={() => copyToClipboard(dataElement.id)}
-                              >{"Type: " + dataElement.concept_class}</span>
-                            </Grid>
+                            <span className={classes.chip}
+                              onClick={() => copyToClipboard(dataElement.id)}
+                            >{"Type: " + dataElement.concept_class}</span>
+                          </Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
                       </ErrorBoundary>
@@ -2738,7 +2753,7 @@ Compare selected data elements
 
               <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
                 <Grid container className={classes.comparePanelContainer} justify="space-between">
-                {setShowLinked(false)}
+                  {setShowLinked(false)}
                   {/* <div className={classes.fixedTop}> */}
 
                   {/* <Grid container alignItems="center" justify="space-between"> */}
@@ -2817,21 +2832,21 @@ Compare selected data elements
                             </TableCell>
                           </TableRow>
                           <TableRow>
-                                        <TableCell><strong>Code List Membership</strong></TableCell>
-                                        <TableCell>
-                                          {
-                                            dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
+                            <TableCell><strong>Code List Membership</strong></TableCell>
+                            <TableCell>
+                              {
+                                dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
 
-                                              key =>
+                                  key =>
 
-                                              dataElementDetail.extras.codelists[key].name + ", "
+                                    dataElementDetail.extras.codelists[key].name + ", "
 
-                                            )
-                                            ) : '--') : '--'
-                                          }
-                                        </TableCell>
-                                      </TableRow>
-                                      <TableRow></TableRow>
+                                )
+                                ) : '--') : '--'
+                              }
+                            </TableCell>
+                          </TableRow>
+                          <TableRow></TableRow>
                           <TableRow>
                             <TableCell><strong>Result/Target</strong></TableCell>
                             <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
@@ -2922,27 +2937,27 @@ Compare selected data elements
                                   }
                                   return (
                                     <TableRow>
-                                      
+
                                       <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
                                         <Grid container alignItems="center"
                                           //justify="space-between"
                                           spacing={2}>
-                                            <Grid item xs={12}  >
-                                           <strong>{derives}</strong> 
-                            </Grid>
+                                          <Grid item xs={12}  >
+                                            <strong>{derives}</strong>
+                                          </Grid>
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                                onClick={() => copyToClipboard(code)}
-                              >{"UID: " + code}</span></Grid>
+                                            <span className={classes.chip}
+                                              onClick={() => copyToClipboard(code)}
+                                            >{"UID: " + code}</span></Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                              >{"Source: " + source}</span></Grid>
+                                            <span className={classes.chip}
+                                            >{"Source: " + source}</span></Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                              >{"Type: " + type}</span>                                            </Grid>
+                                            <span className={classes.chip}
+                                            >{"Type: " + type}</span>                                            </Grid>
                                         </Grid>
                                       </TableCell>
                                       <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
@@ -2957,7 +2972,7 @@ Compare selected data elements
                           ) : ''
                           }
 
-{dataElementDetail ? (
+                          {dataElementDetail ? (
                             (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
                               function (key) {
@@ -2996,22 +3011,22 @@ Compare selected data elements
                                         <Grid container alignItems="center"
                                           //justify="space-between"
                                           spacing={2}>
-                                            <Grid item xs={12}  >
-                                           <strong>{replaces}</strong> 
-                            </Grid>
+                                          <Grid item xs={12}  >
+                                            <strong>{replaces}</strong>
+                                          </Grid>
                                           <Grid item xs={12}  >
                                             {name}
                                           </Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                                onClick={() => copyToClipboard(code)}
-                              >{"UID: " + code}</span></Grid>
+                                            <span className={classes.chip}
+                                              onClick={() => copyToClipboard(code)}
+                                            >{"UID: " + code}</span></Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                              >{"Source: " + source}</span></Grid>
+                                            <span className={classes.chip}
+                                            >{"Source: " + source}</span></Grid>
                                           <Grid item xs={4} md={4} >
-                                          <span className={classes.chip}
-                              >{"Type: " + type}</span></Grid>
+                                            <span className={classes.chip}
+                                            >{"Type: " + type}</span></Grid>
                                         </Grid>
                                       </TableCell>
                                       <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
