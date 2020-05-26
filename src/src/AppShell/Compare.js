@@ -20,6 +20,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
 import { getConfig } from '../config.js';
 import { useHistory, useLocation } from "react-router";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -652,6 +653,13 @@ export default function Compare() {
   const table = function () {
     //!deMappings[datim.id] ? getMappings(datim.id) : ''
     return (
+      <div className={classes.compareRowColumn}>
+      { deloading ?
+                    <div>
+                        <LinearProgress mode="indeterminate" />
+                        <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data elements ...</div>
+                    </div> :
+                    (
       <div className={classes.compareRowColumn} key={Math.random()}>
         <ExpansionPanel className={classes.expandPanel}>
           <ExpansionPanelSummary
@@ -743,61 +751,18 @@ export default function Compare() {
           <ExpansionPanelDetails className={classes.panelDetail}>
 
 
-          {/* <div className={classes.tableContainer} key={Math.random()}>
-                             <strong>Disaggregations</strong>:<br />
-
-                           <Table className={classes.table} aria-label="simple table">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell></TableCell>
-                                  <TableCell>
-                                   <TableCell>Name</TableCell>
-                                  <TableCell>Code</TableCell>
-                                  </TableCell>
-                                  <TableCell>
-                                   <TableCell>Name</TableCell>
-                                  <TableCell>Code</TableCell>
-                                  </TableCell>
-                                 </TableRow>
-                           </TableHead>
-                               <TableBody >
-                               <TableRow><TableCell style={{width: '100px'}}></TableCell>
-                               {Object.values(de).map(datim => 
-                                <TableCell>
-                                  {(mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
-
-                                    key =>
-                                   
-                                      {Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
-                                        <TableRow key={Math.random()}>
-                                          <TableCell component="th" scope="row">
-                                            {Object(mappings[datim.id])[key].to_concept_name}
-                                          </TableCell>
-                                          <TableCell component="th" scope="row">
-                                            {Object(mappings[datim.id])[key].to_concept_code}
-                                          </TableCell>
-                                        </TableRow>
-                                      ) : ''}
-                                      
-                                  ) : ''}
-                                  </TableCell>
-                               )}
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </div> */}
-
-
           </ExpansionPanelDetails>
         </ExpansionPanel>
       </div>
+                    ) }
+                    </div>
     )
   }
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogMessage, setDialogMessage] = React.useState('');
   const [errorDisplay, setErrorDisplay] = useState(null)
   const [error, setError] = useState(null)
-
+  const [deloading, setDELoading] = useState(false);
 
   const sortJSONByKey = function (data, key, direction) {
     return data.sort(function (a, b) {
@@ -903,7 +868,7 @@ export default function Compare() {
   // render() {
 
   async function getMappings(id) {
-    //setExpanded(true);
+    setDELoading(true)
     let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
     console.log(" queryByDataElement " + queryMapping)
 
@@ -925,40 +890,41 @@ export default function Compare() {
       if (!de[id]) {
         de[id] = jsonData
       }
+      setDELoading(false)
       // if the data element has linkages, retrieve those as well
-      Object.keys(Object(deMappings[id])).map(
+      // Object.keys(Object(deMappings[id])).map(
 
-        async function (key) {
-          if (Object(deMappings[id])[key].map_type === 'Derived From') {
-            const derivationId = Object(deMappings[id])[key].to_concept_code
-            if (derivationId === id) {
-              let from_concept_url = Object(deMappings[id])[key].from_concept_url
-              if (from_concept_url.endsWith('/')) {
-                from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-              }
-              let arr = from_concept_url.split('/')
-              derivationId = arr[arr.length - 1]
-            }
-            if (!deMappings[derivationId]) {
-              queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
-              response = await fetch(queryMapping);
-              if (!response.ok) {
-                console.log(response);
-                setErrorDisplay("Failed to fetch")
-                throw new Error(
-                  `Error when retrieving data element mappings for ${derivationId} ${response.status} ${response.statusText}`
-                );
-              }
-              jsonData = await response.json()
-              sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
-              deMappings[derivationId] = sortedData
-              if (!de[derivationId]) {
-                de[derivationId] = jsonData
-              }
-            }
-          }
-        }
-      )
+      //   async function (key) {
+      //     if (Object(deMappings[id])[key].map_type === 'Derived From') {
+      //       const derivationId = Object(deMappings[id])[key].to_concept_code
+      //       if (derivationId === id) {
+      //         let from_concept_url = Object(deMappings[id])[key].from_concept_url
+      //         if (from_concept_url.endsWith('/')) {
+      //           from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+      //         }
+      //         let arr = from_concept_url.split('/')
+      //         derivationId = arr[arr.length - 1]
+      //       }
+      //       if (!deMappings[derivationId]) {
+      //         queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
+      //         response = await fetch(queryMapping);
+      //         if (!response.ok) {
+      //           console.log(response);
+      //           setErrorDisplay("Failed to fetch")
+      //           throw new Error(
+      //             `Error when retrieving data element mappings for ${derivationId} ${response.status} ${response.statusText}`
+      //           );
+      //         }
+      //         jsonData = await response.json()
+      //         sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+      //         deMappings[derivationId] = sortedData
+      //         if (!de[derivationId]) {
+      //           de[derivationId] = jsonData
+      //         }
+      //       }
+      //     }
+      //   }
+      // )
     } catch (e) {
       console.log("error:" + e.message);
       setError(e.message);

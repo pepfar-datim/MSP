@@ -518,7 +518,6 @@ export default function DataElementDetails() {
             }
             // if the data element has linkages, retrieve those as well
             await getDerivatives(id)
-            console.log("*********** getDerivatives done")
             setDELoading(false)
 
         } catch (e) {
