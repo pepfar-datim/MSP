@@ -461,7 +461,8 @@ const useStyles = makeStyles(theme => ({
     border: '2px solid #D55804',
     /*borderColor: `'#D55804' !important`,
     borderWidth: '2px',*/
-    marginTop: '15px'
+    marginTop: '10px',
+    marginLeft: '15px'
   },
   compare: {
     padding: '6px 4px',
@@ -1676,23 +1677,6 @@ export default function Codelist() {
             </Grid>}
 
             <Grid item xs={12} md={5} justifycontent="flex-end" >
-              {/* search bar */}
-              <Paper component="form" className={classes.search}>
-                <InputBase
-                  className={classes.input}
-                  placeholder="Search Indicators"
-                  inputProps={{ 'aria-label': 'search indicators' }}
-                  id="inputSearch"
-                  key="inputSearch"
-                  onKeyDown={handleKeyPress}
-                  onChange={handleSearchInputChange}
-                  value={searchInputText}
-                />
-
-                <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
             </Grid>
           </Grid>
           {/* </div> */}
@@ -1969,17 +1953,21 @@ export default function Codelist() {
               {/* dashboard, including download, compare, select all buttons */}
               <div className={classes.tabDashboard}>
                 <div>
-                  {selectedDataElement && selectedDataElement.length > 0 ?
+                <div style={{ flexDirection: 'row', display: 'flex' }} >
+                  {/* {selectedDataElement && selectedDataElement.length > 0 ?
                     <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
-                    : null}
+                    : null} */}
+                    <div>
+                      <Tooltip disableFocusListener title="Download">
+                        <i>
                   <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 ? true : false}>
-                    <ActionButtonLabel> Download Indicators</ActionButtonLabel>
+                    {/* <ActionButtonLabel> Download Indicators</ActionButtonLabel> */}
                     {
                       selectedDataElement.length === 0 ?
                         <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
                     }
-                  </Button>
+                  </Button></i></Tooltip></div>
                   {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
 Compare selected data elements
@@ -1989,17 +1977,19 @@ Compare selected data elements
                   //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
                   pathname: comparePage,
                   data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
-                }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}
-                  <Button variant="outlined" className={classes.actionButton} disabled={selectedDataElement.length < 2 ? true : false}
+                }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}<div >
+                      <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Indicators">
+                        <i >
+                  <Button variant="outlined" className={classes.actionButton} disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}
                     onClick={toggleDrawer('bottom', true)}
                     id="comparisonButton">
-                      <ActionButtonLabel> Compare Indicators</ActionButtonLabel>
+                      {/* <ActionButtonLabel> Compare Indicators</ActionButtonLabel> */}
                     {
-                      selectedDataElement.length === 0 ?
+                     selectedDataElement.length < 2 || selectedDataElement.length > 3 ?
                         <CompareArrowsIcon style={{marginLeft: '2px' }}/> : <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
                     }
                     
-                  </Button>
+                  </Button></i></Tooltip></div></div>
                   {/* </NavLink> */}
                 </div>
 
@@ -2015,9 +2005,36 @@ Compare selected data elements
                     <DialogActions>
                       <Button autoFocus onClick={handleDialogClose} color="primary">
                         OK
-          </Button>
+                      </Button>
                     </DialogActions>
                   </Dialog>
+                </div>
+
+                <div style={{ flexDirection: 'row', display: 'flex' }} >
+                  <div>
+                    <Tooltip disableFocusListener title="Select">
+                      <Checkbox variant="outlined" className={classes.actionButton} onClick={selectAll} size="large" style={{ marginLeft: '12px' }}>
+                        Select All
+                        </Checkbox>
+                    </Tooltip>
+                  </div>
+                  <div style={{ width: '400px' }}>
+                    <Paper component="form" className={classes.search}>
+                      <InputBase
+                        className={classes.input}
+                        placeholder="Search Indicators"
+                        inputProps={{ 'aria-label': 'search indicators' }}
+                        id="inputSearch"
+                        key="inputSearch"
+                        onKeyDown={handleKeyPress}
+                        onChange={handleSearchInputChange}
+                        value={searchInputText}
+                      />
+
+                      <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
+                        <SearchIcon />
+                      </IconButton>
+                    </Paper></div>
                 </div>
 
                 {/* <Button variant="outlined" className={classes.actionButton} onClick={selectAll} id="downloadButton">

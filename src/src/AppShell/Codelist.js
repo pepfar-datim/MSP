@@ -1451,12 +1451,12 @@ export default function Codelist() {
   };
 
   const performDownload = event => {
-    const baseDownloadURL = "https://test.ohie.datim.org:5000/show-msp";
+    const baseDownloadURL = "https://test.ohie.datim.org:5000/ocl-etl/msp/";
     let downloadURL = "";
     if (selectedDataElement.length > 0) {
       downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
     } else if (values.dataSet !== "All") {
-      downloadURL = baseDownloadURL + "?collection=" + collection + "&format=" + downloadValue.trim();
+      downloadURL = baseDownloadURL + collection + "?format=" + downloadValue.trim();
     }
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
@@ -2013,7 +2013,7 @@ export default function Codelist() {
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
                     : null} */}
                     <div>
-                      <Tooltip disableFocusListener title="Download Selected Data Elements">
+                      <Tooltip disableFocusListener title="Download">
                         <i>
                           <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
                             {/* <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel> */}
@@ -2024,8 +2024,8 @@ export default function Codelist() {
                           </Button></i></Tooltip></div>
                     {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
 
-Compare selected data elements
-</Button> */}
+                           Compare selected data elements
+                   </Button> */}
 
                     {/* <NavLink to={{
                   //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
@@ -2035,7 +2035,7 @@ Compare selected data elements
                     <div >
                       <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Data Elements">
                         <i >
-                          <Button variant="outlined" className={classes.actionButton} 
+                          <Button variant="outlined" className={classes.actionButton}
                             onClick={toggleDrawer('bottom', true)}
                             id="comparisonButton"
                             disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}>
@@ -2062,7 +2062,7 @@ Compare selected data elements
                     <DialogActions>
                       <Button autoFocus onClick={handleDialogClose} color="primary">
                         OK
-          </Button>
+                   </Button>
                     </DialogActions>
                   </Dialog>
                 </div>
@@ -2074,7 +2074,7 @@ Compare selected data elements
                         </Checkbox>
                     </Tooltip>
                   </div>
-                  <div style={{width: '400px'}}> 
+                  <div style={{ width: '400px' }}>
                     <Paper component="form" className={classes.search}>
                       <InputBase
                         className={classes.input}
