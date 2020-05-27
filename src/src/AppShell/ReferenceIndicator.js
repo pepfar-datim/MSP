@@ -1075,9 +1075,9 @@ return (
   
  <div className={classes.container}>
   {/* <Breadcrumb></Breadcrumb> */}
-  <div style={{height: '30px'}}></div>
-    {errorLoadIndicatorDetail!== null ? <div className={classes.errorMessage}>{errorLoadIndicatorDetail}</div> : null}
-    {errorLoadDataElement!== null ? <div className={classes.errorMessage}>{errorLoadDataElement}</div> : null}
+  <div ></div>
+    {errorLoadIndicatorDetail!== null ? <div className={classes.errorMessage} style={{marginTop: '30px'}}>{errorLoadIndicatorDetail}</div> : null}
+    {errorLoadDataElement!== null ? <div className={classes.errorMessage} style={{marginTop: '30px'}}>{errorLoadDataElement}</div> : null}
   <Grid container>
   {/* sidebar */}
   <Grid item xs={12} md={3}>      
@@ -1152,7 +1152,7 @@ return (
     currentIndicator && currentIndicator.length === 0  ? 
         <div>
            <Grid container alignItems="center" >   
-              <div>Select an indicator to view details.</div>             
+              <div style={{marginTop: '30px'}}> Select an indicator to view details.</div>             
           </Grid>
         </div>
         : 

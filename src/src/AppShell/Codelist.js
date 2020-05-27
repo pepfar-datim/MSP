@@ -1451,12 +1451,12 @@ export default function Codelist() {
   };
 
   const performDownload = event => {
-    const baseDownloadURL = "https://test.ohie.datim.org:5000/ocl-etl/msp/";
+    const baseDownloadURL = "https://test.ohie.datim.org:5000/ocl-etl/msp";
     let downloadURL = "";
     if (selectedDataElement.length > 0) {
       downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
     } else if (values.dataSet !== "All") {
-      downloadURL = baseDownloadURL + collection + "?format=" + downloadValue.trim();
+      downloadURL = baseDownloadURL + '/' + collection + "?format=" + downloadValue.trim();
     }
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
@@ -1720,21 +1720,12 @@ export default function Codelist() {
             </Grid>
           </Grid>
           {/* </div> */}
-
-
           {errorDisplay !== null ?
             <div className={classes.errorMessage}>{errorDisplay}</div>
             // <Alert severity="error">{errorDisplay}</Alert>
             : null}
-
-
-
-
-
           {/* <div className={classes.container}> */}
           <Grid container>
-
-
             {/* filters */}
             <Grid item xs={12} md={3}>
 
@@ -1807,9 +1798,6 @@ export default function Codelist() {
                               key => <option key={Math.random()} >{key}</option>
                             )
                           }
-                          {/* <option value={'2020'}>2020</option>
-                        <option value={'2019'} >2019</option>
-                        <option value={'2018'}>2018</option> */}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -1835,20 +1823,13 @@ export default function Codelist() {
                               }
 
                             }}
-
                           >
                             {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) :
                               type.map(key => <option key={Math.random()} >{key}</option>)
                             }
-
-                            {/* <option value={'SIMS'}>SIMS</option> */}
                           </Select>
                         </FormControl>
                       </Grid>
-
-
-
-
                       {/* data set filter */}
                       {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
                       <Grid item xs={12} className={classes.filter}>
@@ -1868,7 +1849,6 @@ export default function Codelist() {
                               },
                               disabled: values.source === 'PDH'
                             }}
-
                           >
                             {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
                             {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
@@ -1885,39 +1865,6 @@ export default function Codelist() {
                         </FormControl>
                       </Grid>
                     </fieldset>
-                    {/* <Grid item xs={12} className={classes.filter}>
-                    <FormControl className={classes.formControl}>
-
-                      <Table className={classes.table} aria-label="simple table">
-                        <TableBody>
-                          {(values.type === 'All') ? (<TableRow key={Math.random()}>
-                            <TableCell component="th" scope="row">
-                              All
-                                      </TableCell>
-                          </TableRow>) : ([])}
-                          {Object.values(codeListMap[values.fiscal]).map(
-
-                            key => key.includes(values.type) ? (
-                              <TableRow key={Math.random()} >
-                                <TableCell component="th" scope="row" onClick={handleTableClick}>
-                                {key} 
-                                </TableCell>
-                              </TableRow>
-                            ) : ([])
-                          )}
-
-                        </TableBody>
-                      </Table>
-
-                      {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
-                        {Object.values(codeListMap[values.fiscal]).map(
-
-                          key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
-                        )
-                        }
-
-                    </FormControl>
-                  </Grid> */}
 
                     <fieldset className={classes.fieldset}>
 
@@ -1948,7 +1895,6 @@ export default function Codelist() {
                           </Select>
                         </FormControl>
                       </Grid>
-
                       {/* indicator filter */}
                       {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
                       <Grid item xs={12} className={classes.filter} >
@@ -1978,21 +1924,6 @@ export default function Codelist() {
                       </Grid>
                     </fieldset>
                   </form>
-
-                  {/* filter functions */}
-                  {/* <Button onClick={displayAdvanced} className={classes.toggleFilters}>
-      {advanced ? 'Less Filters' : 'More Filters'}
-</Button> */}
-                  {/* <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
-       Clear Filters
-</Button> */}
-
-
-
-
-
-
-
                 </div>
 
               </Paper>
@@ -2006,8 +1937,6 @@ export default function Codelist() {
               <div className={classes.tabDashboard}>
                 <div >
                   <div style={{ flexDirection: 'row', display: 'flex' }} >
-
-
                     {/* {selectedDataElement && selectedDataElement.length > 0 ?
                     <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
@@ -2022,16 +1951,6 @@ export default function Codelist() {
                                 <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
                             }
                           </Button></i></Tooltip></div>
-                    {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
-
-                           Compare selected data elements
-                   </Button> */}
-
-                    {/* <NavLink to={{
-                  //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
-                  pathname: comparePage,
-                  data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
-                }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}
                     <div >
                       <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Data Elements">
                         <i >
@@ -2106,7 +2025,6 @@ export default function Codelist() {
                     vertical: 'top',
                     horizontal: 'center',
                   }}
-
                 >
                   {/* download popover panel */}
                   {
@@ -2161,9 +2079,6 @@ export default function Codelist() {
                   <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data elements ...</div>
                 </div> : ([])
               }
-              {/* data elements */}
-              {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
-              {/* {/* <ErrorBoundary> */}
               {dataElements.map(dataElement => (
 
                 <div key={dataElement.id}>
@@ -2203,16 +2118,7 @@ export default function Codelist() {
                           </Grid>
 
                           <Grid item xs={3}>
-                            {/* <Typography>
-                          <strong>Data Element UID</strong>: {dataElement.external_id}
-                        </Typography> */}
                           </Grid>
-                          {/* <Chip
-                            variant="outlined"
-                            size="small"
-                            label={"UID: " + dataElement.external_id}
-                          //onClick={handleClick}
-                          /></Grid> */}
                           <Grid item xs={2} md={3}>
                             <Tooltip disableFocusListener title="Click to copy UID">
                               <span className={classes.chip}
@@ -2234,9 +2140,6 @@ export default function Codelist() {
                         </Grid>
                       </ErrorBoundary>
                     </ExpansionPanelSummary>
-
-
-
                     {/* data elements details */}
                     <ExpansionPanelDetails
                       className={classes.expansionPanelDetails}
@@ -2402,101 +2305,11 @@ export default function Codelist() {
                             </Grid>
                           </TabPanel>
                           <TabPanel value={panel} index={2} className={classes.tabPanel} >
-                            {/* <Table className={classes.table} aria-label="simple table">
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>Source Data Element</TableCell>
-                                      <TableCell>Source Disaggregation</TableCell>
-                                      <TableCell>+/-</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {
-                                      (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
-                                    }
-                                    {
-                                      Object.keys(pdhDerivatives).map(
-
-                                        key =>
-                                          <TableRow key={Math.random()}>
-                                            <TableCell component="th" scope="row" rowSpan={pdhDerivatives[key].size}>
-                                              {key}
-                                            </TableCell>
-                                            <TableCell>
-                                              {Object.keys(pdhDerivatives[key]).map(dissags =>
-                                                <TableRow key={Math.random()}>
-                                                  <TableCell component="th" scope="row" width="300">
-                                                    {pdhDerivatives[key][dissags].substring(0, pdhDerivatives[key][dissags].length - 1)}
-                                                  </TableCell>
-                                                </TableRow>
-                                              )}
-                                            </TableCell>
-                                            <TableCell>
-                                              {Object.keys(pdhDerivatives[key]).map(dissags =>
-                                                <TableRow key={Math.random()}>
-                                                  <TableCell component="th" scope="row" align="right">
-                                                    {(pdhDerivatives[key][dissags].substring(pdhDerivatives[key][dissags].length - 1, pdhDerivatives[key][dissags].length)) == 1 ? '+' : '-'}
-                                                  </TableCell>
-                                                </TableRow>
-                                              )}
-                                            </TableCell>
-                                          </TableRow>
-
-                                      )
-                                    }
-                                  </TableBody>
-                                </Table> */}
-                            {/* {pdhDerivatives = []} */}
+                            
                             {
                               (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
                             }
-                            {/* <TableHead>
-                                    <TableRow>
-                                    <TableCell>Derived Disaggregate</TableCell>
-                                      <TableCell>Source Data Element</TableCell>
-                                      <TableCell>Source Disaggregation</TableCell>
-                                      <TableCell>+/-</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                  {
-                                      Object.keys(derivedCoC).map(
-                                        key =>
-                                        <TableRow key={Math.random()}>
-                                            <TableCell component="th" scope="row" rowSpan={derivedCoC[key].size}>
-                                              {key}
-                                            </TableCell>
-                                            {Object.values(derivedCoC[key]).map(
-                                              value =>
-                                            <TableRow>
-                                            <TableCell component="th" scope="row" rowSpan={pdhDerivatives[value].size}>
-                                              {value}
-                                            </TableCell>
-                                            <TableCell>
-                                              {Object.keys(pdhDerivatives[value]).map(dissags =>
-                                                <TableRow key={Math.random()}>
-                                                  <TableCell component="th" scope="row" width="300">
-                                                    {pdhDerivatives[value][dissags].split('|')[0]}
-                                                  </TableCell>
-                                                </TableRow>
-                                              )}
-                                            </TableCell>
-                                            <TableCell>
-                                              {Object.keys(pdhDerivatives[value]).map(dissags =>
-                                                <TableRow key={Math.random()}>
-                                                  <TableCell component="th" scope="row" align="right">
-                                                    {(pdhDerivatives[value][dissags].split('|')[1]) == 1 ? '+' : '-'}
-                                                  </TableCell>
-                                                </TableRow>
-                                              )}
-                                            </TableCell>
-                                            </TableRow>
-                                           
-                                            )}
- </TableRow>
-                                      )
-                                    }
-                                    </TableBody> */}
+                            
                             <Grid container alignItems="center" justify="space-between">
                               <Grid item xs={6}></Grid>
                               <Grid item xs={3}></Grid>
@@ -2562,10 +2375,6 @@ export default function Codelist() {
                     <TablePagination
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       labelDisplayedRows={({ from, to, count }) => `Displaying rows ${from}-${to} of ${count}`}
-                      // page={0}
-                      // rowsPerPage={10}
-                      // count={100}
-                      // onChangePage={() => {}}
                       count={count}
                       rowsPerPage={rowsPerPage}
                       page={page}
@@ -2692,11 +2501,6 @@ export default function Codelist() {
                                       </TableRow>
                                     </TableBody>
                                   </Table>
-
-                                  {/* <div className={`${classes.heroContainer} ${classes.compareRowColumn}`}>
-                                Description: {(datim.descriptions) ? datim.descriptions[0].description : "Not Available"}<br />
-
-                              </div> */}
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails className={classes.panelDetail}>
 
@@ -2754,28 +2558,12 @@ export default function Codelist() {
               <Drawer anchor="bottom" open={detailPanel.bottom} onClose={toggleDetailDrawer('bottom', false)}>
                 <Grid container className={classes.comparePanelContainer} justify="space-between">
                   {setShowLinked(false)}
-                  {/* <div className={classes.fixedTop}> */}
-
-                  {/* <Grid container alignItems="center" justify="space-between"> */}
                   <Grid item xs={6}  >
                     <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
                   </Grid>
                   <Grid item xs={6}  >
                     <CloseIcon onClick={toggleDetailDrawer(dataElementDetail, 'bottom', false)} className={classes.closeComparePanel}>add_circle</CloseIcon>
                   </Grid>
-                  {/* </Grid> */}
-                  {/* comparison panel title */}
-                  {/* <Dialog fullScreen open={detailsOpen} onClose={handleDetailsClose} 
-                          TransitionComponent={Transition}
-                          >
-                            <AppBar className={classes.detailsDialogBar}>
-                              <Toolbar>
-                                <IconButton edge="start" color="inherit" onClick={handleDetailsClose} aria-label="close">
-                                  <CloseIcon />
-                                </IconButton>
-                              </Toolbar>
-                              </AppBar> */}
-                  {/* <Grid container alignItems="center" justify="space-between"> */}
                   <Grid item xs={6}  >
                     {dataElementDetail ?
                       <Table className={classes.comboTable} style={{ marginRight: '20px' }} aria-label="simple table">
@@ -2792,14 +2580,6 @@ export default function Codelist() {
                             <TableCell><strong>Description</strong></TableCell>
                             <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "--"}</TableCell>
                           </TableRow>
-                          {/* <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{dataElement.id ? (dataElement.id) : '--'}</TableCell>
-                              </TableRow> */}
-                          {/* <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : '--'}</TableCell>
-                              </TableRow> */}
                           <TableRow>
                             <TableCell><strong>Data Type</strong></TableCell>
                             <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : '--'}</TableCell>
@@ -2889,9 +2669,6 @@ export default function Codelist() {
                       {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''}
                     </div>
                     <div>
-                      {/* {dataElementDetail ? (
-                            (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
-                              key =>  */}
                       <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
                         <TableBody>
 
