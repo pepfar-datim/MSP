@@ -17,6 +17,7 @@
     "material-ui-flat-pagination": "^4.0.0",
     "material-ui-next-responsive-table": "^0.5.1",
     "micromatch": "^4.0.2",
+    "module": "^1.2.5",
     "mui-datatables": "^2.0.0",
     "node-sass": "^4.13.1",
     "react": "^16.8.6",

@@ -60,7 +60,8 @@ import history from './../history';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import styled from 'styled-components';
-import DataElementDetail from './DataElementDetail';
+import MenuItem from '@material-ui/core/MenuItem';
+import { TiArrowSortedDown } from 'react-icons/ti';
 
 //tab panel function
 function TabPanel(props) {
@@ -175,8 +176,8 @@ const useStyles = makeStyles(theme => ({
 
   },
   popOver: {
-    padding: '20px',
-    minWidth: '200px'
+    padding: '20px'
+    // minWidth: '200px'
   },
   fieldset: {
     borderRadius: '25px',
@@ -1411,6 +1412,7 @@ export default function Codelist() {
       })
 
       setSelectedDataElement(tempDataElement);
+      setChecked(true);
     } else {
       setSelectedDataElement([]);
     }
@@ -1424,7 +1426,7 @@ export default function Codelist() {
     setDropDownName(buttonName);
 
   };
-
+  // set export popup
   function exportMenu(buttonName, id, source, type) {
     event = event || window.event;
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -1432,6 +1434,11 @@ export default function Codelist() {
     setExportDataElement(id)
     setExportSource(source)
     setExportType(type)
+  };
+  //set select popup
+  const selectMenu = buttonName => event => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+    setDropDownName(buttonName);
 
   };
   const popOpen = Boolean(anchorEl);
@@ -1498,7 +1505,7 @@ export default function Codelist() {
     }, 10000);
   }
 
-  const clearSelectedDataElements = event => {
+  const clearAll = event => {
     setSelectedDataElement([]);
     selectDataTemp = {}
   }
@@ -1944,7 +1951,7 @@ export default function Codelist() {
                     <div>
                       <Tooltip disableFocusListener title="Download">
                         <i>
-                          <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                          <Button variant="outlined" className={classes.actionButton} style={{height:'48px', width:'80px', marginBottom: '10px'}} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
                             {/* <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel> */}
                             {
                               selectedDataElement.length === 0 && values.dataSet === "All" ?
@@ -1954,7 +1961,7 @@ export default function Codelist() {
                     <div >
                       <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Data Elements">
                         <i >
-                          <Button variant="outlined" className={classes.actionButton}
+                          <Button variant="outlined" className={classes.actionButton} style={{height:'48px', width:'80px', marginBottom: '10px'}}
                             onClick={toggleDrawer('bottom', true)}
                             id="comparisonButton"
                             disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}>
@@ -1987,13 +1994,34 @@ export default function Codelist() {
                 </div>
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
                   <div>
+
                     <Tooltip disableFocusListener title="Select">
-                      <Checkbox variant="outlined" className={classes.actionButton} onClick={selectAll} size="large" style={{ marginLeft: '12px' }}>
-                        Select All
-                        </Checkbox>
+                      <Button  style={{marginTop:'10px'}}>
+                        {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll} 
+                        style={{padding:'5px', marginLeft:'10px'}}/> : ''}
+                        {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
+                          <Checkbox
+                            defaultChecked
+                            indeterminate
+                            inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                            onClick={clearAll}
+                            style={{padding:'5px', marginLeft:'10px'}}
+                          /> : ''}
+                        {selectedDataElement.length == dataElements.length ? <Checkbox
+                          checked={checked}
+                          onChange={handleChange}
+                          inputProps={{ 'aria-label': 'primary checkbox' }}
+                          onClick={selectAll}
+                          style={{padding:'5px', marginLeft:'10px'}}
+                        /> : ''}
+
+                        <TiArrowSortedDown onClick={selectMenu('select')} />
+
+                      </Button>
                     </Tooltip>
+
                   </div>
-                  <div style={{ width: '400px' }}>
+                  <div style={{ width: '500px' }}>
                     <Paper component="form" className={classes.search}>
                       <InputBase
                         className={classes.input}
@@ -2043,26 +2071,33 @@ export default function Codelist() {
                         </Button>
                         </FormGroup>
                       </FormControl> :
-                      <FormControl component="fieldset" className={classes.popOver}>
-                        <FormGroup>
-                          {exportSource === 'DATIM' ?
-                            <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
-                          {exportSource === 'DATIM' ?
+                      dropDownName === "export" ?
+                        <FormControl component="fieldset" className={classes.popOver}>
+                          <FormGroup>
+                            {exportSource === 'DATIM' ?
+                              <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
+                            {exportSource === 'DATIM' ?
+                              <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                                <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                                <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                                <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                              </RadioGroup> : ''}
+                            <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
                             <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
-                            </RadioGroup> : ''}
-                          <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
-                          <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
-                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
-                          </RadioGroup>
-                          <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                            Download DATA
+                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                            </RadioGroup>
+                            <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                              Download DATA
                       </Button>
-                        </FormGroup>
-                      </FormControl>
+                          </FormGroup>
+                        </FormControl> :
+                        <FormControl component="fieldset" className={classes.popOver}>
+                          <FormGroup>
+                            <MenuItem value="All" onClick={selectAll}>All</MenuItem>
+                            <MenuItem value="None" onClick={clearAll}>None</MenuItem>
+                          </FormGroup>
+                        </FormControl>
 
                   }
 
@@ -2305,11 +2340,11 @@ export default function Codelist() {
                             </Grid>
                           </TabPanel>
                           <TabPanel value={panel} index={2} className={classes.tabPanel} >
-                            
+
                             {
                               (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
                             }
-                            
+
                             <Grid container alignItems="center" justify="space-between">
                               <Grid item xs={6}></Grid>
                               <Grid item xs={3}></Grid>
