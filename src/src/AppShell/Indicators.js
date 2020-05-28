@@ -58,6 +58,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import styled from 'styled-components';
+import MenuItem from '@material-ui/core/MenuItem';
+import { TiArrowSortedDown } from 'react-icons/ti';
 
 //tab panel function
 function TabPanel(props) {
@@ -167,7 +169,7 @@ const useStyles = makeStyles(theme => ({
   },
   popOver: {
     padding: '20px',
-    minWidth: '200px'
+    //minWidth: '200px'
   },
   fieldset: {
     borderRadius: '25px',
@@ -274,11 +276,11 @@ const useStyles = makeStyles(theme => ({
 
   },
   chip: {
-    marginTop: '5px', 
-    color: '#333333' ,
-   /* backgroundColor: '#ffffff',*/
+    marginTop: '5px',
+    color: '#333333',
+    /* backgroundColor: '#ffffff',*/
     fontSize: '12px'
-    },
+  },
   sidebarTitle: {
     textAlign: 'center',
     padding: '1em',
@@ -671,63 +673,63 @@ export default function Codelist() {
   const loadDataElementsByPeriod = async () => {
     setDELoading(true)
     //if (values.type === "All") {
-      //setDataElementsData([]);
-      //setCountOfValues(0);
-      try {
-        const response = [];
-        let queryToRun = ""
-        if (values.denom === 'All') {
-          if (values.datatype === 'All') {
-            queryToRun = queryAllIndicators
-          } else {
-            queryToRun = queryByDataType
-          }
-          console.log(" queryByDataType " + queryToRun)
+    //setDataElementsData([]);
+    //setCountOfValues(0);
+    try {
+      const response = [];
+      let queryToRun = ""
+      if (values.denom === 'All') {
+        if (values.datatype === 'All') {
+          queryToRun = queryAllIndicators
+        } else {
+          queryToRun = queryByDataType
         }
-        else {
-
-          queryToRun = queryByDenom
-          console.log(" queryByDenom " + queryByDenom)
-        }
-        response = await fetch(queryToRun);
-        if (!response.ok) {
-          console.log(response);
-          setDataElementsData([]);
-          setCountOfValues(0);
-          setErrorDisplay("Failed to fetch");
-          setDELoading(false)
-          throw new Error(
-            `Error when retrieving data elements: ${response.status} ${response.statusText}`
-          );
-        }
-        const jsonData = await response.json();
-        if (!jsonData.length || jsonData.length === 0) {
-          console.log("jsonData is empty");
-          setDataElementsData([]);
-          setCountOfValues(0);
-          setDELoading(false)
-          throw new Error(
-            `There is no data for this selection. `
-          );
-        }
-        setDELoading(false)
-        setErrorDisplay(null);
-        var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
-
-        //filter by default filters
-
-        const temp = [];
-        setDataElementsData(sortedData);
-        setCountOfValues(parseInt(response.headers.get('num_found')));
-        console.log(jsonData.length + " dataElements.length ")
-        console.log(response.headers.get('num_found') + " results found ")
-        console.log(response.headers.get('num_returned') + " results returned ")
-      } catch (e) {
-        setDELoading(false)
-        console.log("error:" + e.message);
-        setError(e.message);
-        setErrorDisplay(e.message);
+        console.log(" queryByDataType " + queryToRun)
       }
+      else {
+
+        queryToRun = queryByDenom
+        console.log(" queryByDenom " + queryByDenom)
+      }
+      response = await fetch(queryToRun);
+      if (!response.ok) {
+        console.log(response);
+        setDataElementsData([]);
+        setCountOfValues(0);
+        setErrorDisplay("Failed to fetch");
+        setDELoading(false)
+        throw new Error(
+          `Error when retrieving data elements: ${response.status} ${response.statusText}`
+        );
+      }
+      const jsonData = await response.json();
+      if (!jsonData.length || jsonData.length === 0) {
+        console.log("jsonData is empty");
+        setDataElementsData([]);
+        setCountOfValues(0);
+        setDELoading(false)
+        throw new Error(
+          `There is no data for this selection. `
+        );
+      }
+      setDELoading(false)
+      setErrorDisplay(null);
+      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+
+      //filter by default filters
+
+      const temp = [];
+      setDataElementsData(sortedData);
+      setCountOfValues(parseInt(response.headers.get('num_found')));
+      console.log(jsonData.length + " dataElements.length ")
+      console.log(response.headers.get('num_found') + " results found ")
+      console.log(response.headers.get('num_returned') + " results returned ")
+    } catch (e) {
+      setDELoading(false)
+      console.log("error:" + e.message);
+      setError(e.message);
+      setErrorDisplay(e.message);
+    }
     //}
   }
 
@@ -1023,7 +1025,7 @@ export default function Codelist() {
 
     let compareLink = ''
     if (!dataElementToCompare) {
-        compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + compareText + '&indicatorDetail=true'
+      compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + compareText + '&indicatorDetail=true'
 
     } else {
       compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&indicatorDetail=true'
@@ -1110,12 +1112,12 @@ export default function Codelist() {
     if (values.denom === "All") {
       setDatatype("")
     }
-    else if(values.denom === "Yes"){
+    else if (values.denom === "Yes") {
       setDatatype('"Percentage"+OR+"Ratio"')
-      }
-      else{
-        setDatatype("Number")
-      }
+    }
+    else {
+      setDatatype("Number")
+    }
     console.log(" displaying " + dataElements.length + " results")
   }, [values.denom]);
 
@@ -1357,6 +1359,7 @@ export default function Codelist() {
       })
 
       setSelectedDataElement(tempDataElement);
+      setChecked(true);
     } else {
       setSelectedDataElement([]);
     }
@@ -1371,14 +1374,12 @@ export default function Codelist() {
 
 
   };
-  // function exportMenu(buttonName, id, type) {
-  //   event = event || window.event;
-  //   setAnchorEl(anchorEl ? null : event.currentTarget);
-  //   setDropDownName(buttonName);
-  //   setExportDataElement(id)
-  //   setExportType(type)
+ //set select popup
+ const selectMenu = buttonName => event => {
+  setAnchorEl(anchorEl ? null : event.currentTarget);
+  setDropDownName(buttonName);
 
-  // }; 
+};
   const popOpen = Boolean(anchorEl);
   const popId = popOpen ? 'popover' : undefined;
   const popHandleClose = () => {
@@ -1396,13 +1397,14 @@ export default function Codelist() {
       let UIDs = ''
       Object.values(selectedDataElement).map(value => {
         console.log(value)
-        UIDs = UIDs + '"' + value + '"OR'}
+        UIDs = UIDs + '"' + value + '"OR'
+      }
       )
       UIDs = UIDs.substring(0, UIDs.length - 2)
       downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
     }
     else {
-        downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
+      downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
     }
     console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');
@@ -1444,7 +1446,7 @@ export default function Codelist() {
     }, 10000);
   }
 
-  const clearSelectedDataElements = event => {
+  const clearAll = event => {
     setSelectedDataElement([]);
     selectDataTemp = {}
   }
@@ -1546,10 +1548,10 @@ export default function Codelist() {
   getCompareLabel
   function getDownloadLabel() {
     let downloadLabel = "Download";
-      if (selectedDataElement.length > 0) {
-        downloadLabel = "Download Selected Indicators";
-      }
-     else {
+    if (selectedDataElement.length > 0) {
+      downloadLabel = "Download Selected Indicators";
+    }
+    else {
       downloadLabel = "Download Indicators"
     }
     return downloadLabel;
@@ -1557,10 +1559,10 @@ export default function Codelist() {
 
   function getCompareLabel() {
     let downloadLabel = "Compare";
-      if (selectedDataElement.length > 0) {
-        downloadLabel = "Compare Selected Indicators";
-      }
-     else {
+    if (selectedDataElement.length > 0) {
+      downloadLabel = "Compare Selected Indicators";
+    }
+    else {
       downloadLabel = "Compare Indicators"
     }
     return downloadLabel;
@@ -1733,8 +1735,8 @@ export default function Codelist() {
 
                         >
                           <option value={'All'}>All</option>
-                          <option value={'Number'}>Number</option> 
-                        <option value={'Ratio'}>Ratio</option>
+                          <option value={'Number'}>Number</option>
+                          <option value={'Ratio'}>Ratio</option>
                           <option value={'Percentage'} >Percentage</option>
                           {/* <option value={'MOH'} disabled>MOH</option> */}
                         </Select>
@@ -1760,17 +1762,17 @@ export default function Codelist() {
                           }}
 
                         >
-                           <option value={"All"}>All</option>
+                          <option value={"All"}>All</option>
                           <option value={'Yes'}>Yes</option>
-                        <option value={'No'} >No</option>
+                          <option value={'No'} >No</option>
                         </Select>
                       </FormControl>
                     </Grid>
 
 
                     {/* <fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}> */}
-                      {/* type filter */}
-                      {/* <Grid item xs={12} className={classes.filter}  >
+                    {/* type filter */}
+                    {/* <Grid item xs={12} className={classes.filter}  >
                         <FormControl className={classes.formControl}>
 
                           <InputLabel htmlFor="type">Type</InputLabel>
@@ -1793,17 +1795,17 @@ export default function Codelist() {
                               type.map(key => <option key={Math.random()} >{key}</option>)
                             } */}
 
-                            {/* <option value={'SIMS'}>SIMS</option> */}
-                          {/* </Select>
+                    {/* <option value={'SIMS'}>SIMS</option> */}
+                    {/* </Select>
                         </FormControl>
                       </Grid> */}
 
 
 
 
-                      {/* data set filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
-                      {/* <Grid item xs={12} className={classes.filter}>
+                    {/* data set filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
+                    {/* <Grid item xs={12} className={classes.filter}>
                         <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
                           <InputLabel htmlFor="dataSet">Code List</InputLabel>
                           <Select
@@ -1871,9 +1873,9 @@ export default function Codelist() {
 
                     {/* <fieldset className={classes.fieldset}> */}
 
-                      {/* frequency filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
-                      {/* <Grid item xs={12} className={classes.filter} >
+                    {/* frequency filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    {/* <Grid item xs={12} className={classes.filter} >
                         <FormControl className={classes.formControl}>
                           <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
                           <Select
@@ -1899,9 +1901,9 @@ export default function Codelist() {
                         </FormControl>
                       </Grid> */}
 
-                      {/* indicator filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
-                      {/* <Grid item xs={12} className={classes.filter} >
+                    {/* indicator filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    {/* <Grid item xs={12} className={classes.filter} >
                         <FormControl className={classes.formControl}>
                           <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
                           <Select
@@ -1953,43 +1955,35 @@ export default function Codelist() {
               {/* dashboard, including download, compare, select all buttons */}
               <div className={classes.tabDashboard}>
                 <div>
-                <div style={{ flexDirection: 'row', display: 'flex' }} >
-                  {/* {selectedDataElement && selectedDataElement.length > 0 ?
+                  <div style={{ flexDirection: 'row', display: 'flex' }} >
+                    {/* {selectedDataElement && selectedDataElement.length > 0 ?
                     <Button variant="outlined" className={classes.actionButton} onClick={clearSelectedDataElements} id="clearDataElementButton">
                       <ActionButtonLabel> Clear Selection   <span style={{ background: '#D3D3D3', marginLeft: '2px', paddingLeft: '5px', paddingRight: '5px', borderRadius: '5px' }}> {selectedDataElement.length}</span></ActionButtonLabel></Button>
                     : null} */}
                     <div>
                       <Tooltip disableFocusListener title="Download">
                         <i>
-                  <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 ? true : false}>
-                    {/* <ActionButtonLabel> Download Indicators</ActionButtonLabel> */}
-                    {
-                      selectedDataElement.length === 0 ?
-                        <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
-                    }
-                  </Button></i></Tooltip></div>
-                  {/* <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("compare")} id="comparisonButton">
-
-Compare selected data elements
-</Button> */}
-
-                  {/* <NavLink to={{
-                  //pathname: (selectedDataElement.length < 2 || selectedDataElement.length > 3)? comparePage : "/compare",
-                  pathname: comparePage,
-                  data: { 'deMappings': deMappings, 'selectedDatim': selectedDatim } // your data array of objects
-                }} activeClassName="sidebarActive" className={classes.buttonNav} onClick={toggleDrawer('bottom', true)}> */}<div >
+                          <Button variant="outlined" className={classes.actionButton} onClick={dropDownMenu("download")} id="downloadButton"
+                           disabled={selectedDataElement.length === 0 ? true : false} style={{height:'48px', width:'80px', marginBottom: '10px'}}>
+                            {/* <ActionButtonLabel> Download Indicators</ActionButtonLabel> */}
+                            {
+                              selectedDataElement.length === 0 ?
+                                <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893' }} />
+                            }
+                          </Button></i></Tooltip></div>
+                          <div >
                       <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Indicators">
                         <i >
-                  <Button variant="outlined" className={classes.actionButton} disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}
-                    onClick={toggleDrawer('bottom', true)}
-                    id="comparisonButton">
-                      {/* <ActionButtonLabel> Compare Indicators</ActionButtonLabel> */}
-                    {
-                     selectedDataElement.length < 2 || selectedDataElement.length > 3 ?
-                        <CompareArrowsIcon style={{marginLeft: '2px' }}/> : <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
-                    }
-                    
-                  </Button></i></Tooltip></div></div>
+                          <Button variant="outlined" className={classes.actionButton} disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}
+                            onClick={toggleDrawer('bottom', true)}
+                            id="comparisonButton" style={{height:'48px', width:'80px', marginBottom: '10px'}}>
+                            {/* <ActionButtonLabel> Compare Indicators</ActionButtonLabel> */}
+                            {
+                              selectedDataElement.length < 2 || selectedDataElement.length > 3 ?
+                                <CompareArrowsIcon style={{ marginLeft: '2px' }} /> : <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                            }
+
+                          </Button></i></Tooltip></div></div>
                   {/* </NavLink> */}
                 </div>
 
@@ -2012,13 +2006,34 @@ Compare selected data elements
 
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
                   <div>
+
                     <Tooltip disableFocusListener title="Select">
-                      <Checkbox variant="outlined" className={classes.actionButton} onClick={selectAll} size="large" style={{ marginLeft: '12px' }}>
-                        Select All
-                        </Checkbox>
+                      <Button style={{ marginTop: '10px' }}>
+                        {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
+                          style={{ padding: '5px', marginLeft: '10px' }} /> : ''}
+                        {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
+                          <Checkbox
+                            defaultChecked
+                            indeterminate
+                            inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                            onClick={clearAll}
+                            style={{ padding: '5px', marginLeft: '10px' }}
+                          /> : ''}
+                        {selectedDataElement.length == dataElements.length ? <Checkbox
+                          checked={checked}
+                          onChange={handleChange}
+                          inputProps={{ 'aria-label': 'primary checkbox' }}
+                          onClick={selectAll}
+                          style={{ padding: '5px', marginLeft: '10px' }}
+                        /> : ''}
+
+                        <TiArrowSortedDown onClick={selectMenu('select')} />
+
+                      </Button>
                     </Tooltip>
+
                   </div>
-                  <div style={{ width: '400px' }}>
+                  <div style={{ width: '500px' }}>
                     <Paper component="form" className={classes.search}>
                       <InputBase
                         className={classes.input}
@@ -2063,12 +2078,12 @@ Compare selected data elements
                     dropDownName === "download" ?
                       <FormControl component="fieldset" className={classes.popOver}>
                         <FormGroup>
-                            <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
-                            <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
-                              <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
-                            </RadioGroup>
+                          <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                          <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
+                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                            <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                          </RadioGroup>
                           <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
                           <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
                             <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
@@ -2079,31 +2094,13 @@ Compare selected data elements
                         </FormGroup>
                       </FormControl> :
 
-                      //  compare popover panel
+                      //  select popover panel
                       <FormControl component="fieldset" className={classes.popOver}>
-
-                        <FormGroup>
-
-                          <FormLabel component="legend" className={classes.formLegend}>Data Sources</FormLabel>
-                          <FormControlLabel
-                            control={<Checkbox checked={DATIM} style={{ color: '#D55804' }} onChange={handleCompareChange('DATIM')} value="DATIM" />}
-                            label="DATIM" disabled
-                          />
-                          <FormControlLabel
-                            control={<Checkbox checked={PDH} style={{ color: '#D55804' }} onChange={handleCompareChange('PDH')} value="PDH" />}
-                            label="PDH"
-                          />
-                          <FormControlLabel
-                            control={
-                              <Checkbox checked={MOH} style={{ color: '#D55804' }} onChange={handleCompareChange('MOH')} value="MOH" />
-                            }
-                            label="MOH"
-                          />
-                          <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={toggleDrawer('bottom', true)} >
-                            COMPARE SOURCES
-         </Button>
-                        </FormGroup>
-                      </FormControl>
+                          <FormGroup>
+                            <MenuItem value="All" onClick={selectAll}>All</MenuItem>
+                            <MenuItem value="None" onClick={clearAll}>None</MenuItem>
+                          </FormGroup>
+                        </FormControl>
 
                   }
 
@@ -2176,17 +2173,17 @@ Compare selected data elements
                           /></Grid> */}
                           <Grid item xs={2} md={3}>
                             <Tooltip disableFocusListener title="Click to copy UID">
-                            <span className={classes.chip}
+                              <span className={classes.chip}
                                 onClick={() => copyToClipboard(dataElement.id)}
                               >{"UID: " + dataElement.id}</span>
                             </Tooltip>
                           </Grid>
                           <Grid item xs={2} md={3} >
-                          <span className={classes.chip}
-                              >{"Source: DATIM"}</span></Grid>
+                            <span className={classes.chip}
+                            >{"Source: DATIM"}</span></Grid>
                           <Grid item xs={2} md={3}>
-                          <span className={classes.chip}
-                              >{"Type: " + dataElement.concept_class}</span></Grid>
+                            <span className={classes.chip}
+                            >{"Type: " + dataElement.concept_class}</span></Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
                       </ErrorBoundary>
@@ -2206,21 +2203,21 @@ Compare selected data elements
                         </Grid>
                         <Grid item xs={12} className={classes.expansionPanelLeft}>
                           <strong>Indicator Groups: </strong> {
-                                          dataElement.extras.indicatorGroups ? (dataElement.extras.indicatorGroups.length > 0 ? (Object.values(dataElement.extras.indicatorGroups).map(
+                            dataElement.extras.indicatorGroups ? (dataElement.extras.indicatorGroups.length > 0 ? (Object.values(dataElement.extras.indicatorGroups).map(
 
-                                            value =>
+                              value =>
 
-                                              value.name + ", "
+                                value.name + ", "
 
-                                          )
-                                          ) : '--') : '--'
-                                        }
-                                        <br></br><br></br>
-                           <strong>Data Type: </strong> {dataElement.datatype ? dataElement.datatype : '--'}
-                           <br></br><br></br>
-                           <strong>Numerator Description: </strong> {dataElement.extras.numeratorDescription ? dataElement.extras.numeratorDescription : '--'}
-                           <br></br><br></br>
-                           <strong>Denominator Description: </strong> {dataElement.extras.denominatorDescription ? dataElement.extras.denominatorDescription : '--'}
+                            )
+                            ) : '--') : '--'
+                          }
+                          <br></br><br></br>
+                          <strong>Data Type: </strong> {dataElement.datatype ? dataElement.datatype : '--'}
+                          <br></br><br></br>
+                          <strong>Numerator Description: </strong> {dataElement.extras.numeratorDescription ? dataElement.extras.numeratorDescription : '--'}
+                          <br></br><br></br>
+                          <strong>Denominator Description: </strong> {dataElement.extras.denominatorDescription ? dataElement.extras.denominatorDescription : '--'}
                         </Grid>
 
                         <Grid item xs={12} className={classes.expansionPanelLeft}>
@@ -2262,11 +2259,11 @@ Compare selected data elements
                                 <div className={classes.tableContainer}>
                                   <strong>Numerator: </strong>
                                   {
-                                  checked ? dataElement.extras.numerator : dataElement.extras.numeratorReadableFormula
+                                    checked ? dataElement.extras.numerator : dataElement.extras.numeratorReadableFormula
                                   }<br></br><br></br>
                                   <strong>Denominator: </strong>
                                   {
-                                  checked ? dataElement.extras.denominator : dataElement.extras.denominatorReadableFormula
+                                    checked ? dataElement.extras.denominator : dataElement.extras.denominatorReadableFormula
                                   }
                                 </div></Grid>
                               <Grid item xs={3} >
@@ -2865,143 +2862,143 @@ Compare selected data elements
                           <TableRow>
                             <TableCell><strong>Indicator Groups</strong></TableCell>
                             <TableCell>
-                            {
-                                          dataElementDetail.extras.indicatorGroups ? (dataElementDetail.extras.indicatorGroups.length > 0 ? (Object.values(dataElementDetail.extras.indicatorGroups).map(
+                              {
+                                dataElementDetail.extras.indicatorGroups ? (dataElementDetail.extras.indicatorGroups.length > 0 ? (Object.values(dataElementDetail.extras.indicatorGroups).map(
 
-                                            value =>
+                                  value =>
 
-                                              value.name + ", "
+                                    value.name + ", "
 
-                                          )
-                                          ) : '--') : '--'
-                                        }
-                              </TableCell>
+                                )
+                                ) : '--') : '--'
+                              }
+                            </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table> : ''}
                   </Grid>
                   {/* <Grid item xs={6}  > */}
                   <ErrorBoundary>
-                  <Grid item xs={6}  >
-                    <div>
-                      <div className={classes.heroContainer}>
-                        <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
-                        <div>
-                          <GridList cellHeight={60} className={classes.gridList} cols={2}>
-                            <GridListTile >
-                              <Paper component="form" className={classes.compare}>
-                                <InputBase
-                                  className={classes.input}
-                                  //inputProps={{ 'aria-label': 'search data elements' }}
-                                  id="compareSearch"
-                                  key="compareSearch"
-                                  onKeyDown={handleKeyPressCompare}
-                                  onChange={handleCompareInputChange}
-                                  value={compareInputText}
-                                />
-                              </Paper>
-                            </GridListTile>
-                            {/* </Grid>
+                    <Grid item xs={6}  >
+                      <div>
+                        <div className={classes.heroContainer}>
+                          <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
+                          <div>
+                            <GridList cellHeight={60} className={classes.gridList} cols={2}>
+                              <GridListTile >
+                                <Paper component="form" className={classes.compare}>
+                                  <InputBase
+                                    className={classes.input}
+                                    //inputProps={{ 'aria-label': 'search data elements' }}
+                                    id="compareSearch"
+                                    key="compareSearch"
+                                    onKeyDown={handleKeyPressCompare}
+                                    onChange={handleCompareInputChange}
+                                    value={compareInputText}
+                                  />
+                                </Paper>
+                              </GridListTile>
+                              {/* </Grid>
                     <Grid item xs={3}  > */}
-                            <GridListTile>
-                              <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
-                                COMPARE
+                              <GridListTile>
+                                <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
+                                  COMPARE
                             </Button>
-                            </GridListTile>
-                          </GridList>
-                          <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter an Indicator UID</i></div>
+                              </GridListTile>
+                            </GridList>
+                            <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter an Indicator UID</i></div>
+                          </div>
+
                         </div>
-
+                        <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div>
                       </div>
-                      <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div>
-                    </div>
-                    <div>
-                      <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
-                        <TableBody>
-                          <TableRow>
-                            <TableCell><strong>Linked Resources</strong></TableCell>
-                            <TableCell></TableCell>
-                          </TableRow>
+                      <div>
+                        <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
+                          <TableBody>
+                            <TableRow>
+                              <TableCell><strong>Linked Resources</strong></TableCell>
+                              <TableCell></TableCell>
+                            </TableRow>
 
-                          {dataElementDetail ? (
-                            (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
+                            {dataElementDetail ? (
+                              (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
-                              function (key) {
-                                if (deMappings[dataElementDetail.id][key].map_type === "Derived From") {
-                                  let name = ''
-                                  let code = ''
-                                  let source = ''
-                                  let type = ''
-                                  if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
-                                    name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
-                                    code = deMappings[dataElementDetail.id][key].to_concept_code
-                                    source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
-                                    type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
-                                  }
-                                  else {
-                                    let from_concept_url = deMappings[dataElementDetail.id][key].from_concept_url
-                                    if (from_concept_url.endsWith('/')) {
-                                      from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                function (key) {
+                                  if (deMappings[dataElementDetail.id][key].map_type === "Derived From") {
+                                    let name = ''
+                                    let code = ''
+                                    let source = ''
+                                    let type = ''
+                                    if (deMappings[dataElementDetail.id][key].to_concept_code !== dataElementDetail.id) {
+                                      name = Object(deMappings[dataElementDetail.id])[key].to_concept_name
+                                      code = deMappings[dataElementDetail.id][key].to_concept_code
+                                      source = de[deMappings[dataElementDetail.id][key].to_concept_code].extras.source
+                                      type = de[deMappings[dataElementDetail.id][key].to_concept_code].concept_class
                                     }
-                                    let arr = from_concept_url.split('/')
-                                    let derivationId = arr[arr.length - 1]
-                                    name = de[derivationId].display_name
-                                    code = de[derivationId].id
-                                    source = de[derivationId].extras.source
-                                    type = de[derivationId].concept_class
-                                    console.log(name + code + source + type)
-                                  }
-                                  return (
-                                    <TableRow>
-                                      <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
-                                        <Grid container alignItems="center"
-                                          //justify="space-between"
-                                          spacing={2}>
-                                          <Grid item xs={12}  >
-                                            {name}
+                                    else {
+                                      let from_concept_url = deMappings[dataElementDetail.id][key].from_concept_url
+                                      if (from_concept_url.endsWith('/')) {
+                                        from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                      }
+                                      let arr = from_concept_url.split('/')
+                                      let derivationId = arr[arr.length - 1]
+                                      name = de[derivationId].display_name
+                                      code = de[derivationId].id
+                                      source = de[derivationId].extras.source
+                                      type = de[derivationId].concept_class
+                                      console.log(name + code + source + type)
+                                    }
+                                    return (
+                                      <TableRow>
+                                        <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
+                                          <Grid container alignItems="center"
+                                            //justify="space-between"
+                                            spacing={2}>
+                                            <Grid item xs={12}  >
+                                              {name}
+                                            </Grid>
+                                            <Grid item xs={3}  >
+                                              <Chip
+                                                variant="outlined"
+                                                size="small"
+                                                style={{ marginTop: '10px' }}
+                                                label={"UID: " + code}
+                                                clickable
+                                              /></Grid>
+                                            <Grid item xs={3}  >
+                                              <Chip
+                                                variant="outlined"
+                                                size="small"
+                                                style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
+                                                label={"Source: " + source}
+                                                clickable
+                                              /></Grid>
+                                            <Grid item xs={3}  >
+                                              <Chip
+                                                variant="outlined"
+                                                size="small"
+                                                style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
+                                                label={"Type: " + type}
+                                                clickable
+                                              /></Grid>
                                           </Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px' }}
-                                              label={"UID: " + code}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#d8ebe0' }}
-                                              label={"Source: " + source}
-                                              clickable
-                                            /></Grid>
-                                          <Grid item xs={3}  >
-                                            <Chip
-                                              variant="outlined"
-                                              size="small"
-                                              style={{ marginTop: '10px', marginLeft: '15px', backgroundColor: '#c0b3c7' }}
-                                              label={"Type: " + type}
-                                              clickable
-                                            /></Grid>
-                                        </Grid>
-                                      </TableCell>
-                                      <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
-                                        <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
-                                          COMPARE
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                          <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
+                                            COMPARE
                                     </Button>
-                                      </TableCell>
-                                    </TableRow>
-                                  )
-                                }
-                              }) : ''
-                          ) : ''
-                          }
+                                        </TableCell>
+                                      </TableRow>
+                                    )
+                                  }
+                                }) : ''
+                            ) : ''
+                            }
 
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </Grid>
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </Grid>
                   </ErrorBoundary>
                   {/* </Grid> */}
                   {/* </Grid> */}
