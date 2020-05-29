@@ -28,6 +28,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
+import Popover from '@material-ui/core/Popover';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -280,10 +286,12 @@ const useStyles = makeStyles(theme => ({
   },
   actionButton: {
     marginLeft: '10px',
+    marginRight: '20px',
     marginTop: '12px',     
+    color: '#1D5893',
     '&:hover, &:focus': {
       backgroundColor: '#C1A783',
-      color: '#000000'
+     /* color: '#000000'*/
     }
   },
   formLegend:{
@@ -564,6 +572,40 @@ const useStyles = makeStyles(theme => ({
       setDetailPanel({ ...detailPanel, [side]: open });
     };
 
+
+    const performDownload = event => {    
+        const baseDownloadURL = "https://test.ohie.datim.org:5000/ocl-etl/msp";
+        let downloadURL = "";
+        console.log(matchDataElements);
+        let deIDs = [];
+        matchDataElements.map(item => {
+          //console.log(item);
+          if (item.id && item.id !== ""){
+            deIDs.push(item.id);
+          }
+        });
+      
+        if (deIDs.length > 0) {
+          downloadURL = baseDownloadURL + "?dataElements=" + deIDs.toString().trim() + "&format=" + downloadValue.trim();
+        }
+        let downloadLink = document.createElement('a');
+        downloadLink.href = downloadURL;
+        if (downloadValue.trim() !== "CSV") {
+          downloadLink.setAttribute("target", "_blank");
+        }
+        downloadLink.setAttribute('download', "download");
+        
+        downloadLink.click();
+        revokeDownloadLink(downloadLink.href);     
+    }
+
+    function revokeDownloadLink(href) {
+      console.log("Revoke method... ");
+      setTimeout(function () {
+        window.URL.revokeObjectURL(href);
+      }, 10000);
+    }
+  
     const getIndicatorGroup = function (indicatorData) {     
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
       var filteredByYearData = indicatorData.filter(function (data) {                
@@ -648,7 +690,9 @@ const useStyles = makeStyles(theme => ({
     const [indicatorGroups, setIndicatorGroups] = useState([] );
     const [indGrouploading, setIndGroupLoading] = useState(false);
     const [deloading, setDELoading] = useState(false);    
-    const [indicatorDetailLoading, setIndicatorDetailLoading] = useState(false);    
+    const [indicatorDetailLoading, setIndicatorDetailLoading] = useState(false); 
+    const [anchorEl, setAnchorEl] = React.useState(null);   
+    const [dropDownName, setDropDownName] = React.useState("");
     
     const loadIndicatorsAbortController = new window.AbortController(); 
     const loadDataElementsAbortController = new window.AbortController();   
@@ -726,14 +770,7 @@ const useStyles = makeStyles(theme => ({
         if (jsonData && Array.isArray(jsonData)){          
           mappedDataElements = jsonData.map(item => {
             //console.log(item);
-            var dataElementItem = {};
-            /*dataElementItem.source = item.extras.source;
-            dataElementItem.description = (item.descriptions && item.descriptions.length > 0 ) ? item.descriptions[0].description : ""; 
-            dataElementItem.uid = item.external_id;
-            dataElementItem.id = item.id;
-            dataElementItem.code = item.id;
-            dataElementItem.name = item.display_name;   
-            dataElementItem.extra = item.extra;*/
+            var dataElementItem = {};           
             dataElementItem = item;
             var deMappings = []; 
             const mappings = [];           
@@ -941,6 +978,23 @@ const useStyles = makeStyles(theme => ({
   const handleNavLinkChange = event => {
     setPage(0);
   }
+
+  //set dropdown popup
+  const dropDownMenu = buttonName => event => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);  
+    setDropDownName(buttonName);
+  };
+  
+  const popOpen = Boolean(anchorEl);
+  const popId = popOpen ? 'popover' : undefined;
+  const popHandleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [downloadValue, setDownloadValue] = React.useState('HTML');
+  const handleDownloadChange = event => {
+    setDownloadValue(event.target.value);
+  };
 
   //when value has changed, call useEffect function
   useEffect(() => {
@@ -1160,19 +1214,65 @@ return (
       
       <headings.H1>{currentIndicator.name}    
        {downloadIndicatorURL !== "" && panel === 0 ?
-           <Button variant="outlined" href={downloadIndicatorURL} download={currentIndicator.id + ".json"} className={classes.actionButton} target="_black"
-           style={{ float:"right"}}
-           title={"Download reference indicator details for " + currentIndicator.id}
+          <Tooltip disableFocusListener title={"Download reference indicator details in json format for " + currentIndicator.id}>
+           <Button variant="outlined" href={downloadIndicatorURL} className={classes.actionButton} target="_black"
+           style={{ float:"right"}}           
           >
             {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear} 
-            <GetAppIcon />
-           </Button>   
+            <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }}/>
+           </Button>  
+          </Tooltip> 
        :
-          <Button variant="outlined"  color="primary"  className={classes.actionButton} disabled={true}
-          style={{ backgroundColor: '#eeeeee', float:"right"}}
-          >
-            {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}            
-          </Button>  
+      <span>
+          <Tooltip disableFocusListener title="Download data elements" placement='bottom'>  
+            <span style={{float: 'right'}}>        
+              <Button variant="outlined" className={classes.actionButton} name="downloadDEButton" onClick={dropDownMenu("downloadDE")} id="downloadDEButton"
+              disabled={matchDataElements.length === 0 ? true : false} style={{height:'36px',float: 'right'  }}>  
+                {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                           
+                {
+                  matchDataElements.length === 0 ?
+                    <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }} />
+                }
+              </Button>
+            </span>
+          </Tooltip>
+           
+
+          {/* popover panel */}
+          <Popover
+              id={popId}
+              open={popOpen}
+              anchorEl={anchorEl}
+              onClose={popHandleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              {/* download popover panel */}
+              {
+                dropDownName === "downloadDE" ?
+                  <FormControl component="fieldset" className={classes.popOver}>
+                    <FormGroup>
+                      <FormLabel component="legend" className={classes.formLegend}>Data Format</FormLabel>
+                      <RadioGroup aria-label="download" name="downloadRadio" value={downloadValue} onChange={handleDownloadChange}>
+                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                      </RadioGroup>
+                      <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
+                        Download DATA
+                    </Button>
+                    </FormGroup>
+                  </FormControl> : null                      
+              }
+            </Popover>
+          </span>
        }       
        </headings.H1>           
       
