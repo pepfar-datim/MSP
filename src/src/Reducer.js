@@ -27,6 +27,12 @@ export const reducer = (state, action) => {
               ...state,
               matchDataElements: action.matchDataElements
           }
+
+      case 'changeMatchDatimIndicators':
+        return{
+          ...state,
+          matchDatimIndicators: action.matchDatimIndicators
+      }
         
       default:
         return state;

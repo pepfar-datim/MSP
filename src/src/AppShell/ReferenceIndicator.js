@@ -51,6 +51,7 @@ import {getCodeListMap} from '../currentCodelist.js'
 import ReferenceIndicatorDetail from './ReferenceIndicatorDetail';
 import DataElementDetail from './DataElementDetail';
 import Shortcut from './Shortcut';
+import DatimIndicator from './DatimIndicator';
 
 
 //tab panel function
@@ -492,12 +493,13 @@ const useStyles = makeStyles(theme => ({
 
 
 
-  export default function Indicator() {
+  export default function ReferenceIndicator() {
     
     const [page, setPage] = React.useState(0);    
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     var [count, setCountOfValues] = useState(0);
-    const handleChangePage = (event, newPage) => {      
+    const handleChangePage = (event, newPage) => {    
+      console.log("newPage :" + newPage);  
       setPage(newPage);
     };
 
@@ -506,7 +508,10 @@ const useStyles = makeStyles(theme => ({
       setPage(0);
       //setExpanded(false);
     };
-
+    const [pageDatimIndicator, setPageForDatimIndicator] = React.useState(0);           
+    const handleChangePageDatimIndicator = (event, newPage) => {         
+      setPageForDatimIndicator(newPage);
+    };
 
     let location = useLocation();          
     const classes = useStyles();
@@ -529,20 +534,34 @@ const useStyles = makeStyles(theme => ({
 
       const INDICATOR_PANEL = 0;
       const DATA_ELEMENT_PANEL = 1;
+      const DATIM_INDICATOR_PANEL = 2;
       
     //get indicator and data-elements from context
-    const [{ currentIndicator, matchDataElements }, dispatch] = useStateValue();
+    const [{ currentIndicator, matchDataElements, matchDatimIndicators }, dispatch] = useStateValue();
     
     //set initial panel state and panel handle change function
     const [panel, setPanel] = React.useState(INDICATOR_PANEL);
 
-    const handleChange = (event, newPanel) => {
-      setPanel(newPanel);      
+    const handleChange = (event, newPanel) => {     
+      setPage(0);
+      setPageForDatimIndicator(0);
+      setPanel(newPanel);            
+      setErrorLoadDataElement(null);
+      setErrorLoadDatimIndiator(null);
+      
       if (newPanel === DATA_ELEMENT_PANEL){       
+        console.log("load data elements, page: " + page);
         // reload data element
-        if (currentIndicator && currentIndicator.id !== '' && matchDataElements.length ===0){
-          updateIndicator(currentIndicator.id, DATA_ELEMENT_PANEL);
+        if (currentIndicator && currentIndicator.id !== '' /*&& matchDataElements.length ===0*/){
+          //updateIndicator(currentIndicator.id, DATA_ELEMENT_PANEL);
+          loadDataElementsDataByIndicator(currentIndicator.id);
         }        
+      }else if (newPanel === DATIM_INDICATOR_PANEL){       
+        console.log(currentIndicator);
+        setCountOfValues(0);      
+        if (currentIndicator && currentIndicator.id !== '' ){          
+          loadDatimIndicatorByIndicator(currentIndicator.id);
+        }
       }
     };
 
@@ -618,7 +637,7 @@ const useStyles = makeStyles(theme => ({
         }        
         return true;
       });
-      console.log(filteredByYearData);
+      console.log("filteredByYearData:"); console.log(filteredByYearData);
       const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();           
       return distinctGroup;      
@@ -685,12 +704,14 @@ const useStyles = makeStyles(theme => ({
     const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
     const [errorLoadIndicatorDetail, setErrorLoadIndicatorDetail] = useState(null);
+    const [errorLoadDatimIndiator, setErrorLoadDatimIndiator] = useState(null);
     const [indicatorsListForUI, setIndicatorsListForUI] = useState([] ); // contains indicators for all years
     const [filteredIndicatorsListForUI, setFilteredIndicatorsListForUI] = useState([] );
     const [indicatorGroups, setIndicatorGroups] = useState([] );
     const [indGrouploading, setIndGroupLoading] = useState(false);
     const [deloading, setDELoading] = useState(false);    
     const [indicatorDetailLoading, setIndicatorDetailLoading] = useState(false); 
+    const [datimIndicatorLoading, setDatimIndicatorLoading] = useState(false);  
     const [anchorEl, setAnchorEl] = React.useState(null);   
     const [dropDownName, setDropDownName] = React.useState("");
     
@@ -722,7 +743,7 @@ const useStyles = makeStyles(theme => ({
         console.log(jsonData);
         var d = createIndicatorListForUI(jsonData);
         var sortedData = sortJSON(d, 'name', 'asc');
-        setIndicatorsListForUI (sortedData);
+        setIndicatorsListForUI(sortedData);
         setFilteredIndicatorsListForUI(sortedData);
        
         var indGroupTemp = getIndicatorGroup(d);        
@@ -739,11 +760,10 @@ const useStyles = makeStyles(theme => ({
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {      
       var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
-      console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query); 
-      
+      console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query);     
       setDELoading(true);
       setErrorLoadDataElement(null);
-      try {
+      try {       
         const response = await fetch(query, { signal: loadDataElementsAbortController.signal });
         if (!response.ok) {
           console.log(response);
@@ -790,8 +810,7 @@ const useStyles = makeStyles(theme => ({
           })
         }                
         var sortedData = sortJSON(mappedDataElements, 'name', 'asc');  
-        setCountOfValues(parseInt(response.headers.get('num_found')));
-        console.log(response.headers.get('num_found') + " results found ")
+        setCountOfValues(parseInt(response.headers.get('num_found')));       
 
         dispatch({
           type: 'changeMatchDataElements',
@@ -807,6 +826,55 @@ const useStyles = makeStyles(theme => ({
           type: 'changeMatchDataElements',
           matchDataElements: []
         })
+      }
+      
+    }
+
+    const loadDatimIndicatorByIndicator = async (indicatorID)=> {       
+      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1);
+        
+      console.log("loadDatimIndicatorByIndicator: " + indicatorID + " query: " + query); 
+      setDatimIndicatorLoading(true);     
+      setErrorLoadDatimIndiator(null);
+      try {
+        const response = await fetch(query, { signal: loadDataElementsAbortController.signal });
+        if (!response.ok) {
+          console.log(response);
+          setDatimIndicatorLoading(false);
+          setCountOfValues(0);
+          throw new Error(
+            `Error when retrieve datim indicators ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();                
+        if (!jsonData) {
+          console.log("jsonData is empty");
+          setCountOfValues(0);
+          setDatimIndicatorLoading(false);
+          throw new Error(
+            `Warning datim indicator data is emtpy from OCL  ` + indicatorID
+          );
+        }
+        console.log("datim indicators : " + jsonData.length);
+        console.log(jsonData);
+        setDatimIndicatorLoading(false);                   
+        setCountOfValues(parseInt(response.headers.get('num_found')));
+        var sortedData = sortJSON(jsonData, 'display_name', 'asc'); 
+        
+        dispatch({
+          type: 'changeMatchDatimIndicators',
+          matchDatimIndicators: sortedData
+        })                
+      }catch (e){
+        console.log("error:" + e.message);        
+        setDatimIndicatorLoading(false);
+        setErrorLoadDatimIndiator("Error when get datim indicator for " + indicatorID + ". " + e.message);
+        // clear data elements
+        dispatch({
+          type: 'changeMatchDatimIndicators',
+          matchDatimIndicators: []
+        })
+        
       }
       
     }
@@ -930,7 +998,14 @@ const useStyles = makeStyles(theme => ({
           matchDataElements: []
         })
       }
-          
+      if (panel && panel === DATIM_INDICATOR_PANEL) {      
+        loadDatimIndicatorByIndicator(indicatorId);
+      }else {// clear daim indicator
+        dispatch({
+          type: 'changeMatchDatimIndicators',
+          matchDatimIndicators: []
+        })
+      } 
     }         
   }
 
@@ -1122,8 +1197,6 @@ const useStyles = makeStyles(theme => ({
 
   
   
-
-  
   //layout
 return (
   
@@ -1214,7 +1287,7 @@ return (
       
       <headings.H1>{currentIndicator.name}    
        {downloadIndicatorURL !== "" && panel === 0 ?
-          <Tooltip disableFocusListener title={"Download reference indicator details in json format for " + currentIndicator.id}>
+          <Tooltip disableFocusListener title={"Download reference indicator details in json format"}>
            <Button variant="outlined" href={downloadIndicatorURL} className={classes.actionButton} target="_black"
            style={{ float:"right"}}           
           >
@@ -1224,13 +1297,13 @@ return (
           </Tooltip> 
        :
       <span>
-          <Tooltip disableFocusListener title="Download data elements" placement='bottom'>  
+          <Tooltip disableFocusListener title={panel === 2 ? "" : "Download data elements"} placement='bottom'>  
             <span style={{float: 'right'}}>        
               <Button variant="outlined" className={classes.actionButton} name="downloadDEButton" onClick={dropDownMenu("downloadDE")} id="downloadDEButton"
-              disabled={matchDataElements.length === 0 ? true : false} style={{height:'36px',float: 'right'  }}>  
+              disabled={(matchDataElements.length === 0 || panel === 2 )? true : false} style={{height:'36px',float: 'right'  }}>  
                 {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                           
                 {
-                  matchDataElements.length === 0 ?
+                  matchDataElements.length === 0 || panel === 2 ?
                     <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }} />
                 }
               </Button>
@@ -1280,6 +1353,7 @@ return (
       <Tabs value={panel} onChange={handleChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
         <Tab label="REFERENCE INDICATOR DETAILS" {...a11yProps(0)} />
         <Tab label="DATA ELEMENTS" {...a11yProps(1)} />
+        <Tab label="DATIM INDICATOR" {...a11yProps(2)} />
       </Tabs>
 
      
@@ -1576,6 +1650,32 @@ return (
       </TabPanel>
       
     }
+
+    <TabPanel value={panel} index={DATIM_INDICATOR_PANEL} className={classes.tabPanel}>     
+      <DatimIndicator currentIndicator={currentIndicator} 
+                      matchDatimIndicators={matchDatimIndicators} 
+                      classes={classes}  
+                      loading={datimIndicatorLoading} 
+                      error={errorLoadDatimIndiator}  />
+                    
+       {/* pagination */}
+       <table>
+          <tbody>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50, 100]}
+                labelDisplayedRows={({ from, to, count }) => `Displaying rows ${from}-${to} of ${count}`}                    
+                count={count}
+                rowsPerPage={rowsPerPage}
+                page={pageDatimIndicator}
+                onChangePage={handleChangePageDatimIndicator}
+                onChangeRowsPerPage={handleChangeRowsPerPage}                    
+              />
+            </TableRow>
+          </tbody>
+        </table>
+        {/*pagination */}
+    </TabPanel>
       </div>
         }
       </Grid>
