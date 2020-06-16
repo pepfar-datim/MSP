@@ -2010,7 +2010,6 @@ export default function Codelist() {
 
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
                   <div>
-
                     <Tooltip disableFocusListener title="Select">
                       <Button style={{ marginTop: '10px' }}>
                         {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
@@ -2023,19 +2022,16 @@ export default function Codelist() {
                             onClick={clearAll}
                             style={{ padding: '5px', marginLeft: '10px' }}
                           /> : ''}
-                        {selectedDataElement.length == dataElements.length ? <Checkbox
+                        {selectedDataElement.length > 0 && selectedDataElement.length == dataElements.length ? <Checkbox
                           checked={checked}
                           onChange={handleChange}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                           onClick={selectAll}
                           style={{ padding: '5px', marginLeft: '10px' }}
                         /> : ''}
-
                         <TiArrowSortedDown onClick={selectMenu('select')} />
-
                       </Button>
                     </Tooltip>
-
                   </div>
                   <div style={{ width: '500px' }}>
                     <Paper component="form" className={classes.search}>

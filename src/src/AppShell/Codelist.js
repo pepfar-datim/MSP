@@ -869,37 +869,11 @@ export default function Codelist() {
           pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']'] = source_data_element_nameArray;
         }
 
-        // derivatives.descendents.map(
-        //   derivedDisagNode => {
-        //   if(derivedDisagNode.value === source_data_element.derived_category_option_combo_name){
-        //     derivedDisagNode.descendents.map(
-        //       sourceDENode => {
-        //         if(sourceDENode.value === source_data_element.source_data_element_name){
-        //           let sourceDisagNode = new TreeNode(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract)
-        //           sourceDENode.descendents.push(sourceDisagNode)
-        //         }
-        //       }
-        //     )
-        //   }
-        //   else{
-        //     let derivedDisagNode = new TreeNode(source_data_element.derived_category_option_combo_name)
-        //     let sourceDENode = new TreeNode(source_data_element.source_data_element_name)
-        //     let sourceDisagNode = new TreeNode(source_data_element.source_category_option_combo_name + '|' + source_data_element.add_or_subtract)
-        //     sourceDENode.descendents.push(sourceDisagNode)
-        //     derivedDisagNode.descendents.push(sourceDENode)
-        //     derivatives.descendents.push(derivedDisagNode)
-        //   }
-        // })
-
       })
     } catch (e) {
       setError('Something went wrong... ')
-      // throw new Error(
-      //   `Error when retrieving data element  ${e.message}`
-      // );
     }
   }
-  ///////////
 
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -1132,31 +1106,6 @@ export default function Codelist() {
       else setHiddenDataSet(false)
 
     }
-    //dataElements = dataElementsInitial;
-    //dataElementsInitial.map(data_Element => {
-    //   const fy = data_Element.extras["Applicable Periods"].map(period =>
-    //     "20" + period.substring(2, 4)
-    //   );
-    //   const ds = data_Element.extras["dataSets"].map(dataSet =>
-    //     dataSet.name.split(": ")[1]
-    //     // dataSet.name.includes("Facility") ? "facility" : "community"
-    //   );
-
-    //   if (
-    //     fy.includes(values.fiscal) &&
-    //     // (values.fiscal ==='2019' ? true : period === values.fiscal) &&
-    //     //  (values.source ===''? true : data_Element.source === values.source) &&
-    //     //  (values.type ==='' ? true: data_Element.type === values.type)&&
-    //     //  (values.dataSet ===''? true : data_Element.dataSet === values.dataSet)
-    //     ds.includes(values.dataSet.split(": ")[1])
-    //     //(values.dataSet ==='Facility Based Code List'? true : data_Element.dataSet === values.dataSet) 
-    //     //&&
-    //     //  (values.frequency ==='' ? true: data_Element.frequency=== values.frequency)
-    //   ) {
-    //     tempDataElement.push(data_Element);
-    //     return true;
-    // })
-    //});
     console.log(" displaying " + dataElements.length + " results")
   }, [values.fiscal]);
 
@@ -1215,11 +1164,6 @@ export default function Codelist() {
 
   //when frequency changes
   useEffect(() => {
-    // setDataElementsData([])
-    // setCountOfValues(0)
-
-
-
     if (values.frequency === "All") {
       setIndicatorsTemp(indicators)
     }
@@ -1237,8 +1181,6 @@ export default function Codelist() {
 
   //when indicator changes
   useEffect(() => {
-    // setDataElementsData([])
-    // setCountOfValues(0)
     if (values.indicator === "All") {
       setIndicatorQuery("")
     }
@@ -1287,17 +1229,6 @@ export default function Codelist() {
               derivationId = arr[arr.length - 1]
             }
           }
-          //   else if (Object(deMappings[id])[key].map_type === 'Replaces') {
-          //     derivationId = Object(deMappings[id])[key].to_concept_code
-          //    if (derivationId === id) {
-          //     let from_concept_url = Object(deMappings[id])[key].from_concept_url
-          //     if (from_concept_url.endsWith('/')) {
-          //       from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-          //     }
-          //     let arr = from_concept_url.split('/')
-          //     derivationId = arr[arr.length - 1]
-          //    }
-          //  }
           if (!deMappings[derivationId]) {
             queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
             console.log(" queryByDataElement " + queryMapping)
@@ -1560,10 +1491,6 @@ export default function Codelist() {
         })
         compareLink = '/codelist/compare?' + compareLink.substring(0, compareLink.length - 1)
         history.push(compareLink)
-
-        //return <Redirect to={compareLink}/> 
-
-        //setComparePage("/compare")
       }
     }
     else {
@@ -1993,34 +1920,29 @@ export default function Codelist() {
                   </Dialog>
                 </div>
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
-                  <div>
-                    {dataElements ?
-                      <Tooltip disableFocusListener title="Select">
-                        <Button style={{ marginTop: '10px' }}>
-                          {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
-                            style={{ padding: '5px', marginLeft: '10px' }} /> : ''}
-                          {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
-                            <Checkbox
-                              defaultChecked
-                              indeterminate
-                              inputProps={{ 'aria-label': 'indeterminate checkbox' }}
-                              onClick={clearAll}
-                              style={{ padding: '5px', marginLeft: '10px' }}
-                            /> : ''}
-                          {selectedDataElement.length == dataElements.length ?
-                            <Checkbox
-                              checked={checked}
-                              onChange={handleChange}
-                              inputProps={{ 'aria-label': 'primary checkbox' }}
-                              onClick={selectAll}
-                              style={{ padding: '5px', marginLeft: '10px' }}
-                            /> : ''}
-
-                          <TiArrowSortedDown onClick={selectMenu('select')} />
-
-                        </Button>
-                      </Tooltip>
-                      : ''}
+                <div>
+                    <Tooltip disableFocusListener title="Select">
+                      <Button style={{ marginTop: '10px' }}>
+                        {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
+                          style={{ padding: '5px', marginLeft: '10px' }} /> : ''}
+                        {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
+                          <Checkbox
+                            defaultChecked
+                            indeterminate
+                            inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                            onClick={clearAll}
+                            style={{ padding: '5px', marginLeft: '10px' }}
+                          /> : ''}
+                        {selectedDataElement.length > 0 && selectedDataElement.length == dataElements.length ? <Checkbox
+                          checked={checked}
+                          onChange={handleChange}
+                          inputProps={{ 'aria-label': 'primary checkbox' }}
+                          onClick={selectAll}
+                          style={{ padding: '5px', marginLeft: '10px' }}
+                        /> : ''}
+                        <TiArrowSortedDown onClick={selectMenu('select')} />
+                      </Button>
+                    </Tooltip>
                   </div>
                   <div style={{ width: '500px' }}>
                     <Paper component="form" className={classes.search}>

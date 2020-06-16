@@ -636,7 +636,6 @@ export default function DataElementDetails() {
             // }
             // deMappings[derivationId] = sortedData
             //setDataElementMapping(deMappings[derivationId]);
-            console.log("do i ever come here ??????????????????")
             setDataElements(jsonData)
         }
 
@@ -897,9 +896,6 @@ export default function DataElementDetails() {
                                                             {/* </Button> */}
                                                         </i>
                                                     </Tooltip>
-                                                    {/* {dataElementDetail ? setExportDataElement(dataElementDetail.id) : ''}
-                                                    {dataElementDetail ? setExportSource(dataElementDetail.extras.source) : ''}
-                                                    {dataElementDetail ? setExportType(dataElementDetail.concept_class) : ''} */}
                                                     <TiArrowSortedDown />
                                                 </div>
                                                 <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('compare')}>
