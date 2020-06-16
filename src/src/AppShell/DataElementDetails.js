@@ -1445,10 +1445,19 @@ export default function DataElementDetails() {
                                                                         let arr = from_concept_url.split('/')
                                                                         let derivationId = arr[arr.length - 1]
                                                                         //derivationId = dataElementMapping[key].from_concept_code
-                                                                        name = de[derivationId].display_name
-                                                                        code = de[derivationId].id
-                                                                        source = de[derivationId].extras.source
-                                                                        type = de[derivationId].concept_class
+                                                                        let derived = {}
+
+                                                                        Object.values(Object(dataElements)).map(
+                                                                            value => {
+                                                                                if (value.id === derivationId) {
+                                                                                    derived = value
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                        code = derived.id
+                                                                        name = derived.display_name
+                                                                        source = derived.extras ? derived.extras.source : ''
+                                                                        type = derived.concept_class
                                                                         replaces = 'Replaced By'
                                                                     }
                                                                     return (
