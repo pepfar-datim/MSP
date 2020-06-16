@@ -23,6 +23,7 @@ import { Route, NavLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { getConfig } from '../config.js';
 import { useHistory, useLocation } from "react-router";
+import Breadcrumb from './../Components/Breadcrumb';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -33,11 +34,13 @@ const useStyles = makeStyles(theme => ({
     display: 'none'
   },
   container: {
-    maxWidth: '1200px',
+    maxWidth: '1600px',
     margin: '0 auto',
     paddingTop: '30px',
     paddingLeft: '15px',
-    paddingRight: '15px'
+    paddingRight: '15px',
+    flex: 1,
+    marginBottom: '80px'
   },
   heroContainer: {
     margin: '0 auto',
@@ -598,7 +601,7 @@ export default function Compare() {
 
               )
               ) : '--') : '--')
-              dataElements['Indicator Groups'] = types
+            dataElements['Indicator Groups'] = types
           } else {
             let types = []
             types.push(
@@ -620,7 +623,7 @@ export default function Compare() {
 
   }, [])
 
-  const loadMappings = async function (){
+  const loadMappings = async function () {
     let tempDEs = []
     for (let i = 1; i <= [...params.keys()].length; i++) {
       if (params.get('id' + i)) {
@@ -630,7 +633,7 @@ export default function Compare() {
         tempDEs.push(de[params.get('id' + i)])
       }
       setSelectedDatim(tempDEs)
-}
+    }
   }
   const table = function () {
     return (
@@ -640,10 +643,22 @@ export default function Compare() {
             //expandIcon={<ExpandMoreIcon />}
             aria-controls="panel3b-content"
             id="panel3b-header"
-         // onClick={() =>loadMappings()}
+          // onClick={() =>loadMappings()}
           >
 
             <Table className={classes.comboTable} aria-label="simple table">
+              {Object.keys(dataElementMatrix) == 2 ?
+                <colgroup>
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '45%' }} />
+                  <col style={{ width: '45%' }} />
+                </colgroup> :
+                <colgroup>
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '30%' }} />
+                  <col style={{ width: '30%' }} />
+                  <col style={{ width: '30%' }} />
+                </colgroup>}
               <TableBody>
                 <TableRow><TableCell></TableCell>
                   {dataElementMatrix['Indicator Name'] ? (dataElementMatrix['Indicator Name']).map(
@@ -652,18 +667,18 @@ export default function Compare() {
                       // {/* <div className={classes.compareCardSummary}> */}
                       // {/* <div className={classes.compareTitle}> */}
                       // {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
-                      <TableCell>
-                        <div className={`${classes.compareTitleColumn} ${classes.fixedTop}`}>
+                      <TableCell >
+                        <div className={classes.compareTitleColumn}>
                           {name}
                         </div></TableCell>
                     //   {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
                     // {/* </div> */}    
                   ) : ''}
-                </TableRow>
+                </TableRow >
                 {Object.keys(dataElementMatrix).map(
                   key =>
                     <TableRow>
-                      <TableCell><strong>{key}</strong></TableCell>
+                      <TableCell ><strong>{key}</strong></TableCell>
                       {Object.values(dataElementMatrix[key]).map(value =>
                         <TableCell>{value}</TableCell>
                       )}
@@ -674,51 +689,6 @@ export default function Compare() {
             </Table>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.panelDetail}>
-
-
-          {/* <div className={classes.tableContainer} key={Math.random()}>
-                             <strong>Disaggregations</strong>:<br />
-
-                           <Table className={classes.table} aria-label="simple table">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell></TableCell>
-                                  <TableCell>
-                                   <TableCell>Name</TableCell>
-                                  <TableCell>Code</TableCell>
-                                  </TableCell>
-                                  <TableCell>
-                                   <TableCell>Name</TableCell>
-                                  <TableCell>Code</TableCell>
-                                  </TableCell>
-                                 </TableRow>
-                           </TableHead>
-                               <TableBody >
-                               <TableRow><TableCell style={{width: '100px'}}></TableCell>
-                               {Object.values(de).map(datim => 
-                                <TableCell>
-                                  {(mappings[datim.id]) ? Object.keys(Object(mappings[datim.id])).map(
-
-                                    key =>
-                                   
-                                      {Object(mappings[datim.id])[key].map_type === 'Has Option' ? (
-                                        <TableRow key={Math.random()}>
-                                          <TableCell component="th" scope="row">
-                                            {Object(mappings[datim.id])[key].to_concept_name}
-                                          </TableCell>
-                                          <TableCell component="th" scope="row">
-                                            {Object(mappings[datim.id])[key].to_concept_code}
-                                          </TableCell>
-                                        </TableRow>
-                                      ) : ''}
-                                      
-                                  ) : ''}
-                                  </TableCell>
-                               )}
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </div> */}
 
 
           </ExpansionPanelDetails>
@@ -746,11 +716,11 @@ export default function Compare() {
   };
 
   const goBack = () => {
-    if (params.get('indicatorDetail')) {
-      history.push('/indicators?indicatorid=' + params.get('id1'))
-    } else {
+    // if (params.get('indicatorDetail')) {
+    //   history.push('/indicators?indicatorid=' + params.get('id1'))
+    // } else {
       history.goBack()
-    }
+    //}
   }
   const styles = theme => ({
     root: {
@@ -834,54 +804,59 @@ export default function Compare() {
     }
   }
   // render() {
-    async function getDataElement(id) {
-        const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
-        console.log(" queryByDataElement " + queryMapping)
-    
-        try {
-          let options = {
-            uri: queryMapping
-          }
-          //const response = await rp(options)
-          const response = await fetch(queryMapping);
-          if (!response.ok) {
-            console.log(response);
-            setErrorDisplay("Failed to fetch")
-            throw new Error(
-              `Error when retrieving indicator ${response.status} ${response.statusText}`
-            );
-          }
-    
-          const jsonData = await response.json();
-          //const jsonData = JSON.parse(response)
-          console.log("jsonData " + jsonData)
-          de[id] = jsonData;
-          return de[id]
-        } catch (e) {
-          console.log("error:" + e.message);
-          setError(e.message);
-          setDialogMessage(e.message)
-          setDialogOpen(true)
-          throw new Error(
-            `Error when retrieving indicator  ${e.message}`
-          );
-        }
-    
-    
-      };
+  async function getDataElement(id) {
+    const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
+    console.log(" queryByDataElement " + queryMapping)
 
-  
+    try {
+      let options = {
+        uri: queryMapping
+      }
+      //const response = await rp(options)
+      const response = await fetch(queryMapping);
+      if (!response.ok) {
+        console.log(response);
+        setErrorDisplay("Failed to fetch")
+        throw new Error(
+          `Error when retrieving indicator ${response.status} ${response.statusText}`
+        );
+      }
+
+      const jsonData = await response.json();
+      //const jsonData = JSON.parse(response)
+      console.log("jsonData " + jsonData)
+      de[id] = jsonData;
+      return de[id]
+    } catch (e) {
+      console.log("error:" + e.message);
+      setError(e.message);
+      setDialogMessage(e.message)
+      setDialogOpen(true)
+      throw new Error(
+        `Error when retrieving indicator  ${e.message}`
+      );
+    }
+
+
+  };
+
+
   return (
     <ErrorBoundary>
-      <Grid container >
-        <Grid item xs={12}>
-
+     <div className={classes.container} >
           <div className={classes.fixedTop}>
-              {/* <NavLink to="/indicators"> */}
-              <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
-                id="backButton"> Back</Button>
-              {/* </NavLink> */}
-              <h2 className={classes.comparisonPanelTitle}>INDICATOR COMPARISON</h2>
+            {/* <NavLink to="/indicators"> */}
+            <Grid container >
+                        <Grid xs={4}>
+                        <Breadcrumb></Breadcrumb>
+                        </Grid>
+                        <Grid xs={4}>
+                        <h2 className={classes.comparisonPanelTitle}>Indicator DETAILS</h2>                        </Grid>
+                        <Grid xs={4}>
+                        <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
+                        id="backButton"> Back</Button>
+                        </Grid>
+                    </Grid>
           </div>
           {errorDisplay !== null ?
             <div className={classes.errorMessage}>{errorDisplay}</div>
@@ -896,10 +871,7 @@ export default function Compare() {
             }
 
           </div>
-        </Grid>
-
-
-      </Grid>
+        </div>
     </ErrorBoundary>
   );
 }

@@ -1025,10 +1025,10 @@ export default function Codelist() {
 
     let compareLink = ''
     if (!dataElementToCompare) {
-      compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + compareText + '&indicatorDetail=true'
+      compareLink = '/indicators/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + compareText + '&indicatorDetail=true'
 
     } else {
-      compareLink = '/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&indicatorDetail=true'
+      compareLink = '/indicators/compareIndicators?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&indicatorDetail=true'
     }
     history.push(compareLink)
   }
@@ -1506,7 +1506,7 @@ export default function Codelist() {
         Object.keys(selectedDataElement).map(key => {
           compareLink = compareLink + 'id' + (parseInt(key) + 1) + '=' + selectedDataElement[key] + '&'
         })
-        compareLink = '/compareIndicators?' + compareLink.substring(0, compareLink.length - 1)
+        compareLink = '/indicators/compareIndicators?' + compareLink.substring(0, compareLink.length - 1)
         history.push(compareLink)
 
         //return <Redirect to={compareLink}/> 
@@ -1526,8 +1526,12 @@ export default function Codelist() {
       return;
     }
     setDataElementDetail(dataElement);
-    setDetailPanel({ ...detailPanel, [side]: open });
-    if (!open) {
+    //setDetailPanel({ ...detailPanel, [side]: open });
+    if (open) {
+      history.push('/indicators/indicatorDetail?id=' + dataElement.id)
+    }
+    else {
+      setShowLinked(false)
       history.push('/indicators')
     }
 

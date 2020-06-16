@@ -7,8 +7,8 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
 import Paper from '@material-ui/core/Paper';
-import { Route, useLocation, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import { getConfig } from '../config.js';
@@ -17,8 +17,80 @@ import InputBase from '@material-ui/core/InputBase';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import InfoIcon from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import { TiArrowSortedDown } from 'react-icons/ti';
+import { TiArrowSortedUp } from 'react-icons/ti';
+import Popover from '@material-ui/core/Popover';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import MenuItem from '@material-ui/core/MenuItem';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import PropTypes from 'prop-types';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import styled from 'styled-components';
+import Box from '@material-ui/core/Box';
+import TreeView from '@material-ui/lab/TreeView';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import TreeItem from '@material-ui/lab/TreeItem';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { MdList } from 'react-icons/md';
+import { MdFunctions } from 'react-icons/md';
+import { Route, useLocation, useHistory } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
+import { BsCheck } from 'react-icons/bs';
+import Breadcrumb from './../Components/Breadcrumb';
+//tab panel function
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            <Box p={3}>{children}</Box>
+        </Typography>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+const ExportButtonLabel = styled.p`
+    margin:0;
+    padding:0;
+    font-size: 0.8em;  
+    font-weight: bold;
+`;
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        '& > *': {
+            margin: theme.spacing(1),
+        },
+    },
     margin: {
         margin: theme.spacing(1),
         backgroundColor: '#fcfcfc'
@@ -32,7 +104,8 @@ const useStyles = makeStyles(theme => ({
         paddingTop: '30px',
         paddingLeft: '15px',
         paddingRight: '15px',
-        height: '2000px'
+        flex: 1,
+        marginBottom: '80px'
     },
     heroContainer: {
         margin: '0 auto',
@@ -76,7 +149,7 @@ const useStyles = makeStyles(theme => ({
     },
     popOver: {
         padding: '20px',
-        minWidth: '200px'
+        // minWidth: '200px'
     },
     fieldset: {
         borderRadius: '25px',
@@ -318,21 +391,9 @@ const useStyles = makeStyles(theme => ({
         //width: '100%',
         display: 'flex',
         paddingTop: '1em',
-        borderBottom: '1px solid #062133',
+        //borderBottom: '1px solid #062133',
         flexDirection: 'row',
-        backgroundColor: '#f8f8f8',
-
-        '&:nth-child(even)': {
-            backgroundColor: '#eeeeee'
-        }
-    },
-    compareColumn: {
-        width: '100%',
-        display: 'flex',
-        paddingTop: '1em',
-        borderBottom: '1px solid #062133',
-        flexDirection: 'column',
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#f2f2f2',
 
         '&:nth-child(even)': {
             backgroundColor: '#eeeeee'
@@ -341,7 +402,9 @@ const useStyles = makeStyles(theme => ({
     compareRowColumn: {
         flex: 1,
         margin: '1em',
-        marginBottom: '80px'
+        backgroundColor: '#ffffff',
+        borderRadius: '10px'
+        // marginBottom: '80px'
     },
     compareCardSummary: {
         flexDirection: 'column'
@@ -359,11 +422,11 @@ const useStyles = makeStyles(theme => ({
 
 
     search: {
-        padding: '6px 4px',
+        //padding: '6px 4px',
         display: 'flex',
         alignItems: 'center',
         width: '100%',
-        border: '2px solid #D55804',
+        border: '#404040',
         /*borderColor: `'#D55804' !important`,
         borderWidth: '2px',*/
     },
@@ -444,8 +507,7 @@ const useStyles = makeStyles(theme => ({
             flexDirection: 'column'
         },
         comparisonPanelTitle: {
-            margin: 0,
-            padding: '30px',
+            marginBottom: '30px',
             borderBottom: '2px solid #061233'
         },
         compareTitle: {
@@ -463,6 +525,9 @@ const useStyles = makeStyles(theme => ({
 }));
 let deMappings = {}
 let de = {}
+let derivedCoC = {}
+let pdhDerivatives = {}
+
 export default function DataElementDetails() {
     const classes = useStyles();
     const domain = getConfig().domain;
@@ -477,6 +542,7 @@ export default function DataElementDetails() {
     const [dataElementDetail, setDataElementDetail] = React.useState()
     const [dataElementMapping, setDataElementMapping] = React.useState()
     const [dataElements, setDataElements] = React.useState()
+    const [dropDownName, setDropDownName] = React.useState("");
 
     useEffect(() => {
         async function loadData() {
@@ -600,10 +666,10 @@ export default function DataElementDetails() {
         let compareLink = ''
         if (!dataElementToCompare) {
             // if (compareText !== '') {
-            compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
+            compareLink = '/codelist/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
             //}
         } else {
-            compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
+            compareLink = '/codelist/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
         }
         history.push(compareLink)
     }
@@ -622,312 +688,849 @@ export default function DataElementDetails() {
     };
 
     const goBack = () => {
-        history.push('/codelist')
+        history.goBack()
     };
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const popOpen = Boolean(anchorEl);
+    const divRef = React.useRef();
+    const popId = popOpen ? 'popover' : undefined;
+    const popHandleClose = () => {
+        setAnchorEl(null);
+        console.log("anchorEl ") + anchorEl
+    };
+    //set dropdown popup
+    const dropDownMenu = buttonName => event => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+        setDropDownName(buttonName);
+    };
+    const [exportDataElement, setExportDataElement] = React.useState("");
+    const [exportSource, setExportSource] = React.useState("");
+    const [exportType, setExportType] = React.useState("");
+
+    // set export popup
+    function exportMenu(event, buttonName, id, source, type) {
+        //event = event || window.event;
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+        setDropDownName(buttonName);
+        setExportDataElement(id)
+        console.log("ExportDataElement id " + exportDataElement)
+        setExportSource(source)
+        setExportType(type)
+    };
+
+    const handleFormat = buttonName => event => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+        setDropDownName(buttonName);
+        console.log("in handleFormulahandleFormatView")
+    };
+    const [exportValue, setExportValue] = React.useState('HTML');
+    const handleExportChange = event => {
+        setExportValue(event.target.value);
+    };
+
+    const performExport = event => {
+        let downloadURL = "";
+        if (exportValue.trim() === 'OCL') {
+            downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/' + exportDataElement;
+        }
+        else {
+            if (exportType === 'data element') {
+                downloadURL = 'https://dev-de.datim.org/api/dataElements/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
+            }
+            else {
+                downloadURL = 'https://dev-de.datim.org/api/categoryOptionCombos/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
+            }
+        }
+        console.log("downloadURL " + downloadURL)
+        let downloadLink = document.createElement('a');
+        downloadLink.href = downloadURL;
+        if (exportValue.trim() !== "CSV") {
+            downloadLink.setAttribute("target", "_blank");
+        }
+        downloadLink.setAttribute('download', "download");
+        downloadLink.click();
+        revokeDownloadLink(downloadLink.href);
+    }
+    function revokeDownloadLink(href) {
+        setTimeout(function () {
+            window.URL.revokeObjectURL(href);
+        }, 10000);
+    }
+
+    //set initial panel state and panel handle change function
+    const [panel, setPanel] = React.useState(0);
+    const handleChange = (event, newPanel) => {
+        setPanel(newPanel);
+    };
+    const [checked, setChecked] = React.useState(false);
+    const [format, setFormat] = React.useState('Names');
+
+    const toggleChecked = () => {
+        setChecked(prev => !prev);
+        if (!checked) {
+            setFormat('UIDs')
+        }
+        else {
+            setFormat('Names')
+        }
+    };
+    const [moreAttributes, setMoreAttributes] = React.useState(false);
+    const [moreDescription, setMoreDescription] = React.useState(false);
+
+    const [listView, setListView] = React.useState(true);
+
+    function showMoreAttributes() {
+        setMoreAttributes(true)
+    }
+    function showLessAttributes() {
+        setMoreAttributes(false)
+    }
+    function showMoreDescription() {
+        setMoreDescription(true)
+    }
+    function showLessDescription() {
+        setMoreDescription(false)
+    }
+
+    const handleListView = () => {
+        setListView(true)
+    };
+    const handleFormulaView = () => {
+        setListView(false)
+    };
+
+    const [expanded, setExpanded] = React.useState([]);
+    const expandAll = (array) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setExpanded(array)
+    }
+    const collapseAll = (array) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setExpanded([])
+    }
+    function populatePDHDerivatives(source_data_elements) {
+        try {
+            source_data_elements.map(source_data_element => {
+                if (!derivedCoC[source_data_element.derived_category_option_combo_name]) {
+                    let derived_category_option_comboArray = [];
+                    derived_category_option_comboArray.push(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']')
+                    derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
+                }
+                else {
+                    let derived_category_option_comboArray = Array.from(derivedCoC[source_data_element.derived_category_option_combo_name]);
+                    if (!derived_category_option_comboArray.includes(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']')) {
+                        derived_category_option_comboArray.push(source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']')
+                        derivedCoC[source_data_element.derived_category_option_combo_name] = derived_category_option_comboArray
+                    }
+
+                }
+                if (!pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']']) {
+                    let source_data_element_nameArray = [];
+                    let source_category_option_combo_object = {}
+                    source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
+                    source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + ' [' + source_data_element.source_category_option_combo_uid + ']|' + source_data_element.add_or_subtract
+                    source_data_element_nameArray.push(source_category_option_combo_object);
+                    pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']'] = source_data_element_nameArray;
+                }
+                else {
+                    let source_data_element_nameArray = Array.from(pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']']);
+                    let source_category_option_combo_object = {}
+                    source_category_option_combo_object.derivedDisag = source_data_element.derived_category_option_combo_name
+                    source_category_option_combo_object.sourceDisag = source_data_element.source_category_option_combo_name + ' [' + source_data_element.source_category_option_combo_uid + ']|' + source_data_element.add_or_subtract
+                    source_data_element_nameArray.push(source_category_option_combo_object);
+                    pdhDerivatives[source_data_element.source_data_element_name + ' [' + source_data_element.source_data_element_uid + ']'] = source_data_element_nameArray;
+                }
+
+            })
+        } catch (e) {
+            setError('Something went wrong... ')
+            // throw new Error(
+            //   `Error when retrieving data element  ${e.message}`
+            // );
+        }
+    }
 
     return (
         <Route render={(history) => (
-            <div  className={classes.container} >
+            <div className={classes.container} >
+                <div className={classes.fixedTop}>
+                    {/* <NavLink to="/indicators"> */}
+                    <Grid container >
+                        <Grid xs={4}>
+                            <Breadcrumb></Breadcrumb>
+                        </Grid>
+                        <Grid xs={4}>
+                            <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>                        </Grid>
+                        <Grid xs={4}>
+                            <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
+                                id="backButton"> Back</Button>
+                        </Grid>
+                    </Grid>
+
+                    {/* </NavLink> */}
+
+
+                </div>
                 {deloading ?
                     <div>
                         <LinearProgress mode="indeterminate" />
                         <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data element details ...</div>
                     </div> :
                     (
-                        <Grid container direction={'column'}  spacing={1}>
-
-                            <Grid container style={{ height: '100px' }}>
-                                <Grid item xs={6} style={{ height: '100px' }} >
-                                    <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>
-                                </Grid>
-                                <Grid item xs={6} style={{ height: '100px' }} >
-                                    <CloseIcon onClick={goBack} className={classes.closeComparePanel}>add_circle</CloseIcon>
-                                </Grid>
-                            </Grid>
-                            <Grid container>
-                                <Grid item xs={6}  >
-                                    {dataElementDetail && dataElementMapping ?
-                                        <Table className={classes.comboTable} style={{ marginRight: '20px' }} aria-label="simple table">
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell><strong>Short Name</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Code</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow className={classes.comboTable}>
-                                                    <TableCell><strong>Description</strong></TableCell>
-                                                    <TableCell>{(dataElementDetail.descriptions) ? dataElementDetail.descriptions[0].description : "--"}</TableCell>
-                                                </TableRow>
-                                                {/* <TableRow>
-                                <TableCell><strong>UID</strong></TableCell>
-                                <TableCell>{dataElement.id ? (dataElement.id) : '--'}</TableCell>
-                              </TableRow> */}
-                                                {/* <TableRow>
-                                <TableCell><strong>Source</strong></TableCell>
-                                <TableCell>{dataElement.extras.source ? (dataElement.extras.source) : '--'}</TableCell>
-                              </TableRow> */}
-                                                <TableRow>
-                                                    <TableCell><strong>Data Type</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.datatype ? (dataElementDetail.datatype) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Domain Type</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Value Type</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Aggregation Type</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : '--'}</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Applicable Periods</strong></TableCell>
-                                                    <TableCell>
-                                                        {
-                                                            dataElementDetail.extras['Applicable Periods'] ? (dataElementDetail.extras['Applicable Periods'].length > 0 ? (Object.keys(dataElementDetail.extras['Applicable Periods']).map(
-
-                                                                key =>
-
-                                                                    dataElementDetail.extras['Applicable Periods'][key] + ", "
-
-                                                            )
-                                                            ) : '--') : '--'
-                                                        }
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Code List Membership</strong></TableCell>
-                                                    <TableCell>
-                                                        {
-                                                            dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ? (Object.keys(dataElementDetail.extras.codelists).map(
-
-                                                                key =>
-
-                                                                    dataElementDetail.extras.codelists[key].name + ", "
-
-                                                            )
-                                                            ) : '--') : '--'
-                                                        }
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow></TableRow>
-                                                <TableRow>
-                                                    <TableCell><strong>Result/Target</strong></TableCell>
-                                                    <TableCell>{dataElementDetail.extras.resultTarget ? dataElementDetail.extras.resultTarget : '--'}</TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table> : ''}
-                                </Grid>
-                                <Grid item xs={6}  >
-                                    <div>
-                                        <div className={classes.heroContainer}>
-                                            <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
-                                            <div>
-                                                <GridList cellHeight={60} className={classes.gridList} cols={2}>
-                                                    <GridListTile >
-                                                        <Paper component="form" className={classes.compare}>
-                                                            <InputBase
-                                                                className={classes.input}
-                                                                //inputProps={{ 'aria-label': 'search data elements' }}
-                                                                id="compareSearch"
-                                                                key="compareSearch"
-                                                                onKeyDown={handleKeyPressCompare}
-                                                                onChange={handleCompareInputChange}
-                                                                value={compareInputText}
-                                                            />
-                                                        </Paper>
-                                                    </GridListTile>
-                                                    <GridListTile>
-                                                        <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
-                                                            COMPARE
-                            </Button>
-                                                    </GridListTile>
-                                                </GridList>
-                                                <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter a Data Element UID</i></div>
+                        <div className={classes.compareRow} >
+                            <div className={classes.compareRowColumn}>
+                                <Grid container >
+                                    <Grid item xs={9}></Grid>
+                                    <Grid item xs={3}>
+                                        {/* <div className={classes.tabDashboard}> */}
+                                            <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'right' }} >
+                                                <div style={{ marginTop: '25px', marginRight: '20px' }} onClick={(event) => exportMenu(event, 'export', dataElementDetail.id, dataElementDetail.source, 'data element')}>
+                                                    <Tooltip disableFocusListener title="Download">
+                                                        <i>
+                                                            {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
+                                                            <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" />
+                                                            {/* </Button> */}
+                                                        </i>
+                                                    </Tooltip>
+                                                    {/* {dataElementDetail ? setExportDataElement(dataElementDetail.id) : ''}
+                                                    {dataElementDetail ? setExportSource(dataElementDetail.extras.source) : ''}
+                                                    {dataElementDetail ? setExportType(dataElementDetail.concept_class) : ''} */}
+                                                    <TiArrowSortedDown />
+                                                </div>
+                                                <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('compare')}>
+                                                    <Tooltip disableFocusListener disableTouchListener title="Compare" >
+                                                        <i >
+                                                            {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }}
+                                                                        //onClick={toggleDrawer('bottom', true)}
+                                                                        id="comparisonButton" > */}
+                                                            <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                                                            {/* </Button> */}
+                                                        </i>
+                                                    </Tooltip>
+                                                    <TiArrowSortedDown />
+                                                </div>
                                             </div>
 
+                                            <Popover
+                                                id={popId}
+                                                open={popOpen}
+                                                anchorEl={anchorEl}
+                                                getContentAnchorEl={null}
+                                                onClose={popHandleClose}
+                                                // anchorReference="anchorPosition"
+                                                // anchorPosition={{ top: 170, left: 600 }}
+                                                anchorOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'center',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'center',
+                                                }}
+                                            >
+                                                {/* download popover panel */}
+                                                {
+                                                    dropDownName === "export" ?
+                                                        <FormControl component="fieldset" className={classes.popOver}>
+                                                            <FormGroup>
+                                                                {exportSource === 'DATIM' ?
+                                                                    <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
+                                                                {exportSource === 'DATIM' ?
+                                                                    <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                                                                    </RadioGroup> : ''}
+                                                                <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                                                                <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                                                                </RadioGroup>
+                                                                <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                                                                    Download DATA
+                                                                     </Button>
+                                                            </FormGroup>
+                                                        </FormControl> :
+                                                        dropDownName === "format" ?
+                                                            <FormControl component="fieldset" className={classes.popOver}>
+                                                                <FormGroup>
+                                                                    <MenuItem value="All" onClick={toggleChecked}><div style={{ width: '20px' }}>{!checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>Name</MenuItem>
+                                                                    <MenuItem value="None" onClick={toggleChecked}><div style={{ width: '20px' }}>{checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>UID</MenuItem>
+                                                                </FormGroup>
+                                                            </FormControl> :
+                                                            dropDownName === "compare" ?
+                                                            <div style={{ margin: '10px', alignItems: 'right', width: '180px' }}>
+                                                                <Grid container>
+                                                                    <Grid xs={12}>
+                                                                        <Paper component="form" className={classes.search}>
+                                                                            <InputBase
+                                                                                className={classes.input}
+                                                                                //inputProps={{ 'aria-label': 'search data elements' }}
+                                                                                id="compareSearch"
+                                                                                key="compareSearch"
+                                                                                onKeyDown={handleKeyPressCompare}
+                                                                                onChange={handleCompareInputChange}
+                                                                                value={compareInputText}
+                                                                                placeholder="Data Element UID"
+                                                                            />
+                                                                        </Paper>
+                                                                    </Grid>
+                                                                    <Grid xs={6}></Grid>
+                                                                    <Grid xs={6}>
+                                                                        <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" color="primary" size="small">
+                                                                            Compare
+                                                                                </Button>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </div> :
+                                                            <FormControl component="fieldset" className={classes.popOver}>
+                                                            <FormGroup>
+                                                                    <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                                                                    <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                                                                    </RadioGroup> 
+                                                                <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                                                                <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                                                                </RadioGroup>
+                                                                <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                                                                    Download DATA
+                                                                     </Button>
+                                                            </FormGroup>
+                                                        </FormControl>
+                                                }
+                                            </Popover>
+                                        {/* </div> */}
+                                    </Grid>
+
+                                    {dataElementDetail ?
+                                        <div style={{ marginTop: '20px' }}>
+                                            <i style={{ color: '#a6a6a6', marginRight: '5px', marginLeft: '25px' }}>Source:</i> {dataElementDetail.extras.source}
+                                            <i style={{ color: '#a6a6a6', marginRight: '5px', marginLeft: '15px' }}>Type:</i> {dataElementDetail.concept_class}
+                                            <i style={{ color: '#a6a6a6', marginRight: '5px', marginLeft: '15px' }}>UID:</i> {dataElementDetail.id}
                                         </div>
-                                        {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''}
+                                        : ''}
+                                    <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
+                                        {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
-                                    <div>
-                                        {/* {dataElementDetail ? (
-                            (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
-                              key =>  */}
-                                        <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table">
-                                            <TableBody>
+                                    <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
+                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
+                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
+                                            <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
+                                            <div><Link href="#" onClick={showLessDescription} style={{ textDecorationLine: 'underline' }}>less<TiArrowSortedUp /></Link></div>
+                                            : '' : '' : ''}
+                                        {/* {moreAttributes ?
+                                                
+                                            } */}
+                                    </div>
+                                    <div style={{ marginLeft: '25px', marginRight: '20px' }}>
+                                        {dataElementDetail && dataElementMapping ?
+                                            <Table className={classes.comboTable} style={{ marginRight: '20px', width: '650px' }} aria-label="simple table" size="small">
+                                                <TableBody>
+                                                    {
+                                                        dataElementDetail.extras['Applicable Periods'] ? dataElementDetail.extras['Applicable Periods'].length > 0 ?
+                                                            <TableRow> <TableCell><strong>Applicable Periods</strong></TableCell>
+                                                                <TableCell> {(Object.keys(dataElementDetail.extras['Applicable Periods']).map(
 
-                                                {showLinked ?
-                                                    <TableRow>
-                                                        <TableCell><strong>Linked Resources</strong></TableCell>
-                                                        <TableCell></TableCell>
-                                                    </TableRow> : ''}
-                                                {dataElementDetail ? console.log(dataElementDetail.id) : ''}
-                                                {dataElementDetail ? (
-                                                    dataElementMapping ? Object.keys(Object(dataElementMapping)).map(
+                                                                    key =>
+                                                                    key != dataElementDetail.extras['Applicable Periods'].length -1 ?
+                                                                        dataElementDetail.extras['Applicable Periods'][key] + ", " 
+                                                                        : dataElementDetail.extras['Applicable Periods'][key]
 
-                                                        function (key) {
-                                                            if (dataElementMapping[key].map_type === "Derived From") {
-                                                                setShowLinked(true)
-                                                                let name = ''
-                                                                let code = ''
-                                                                let source = ''
-                                                                let type = ''
-                                                                let derives = ''
-                                                                if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
-                                                                    name = Object(dataElementMapping)[key].to_concept_name
-                                                                    code = dataElementMapping[key].to_concept_code
-                                                                    derives = 'Derived From'
-                                                                    if (de[dataElementMapping[key].to_concept_code]) {
-                                                                        source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                        type = de[dataElementMapping[key].to_concept_code].concept_class
-                                                                    }
-                                                                }
-                                                                else {
-                                                                    let from_concept_url = dataElementMapping[key].from_concept_url
-                                                                    if (from_concept_url.endsWith('/')) {
-                                                                        from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
-                                                                    }
-                                                                    let arr = from_concept_url.split('/')
-                                                                    let derivationId = arr[arr.length - 1]
-                                                                    //derivationId = dataElementMapping[key].from_concept_code
-                                                                    console.log(dataElements)
-                                                                    //console.log(de)
-                                                                    console.log(derivationId)
-                                                                    let derived = {}
-                                                                    Object.values(Object(dataElements)).map(
-                                                                        value => {
-                                                                            if (value.id === derivationId) {
-                                                                                derived = value
-                                                                            }
+                                                                )
+                                                                )}
+                                                                </TableCell>
+                                                            </TableRow> : '' : ''
+                                                    }
+                                                    {dataElementDetail.extras.resultTarget ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Result/Target</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.resultTarget}</TableCell>
+                                                        </TableRow> : ''
+                                                    }
+
+                                                    {dataElementDetail.extras.indicator ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Reference Indicator</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.indicator}</TableCell>
+                                                        </TableRow> : ''}
+                                                    {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source === 'PDH' ?
+                                                        < TableRow >
+                                                            <TableCell><strong>PDH Indicator</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.pdh_indicator_code ? dataElementDetail.extras.pdh_indicator_code : '--'}</TableCell>
+                                                        </TableRow>
+                                                        :
+
+
+                                                        dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ?
+                                                            <TableRow>
+                                                                <TableCell><strong>Code List Membership</strong></TableCell>
+                                                                <TableCell>
+                                                                    <ul style={{ listStyleType: 'disc', margin: 10, padding: 0 }}>
+                                                                        {(Object.keys(dataElementDetail.extras.codelists).map(
+
+                                                                            key =>
+
+                                                                                <li>{dataElementDetail.extras.codelists[key].name}</li>
+
+                                                                        )
+                                                                        )}
+                                                                    </ul>
+                                                                </TableCell>
+                                                            </TableRow> : '') : ''
+
+                                                        : '' : ''}
+                                                    {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source === 'PDH' ?
+                                                        dataElementDetail.extras.pepfarSupportType ? 
+                                                        < TableRow >
+                                                            <TableCell><strong>PEPFAR Support Type</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.pepfarSupportType}</TableCell>
+                                                        </TableRow> : ''
+                                                        :
+                                                        <TableRow>
+                                                            <TableCell><strong>Other Names</strong></TableCell>
+                                                            <TableCell>
+                                                                <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
+                                                                    <li>
+                                                                        {dataElementDetail.names[2] ? <i style={{ color: '#a6a6a6', marginRight: '25px' }}>Code</i> : ''} {dataElementDetail.names[2] ? (dataElementDetail.names[2].name) : '--'}
+                                                                    </li>
+                                                                    <li>
+                                                                        {dataElementDetail.names[2] ? <i style={{ color: '#a6a6a6', marginRight: '25px' }}>Short</i> : ''} {dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}
+                                                                    </li>
+
+                                                                </ul>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                        : '' : ''}
+                                                    {dataElementDetail.retired ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Retired</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.retired}</TableCell>
+                                                        </TableRow>
+                                                        : ''}
+                                                    {dataElementDetail.datatype ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Data Type</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.datatype}</TableCell>
+                                                        </TableRow> : ''}
+                                                    {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source !== 'PDH' ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Domain Type</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.domainType ? (dataElementDetail.extras.domainType) : '--'}</TableCell>
+                                                        </TableRow>
+                                                        : '' : '' : ''}
+                                                    {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source !== 'PDH' ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Value Type</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.valueType ? (dataElementDetail.extras.valueType) : '--'}</TableCell>
+                                                        </TableRow>
+                                                        : '' : '' : ''}
+                                                    {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source !== 'PDH' ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Aggregation Type</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.aggregationType ? (dataElementDetail.extras.aggregationType) : '--'}</TableCell>
+                                                        </TableRow>
+                                                        : '' : '' : ''}
+                                                    {!moreAttributes ?
+                                                        <TableRow><TableCell style={{width: '200px'}}><Link href="#" onClick={showMoreAttributes}>more<TiArrowSortedDown /></Link></TableCell><TableCell></TableCell></TableRow>
+                                                        :
+                                                        [
+                                                            dataElementDetail.extras.pdh_rule_begin_period ?
+                                                        <TableRow>
+                                                            <TableCell><strong>PDH Rule Begin Period</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.pdh_rule_begin_period}</TableCell>
+                                                        </TableRow> : '',
+                                                            dataElementDetail.extras.standardized_disaggregate ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Standardized Disaggregate</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.standardized_disaggregate}</TableCell>
+                                                        </TableRow> : '',
+                                                        dataElementDetail.extras.pdh_derivation_rule_id ?
+                                                        <TableRow>
+                                                            <TableCell><strong>PDH Derivation Rule Id</strong></TableCell>
+                                                            <TableCell>{dataElementDetail.extras.pdh_derivation_rule_id}</TableCell>
+                                                        </TableRow> : ''
+                                                        ]
+                                                    }
+                                                    {!moreAttributes ? '' :
+                                                        <TableRow><TableCell style={{width: '200px'}}><Link href="#" onClick={showLessAttributes}>less<TiArrowSortedUp /></Link></TableCell><TableCell></TableCell></TableRow>
+                                                    }
+                                                </TableBody>
+                                            </Table> : ''}
+                                    </div>
+                                </Grid>
+                            </div>
+                            <div className={classes.compareRowColumn}>
+                                {/* <div className={classes.heroContainer}>
+                                                <div style={{ paddingBottom: '10px' }}>COMPARE WITH</div>
+                                                <div>
+                                                    <GridList cellHeight={60} className={classes.gridList} cols={2}>
+                                                        <GridListTile >
+                                                            <Paper component="form" className={classes.compare}>
+                                                                <InputBase
+                                                                    className={classes.input}
+                                                                    //inputProps={{ 'aria-label': 'search data elements' }}
+                                                                    id="compareSearch"
+                                                                    key="compareSearch"
+                                                                    onKeyDown={handleKeyPressCompare}
+                                                                    onChange={handleCompareInputChange}
+                                                                    value={compareInputText}
+                                                                />
+                                                            </Paper>
+                                                        </GridListTile>
+                                                        <GridListTile>
+                                                            <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, null)} variant="outlined" >
+                                                                COMPARE
+                                                        </Button>
+                                                        </GridListTile>
+                                                    </GridList>
+                                                    <div><InfoIcon fontSize='default' color="disabled"></InfoIcon><i style={{ color: '#8a8987' }}>Please enter a Data Element UID</i></div>
+                                                </div>
+
+                                            </div> */}
+                                {/* {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''} */}
+                                <div style={{ margin: '15px' }}>
+                                    <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
+                                        <Tab label="DISAGGREGATIONS" {...a11yProps(0)} />
+                                        <Tab label="LINKAGES" {...a11yProps(1)} />
+                                        {dataElementDetail ? dataElementDetail.extras.source === 'PDH' ? <Tab label="DERIVATIONS" {...a11yProps(2)} /> : '' : ''}
+                                    </Tabs>
+                                    <TabPanel value={panel} index={0} className={classes.tabPanel}>
+                                        <Grid container >
+                                            <Grid item xs={9}></Grid>
+                                            {
+                                                listView ?
+                                                    <Grid item xs={3}>
+                                                        <div style={{ flexDirection: 'row', display: 'flex' }} >
+                                                            <Button style={{ backgroundColor: '#fff0b3' }}>
+                                                                <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
+                                                            </Button>
+                                                            <Button>
+                                                                <MdFunctions size={32} onClick={handleFormulaView} />
+                                                                <TiArrowSortedDown /></Button>
+                                                        </div>
+                                                    </Grid>
+                                                    :
+                                                    <Grid item xs={3}>
+                                                        <div style={{ flexDirection: 'row', display: 'flex' }} >
+                                                            <Button>
+                                                                <MdList size={32} onClick={handleListView} />
+                                                            </Button>
+                                                            <Button style={{ backgroundColor: '#fff0b3' }}><MdFunctions style={{ backgroundColor: '#fff0b3' }} size={32} onClick={handleFormulaView} />
+                                                                <TiArrowSortedDown onClick={handleFormat('format')} />
+                                                            </Button>
+                                                        </div>
+                                                    </Grid>
+                                            }
+                                            <Grid item xs={12} className={classes.comboTable}>
+                                                {listView ?
+                                                <div>
+                                                    <Table className={classes.table} aria-label="simple table" size="small">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Name</TableCell>
+                                                                <TableCell>Code</TableCell>
+                                                                <TableCell>Action</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {dataElementDetail ?
+                                                                (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
+
+                                                                    key =>
+                                                                        Object(deMappings[dataElementDetail.id])[key].map_type === 'Has Option' ? (
+                                                                            <TableRow >
+                                                                                <TableCell>
+                                                                                    {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
+                                                                                </TableCell>
+                                                                                <TableCell>
+                                                                                    {Object(deMappings[dataElementDetail.id])[key].to_concept_code}
+                                                                                </TableCell>
+                                                                                <TableCell>
+                                                                                    {/* <Button variant="outlined" className={classes.exportButton}  id="downloadButton" color="primary">
+                                                                                    <ExportButtonLabel> Export</ExportButtonLabel> */}
+                                                                                    <GetAppIcon style={{ color: '#1D5893' }}
+                                                                                        onClick={(event) => exportMenu(event,"coc", Object(deMappings[dataElementDetail.id])[key].to_concept_code, dataElementDetail.extras.source, 'coc')} />
+                                                                                    {/* </Button> */}
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        ) : ''
+                                                                ) : ''
+                                                                : ''}
+                                                        </TableBody>
+                                                    </Table> 
+                                                    </div>:
+                                                    <Grid container alignItems="center" justify="space-between">
+                                                        <Grid   >
+                                                            <div className={classes.tableContainer}>
+                                                                {
+                                                                    dataElementDetail ?
+                                                                        (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
+
+                                                                            key =>
+                                                                                Object(deMappings[dataElementDetail.id])[key].map_type === 'Has Option' ? (
+                                                                                    checked ? (Object(deMappings[dataElementDetail.id])[key].to_concept_code +
+                                                                                        ((key == Object.keys(Object(deMappings[dataElementDetail.id]))[Object.keys(Object(deMappings[dataElementDetail.id])).length - 1]) ? '' : ' + '))
+                                                                                        : (Object(deMappings[dataElementDetail.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElementDetail.id]))[Object.keys(Object(deMappings[dataElementDetail.id])).length - 1]) ? '' : ' + ')))
+
+                                                                                    : '') : ''
+                                                                        : ''}
+
+                                                            </div></Grid>
+                                                        {/* <Grid item xs={3} >
+                                                                    <FormControlLabel
+                                                                        value="Start"
+                                                                        control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}
+                                                                        label={format}
+                                                                        labelPlacement="start"
+                                                                    />
+                                                                </Grid> */}
+                                                    </Grid>
+                                                }
+                                            </Grid>
+                                        </Grid>
+
+                                    </TabPanel>
+                                    <TabPanel value={panel} index={1} className={classes.tabPanel}>
+                                        <div>
+                                            <Table className={classes.comboTable} style={{ marginLeft: '20px', maxWidth: '700px' }} aria-label="simple table" size="small">
+                                                <TableBody>
+
+                                                    {showLinked ?
+                                                        <TableRow>
+                                                            <TableCell><strong>Linkage</strong></TableCell>
+                                                            <TableCell><strong>Resource</strong></TableCell>
+                                                            <TableCell></TableCell>
+                                                        </TableRow> : ''}
+                                                    {dataElementDetail ? console.log(dataElementDetail.id) : ''}
+                                                    {dataElementDetail ? (
+                                                        dataElementMapping ? Object.keys(Object(dataElementMapping)).map(
+
+                                                            function (key) {
+                                                                if (dataElementMapping[key].map_type === "Derived From") {
+                                                                    setShowLinked(true)
+                                                                    let name = ''
+                                                                    let code = ''
+                                                                    let source = ''
+                                                                    let type = ''
+                                                                    let derives = ''
+                                                                    if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
+                                                                        name = Object(dataElementMapping)[key].to_concept_name
+                                                                        code = dataElementMapping[key].to_concept_code
+                                                                        derives = 'Derived From'
+                                                                        if (de[dataElementMapping[key].to_concept_code]) {
+                                                                            source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                            type = de[dataElementMapping[key].to_concept_code].concept_class
                                                                         }
+                                                                    }
+                                                                    else {
+                                                                        let from_concept_url = dataElementMapping[key].from_concept_url
+                                                                        if (from_concept_url.endsWith('/')) {
+                                                                            from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                                                        }
+                                                                        let arr = from_concept_url.split('/')
+                                                                        let derivationId = arr[arr.length - 1]
+                                                                        //derivationId = dataElementMapping[key].from_concept_code
+                                                                        console.log(dataElements)
+                                                                        //console.log(de)
+                                                                        console.log(derivationId)
+                                                                        let derived = {}
+                                                                        Object.values(Object(dataElements)).map(
+                                                                            value => {
+                                                                                if (value.id === derivationId) {
+                                                                                    derived = value
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                        console.log(derived)
+                                                                        name = derived.display_name
+                                                                        code = derived.id
+                                                                        source = derived.extras ? derived.extras.source : ''
+                                                                        type = derived.concept_class
+                                                                        derives = 'Derived To'
+                                                                        console.log(name + code + source + type)
+                                                                    }
+                                                                    return (
+                                                                        <TableRow>
+                                                                            <TableCell>{derives}</TableCell>
+                                                                            <TableCell component="th" scope="row" >
+                                                                                <Grid container alignItems="center"
+                                                                                    //justify="space-between"
+                                                                                    spacing={2}>
+
+                                                                                    <Grid item xs={12}  >
+                                                                                        <Link href={"/codelist/dataElementDetail?id=" + code} style={{ textDecoration: 'underline' }}> {name}</Link>
+                                                                                    </Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                            onClick={() => copyToClipboard(code)}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>UID: </i> {' ' + code}</span></Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>Source: </i> {' ' + source}</span></Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>Type: </i> {' ' + type}</span>                                            </Grid>
+                                                                                </Grid>
+                                                                            </TableCell>
+                                                                            <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                                                                <Tooltip disableFocusListener disableTouchListener title="Compare" >
+                                                                                    <i >
+                                                                                        <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} onClick={() => performCompare(dataElementDetail, code)} />
+                                                                                    </i>
+                                                                                </Tooltip>
+                                                                            </TableCell>
+                                                                        </TableRow>
                                                                     )
-                                                                    console.log(derived)
-                                                                    name = derived.display_name
-                                                                    code = derived.id
-                                                                    source = derived.extras.source
-                                                                    type = derived.concept_class
-                                                                    derives = 'Derived To'
-                                                                    console.log(name + code + source + type)
                                                                 }
-                                                                return (
-                                                                    <TableRow>
+                                                            }) : ''
+                                                    ) : ''
+                                                    }
 
-                                                                        <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
-                                                                            <Grid container alignItems="center"
-                                                                                //justify="space-between"
-                                                                                spacing={2}>
-                                                                                <Grid item xs={12}  >
-                                                                                    <strong>{derives}</strong>
-                                                                                </Grid>
-                                                                                <Grid item xs={12}  >
-                                                                                    {name}
-                                                                                </Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                        onClick={() => copyToClipboard(code)}
-                                                                                    >{"UID: " + code}</span></Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                    >{"Source: " + source}</span></Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                    >{"Type: " + type}</span>                                            </Grid>
-                                                                            </Grid>
-                                                                        </TableCell>
-                                                                        <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
-                                                                            <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
-                                                                                COMPARE
-                                    </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            }
-                                                        }) : ''
-                                                ) : ''
-                                                }
+                                                    {dataElementDetail ? (
+                                                        (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
 
-                                                {dataElementDetail ? (
-                                                    (dataElementMapping) ? Object.keys(Object(dataElementMapping)).map(
-
-                                                        function (key) {
-                                                            if (dataElementMapping[key].map_type === "Replaces") {
-                                                                let name = ''
-                                                                let code = ''
-                                                                let source = ''
-                                                                let type = ''
-                                                                let replaces = ''
-                                                                if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
-                                                                    name = Object(dataElementMapping)[key].to_concept_name
-                                                                    code = dataElementMapping[key].to_concept_code
-                                                                    replaces = 'Replaces'
-                                                                    if (de[dataElementMapping[key].to_concept_code]) {
-                                                                        source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                        type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                            function (key) {
+                                                                if (dataElementMapping[key].map_type === "Replaces") {
+                                                                    let name = ''
+                                                                    let code = ''
+                                                                    let source = ''
+                                                                    let type = ''
+                                                                    let replaces = ''
+                                                                    if (dataElementMapping[key].to_concept_code !== dataElementDetail.id) {
+                                                                        name = Object(dataElementMapping)[key].to_concept_name
+                                                                        code = dataElementMapping[key].to_concept_code
+                                                                        replaces = 'Replaces'
+                                                                        if (de[dataElementMapping[key].to_concept_code]) {
+                                                                            source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                            type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                        }
                                                                     }
-                                                                }
-                                                                else {
-                                                                    let from_concept_url = dataElementMapping[key].from_concept_url
-                                                                    if (from_concept_url.endsWith('/')) {
-                                                                        from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                                                    else {
+                                                                        let from_concept_url = dataElementMapping[key].from_concept_url
+                                                                        if (from_concept_url.endsWith('/')) {
+                                                                            from_concept_url = from_concept_url.substring(0, from_concept_url.length - 1)
+                                                                        }
+                                                                        let arr = from_concept_url.split('/')
+                                                                        let derivationId = arr[arr.length - 1]
+                                                                        //derivationId = dataElementMapping[key].from_concept_code
+                                                                        name = de[derivationId].display_name
+                                                                        code = de[derivationId].id
+                                                                        source = de[derivationId].extras.source
+                                                                        type = de[derivationId].concept_class
+                                                                        replaces = 'Replaced By'
+                                                                        console.log(name + code + source + type)
                                                                     }
-                                                                    let arr = from_concept_url.split('/')
-                                                                    let derivationId = arr[arr.length - 1]
-                                                                    //derivationId = dataElementMapping[key].from_concept_code
-                                                                    name = de[derivationId].display_name
-                                                                    code = de[derivationId].id
-                                                                    source = de[derivationId].extras.source
-                                                                    type = de[derivationId].concept_class
-                                                                    replaces = 'Replaced By'
-                                                                    console.log(name + code + source + type)
+                                                                    return (
+                                                                        <TableRow>
+                                                                            <TableCell>{replaces}</TableCell>
+                                                                            <TableCell component="th" scope="row" >
+                                                                                <Grid container alignItems="center"
+                                                                                    //justify="space-between"
+                                                                                    spacing={2}>
+                                                                                    <Grid item xs={12}  >
+                                                                                        <Link href={"/codelist/dataElementDetail?id=" + code} underline='always'> {name}</Link>
+                                                                                    </Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                            onClick={() => copyToClipboard(code)}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>UID: </i> {' ' + code}</span></Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>Source: </i> {' ' + source}</span></Grid>
+                                                                                    <Grid item xs={4} md={4} >
+                                                                                        <span className={classes.chip}
+                                                                                        ><i style={{ color: '#a6a6a6' }}>Type: </i> {' ' + type}</span>                                            </Grid>
+                                                                                </Grid>
+                                                                            </TableCell>
+                                                                            <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
+                                                                                <Tooltip disableFocusListener disableTouchListener title="Compare" >
+                                                                                    <i >
+                                                                                        <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} onClick={() => performCompare(dataElementDetail, code)} />
+                                                                                    </i>
+                                                                                </Tooltip>
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )
                                                                 }
-                                                                return (
-                                                                    <TableRow>
-                                                                        <TableCell component="th" scope="row" style={{ maxWidth: '300px' }}>
-                                                                            <Grid container alignItems="center"
-                                                                                //justify="space-between"
-                                                                                spacing={2}>
-                                                                                <Grid item xs={12}  >
-                                                                                    <strong>{replaces}</strong>
-                                                                                </Grid>
-                                                                                <Grid item xs={12}  >
-                                                                                    {name}
-                                                                                </Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                        onClick={() => copyToClipboard(code)}
-                                                                                    >{"UID: " + code}</span></Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                    >{"Source: " + source}</span></Grid>
-                                                                                <Grid item xs={4} md={4} >
-                                                                                    <span className={classes.chip}
-                                                                                    >{"Type: " + type}</span></Grid>
-                                                                            </Grid>
-                                                                        </TableCell>
-                                                                        <TableCell component="th" scope="row" style={{ alignItems: 'left' }}>
-                                                                            <Button type="button" className={classes.margin} aria-label="search" onClick={() => performCompare(dataElementDetail, code)} variant="outlined" >
-                                                                                COMPARE
-                                    </Button>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            }
-                                                        }) : ''
-                                                ) : ''
-                                                }
+                                                            }) : ''
+                                                    ) : ''
+                                                    }
 
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </Grid></Grid>
-                        </Grid>)}
-            </div>
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </TabPanel>
+                                    <TabPanel value={panel} index={2} className={classes.tabPanel} >
+
+                                        {
+                                            dataElementDetail ?
+                                                (dataElementDetail.extras.source_data_elements) ? populatePDHDerivatives(dataElementDetail.extras.source_data_elements) : ''
+                                                : ''
+                                        }
+
+                                        <Grid container alignItems="center" justify="space-between">
+                                            <Grid item xs={6}></Grid>
+                                            <Grid item xs={3}></Grid>
+                                            <Grid item xs={3}>
+                                                <div>
+                                                    {expanded.length !== 0 ? <Button variant="outlined" color="primary" onClick={collapseAll(Object.keys(derivedCoC).concat(Object.keys(pdhDerivatives)))}>Collapse All</Button>
+                                                        :
+                                                        <Button variant="outlined" color="primary" onClick={expandAll(Object.keys(derivedCoC).concat(Object.keys(pdhDerivatives)))}>Expand All</Button>}
+                                                </div>
+                                            </Grid>
+                                        </Grid>
+                                        {
+                                            dataElementDetail ?
+                                                dataElementDetail.extras.source_data_elements ?
+                                                    <TreeView
+                                                        className={classes.derivatives}
+                                                        defaultCollapseIcon={<ExpandMoreIcon />}
+                                                        defaultExpanded={expanded}
+                                                        defaultExpandIcon={<ChevronRightIcon />}
+                                                        style={{ overflow: 'scroll' }}
+
+                                                    >
+                                                        {
+                                                            Object.keys(derivedCoC).map(
+                                                                key =>
+                                                                    <TreeItem key={key} nodeId={key} label={"Derived COC: " + key} >
+                                                                        {Object.values(derivedCoC[key]).map(
+                                                                            value =>
+                                                                                <TreeItem nodeId={value} label={"Source Data Element: " + value}>
+                                                                                    {Object.values(pdhDerivatives[value]).map(
+                                                                                        coc =>
+                                                                                            key === coc.derivedDisag ?
+                                                                                                <TreeItem nodeId={coc.sourceDisag} label={"Source COC: " + (coc.sourceDisag.split('|')[0] + ' ............................... ' + (coc.sourceDisag.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
+                                                                                                </TreeItem>
+                                                                                                : ''
+                                                                                    )}
+                                                                                </TreeItem>
+                                                                        )}
+
+                                                                    </TreeItem>
+                                                            )
+                                                        }
+
+                                                    </TreeView> : 'There are no derivations for this selection' : ''}
+                                    </TabPanel>
+                                    {pdhDerivatives = []}
+                                    {derivedCoC = []}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+            </ div>
 
         )
-        } />)
+        } />
+    )
 }

@@ -21,6 +21,7 @@ import Button from '@material-ui/core/Button';
 import { getConfig } from '../config.js';
 import { useHistory, useLocation } from "react-router";
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Breadcrumb from './../Components/Breadcrumb';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -31,12 +32,14 @@ const useStyles = makeStyles(theme => ({
     display: 'none'
   },
   container: {
-    maxWidth: '1200px',
+    maxWidth: '1600px',
     margin: '0 auto',
     paddingTop: '30px',
     paddingLeft: '15px',
-    paddingRight: '15px'
-  },
+    paddingRight: '15px',
+    flex: 1,
+    marginBottom: '80px'
+},
   heroContainer: {
     margin: '0 auto',
     backgroundColor: '#eeeeee',
@@ -670,6 +673,18 @@ export default function Compare() {
           >
 
             <Table className={classes.comboTable} aria-label="simple table">
+            { Object.keys(dataElementMatrix) == 2 ?
+            <colgroup>
+      <col style={{width:'10%'}}/>
+      <col style={{width:'45%'}}/>
+      <col style={{width:'45%'}}/>
+   </colgroup>: 
+   <colgroup>
+   <col style={{width:'10%'}}/>
+   <col style={{width:'30%'}}/>
+   <col style={{width:'30%'}}/>
+   <col style={{width:'30%'}}/>
+</colgroup>}
               <TableBody>
                 <TableRow><TableCell></TableCell>
                   {dataElementMatrix['Display Name'] ? (dataElementMatrix['Display Name']).map(
@@ -778,11 +793,11 @@ export default function Compare() {
   };
 
   const goBack = () => {
-    if (params.get('dataElementDetail')) {
-      history.push('/dataElementDetail?id=' + params.get('id1'))
-    } else {
+    // if (params.get('dataElementDetail')) {
+    //   history.push('/dataElementDetail?id=' + params.get('id1'))
+    // } else {
       history.goBack()
-    }
+    //}
   }
   const styles = theme => ({
     root: {
@@ -938,15 +953,20 @@ export default function Compare() {
   
   return (
     <ErrorBoundary>
-      <Grid container >
-        <Grid item xs={12}>
+      <div className={classes.container} >
 
           <div className={classes.fixedTop}>
-              {/* <NavLink to="/codelist"> */}
-              <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
-                id="backButton"> Back</Button>
-              {/* </NavLink> */}
-              <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT COMPARISON</h2>
+          <Grid container >
+                        <Grid xs={4}>
+                        <Breadcrumb></Breadcrumb>
+                        </Grid>
+                        <Grid xs={4}>
+                        <h2 className={classes.comparisonPanelTitle}>COMPARE DATA ELEMENTS</h2>                        </Grid>
+                        <Grid xs={4}>
+                        <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
+                        id="backButton"> Back</Button>
+                        </Grid>
+                    </Grid>
           </div>
           {errorDisplay !== null ?
             <div className={classes.errorMessage}>{errorDisplay}</div>
@@ -961,10 +981,7 @@ export default function Compare() {
             }
 
           </div>
-        </Grid>
-
-
-      </Grid>
+        </div>
     </ErrorBoundary>
   );
 }

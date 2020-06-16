@@ -10,7 +10,11 @@ const routes = {
   '/referenceIndicator': 'Reference Indicators',
   '/indicators': 'Indicators',
   '/about': 'About',
-  '/codelist/indicator': 'Indicator'
+  '/codelist/indicator': 'Indicator',
+  '/codelist/dataElementDetail': 'DataElementDetails',
+  '/indicators/indicatorDetail': 'IndicatorDetails',
+  '/indicators/compareIndicators': 'CompareIndicators',
+  '/codelist/compare': 'Compare'
 };
 
 const findRouteName = url => routes[url];

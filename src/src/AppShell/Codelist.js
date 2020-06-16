@@ -1017,10 +1017,10 @@ export default function Codelist() {
     let compareLink = ''
     if (!dataElementToCompare) {
       // if (compareText !== '') {
-      compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
+      compareLink = '/codelist/compare?id1=' + dataElementDetail.id + '&id2=' + compareText + '&dataElementDetail=true'
       //}
     } else {
-      compareLink = '/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
+      compareLink = '/codelist/compare?id1=' + dataElementDetail.id + '&id2=' + dataElementToCompare + '&dataElementDetail=true'
     }
     history.push(compareLink)
   }
@@ -1428,7 +1428,7 @@ export default function Codelist() {
   };
   // set export popup
   function exportMenu(buttonName, id, source, type) {
-    event = event || window.event;
+    //event = event || window.event;
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setDropDownName(buttonName);
     setExportDataElement(id)
@@ -1491,7 +1491,7 @@ export default function Codelist() {
     console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
-    if (downloadValue.trim() !== "CSV") {
+    if (exportValue.trim() !== "CSV") {
       downloadLink.setAttribute("target", "_blank");
     }
     downloadLink.setAttribute('download', "download");
@@ -1558,7 +1558,7 @@ export default function Codelist() {
         Object.keys(selectedDataElement).map(key => {
           compareLink = compareLink + 'id' + (parseInt(key) + 1) + '=' + selectedDataElement[key] + '&'
         })
-        compareLink = '/compare?' + compareLink.substring(0, compareLink.length - 1)
+        compareLink = '/codelist/compare?' + compareLink.substring(0, compareLink.length - 1)
         history.push(compareLink)
 
         //return <Redirect to={compareLink}/> 
@@ -1580,7 +1580,7 @@ export default function Codelist() {
     setDataElementDetail(dataElement);
     //setDetailPanel({ ...detailPanel, [side]: open });
     if (open) {
-      history.push('/dataElementDetail?id=' + dataElement.id)
+      history.push('../codelist/dataElementDetail?id=' + dataElement.id)
     }
     else {
       setShowLinked(false)
@@ -1951,7 +1951,7 @@ export default function Codelist() {
                     <div>
                       <Tooltip disableFocusListener title="Download">
                         <i>
-                          <Button variant="outlined" className={classes.actionButton} style={{height:'48px', width:'80px', marginBottom: '10px'}} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
+                          <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton" disabled={selectedDataElement.length === 0 && values.dataSet === "All" ? true : false}>
                             {/* <ActionButtonLabel> {getDownloadLabel()}</ActionButtonLabel> */}
                             {
                               selectedDataElement.length === 0 && values.dataSet === "All" ?
@@ -1961,7 +1961,7 @@ export default function Codelist() {
                     <div >
                       <Tooltip disableFocusListener disableTouchListener title="Compare 2 or 3 Data Elements">
                         <i >
-                          <Button variant="outlined" className={classes.actionButton} style={{height:'48px', width:'80px', marginBottom: '10px'}}
+                          <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }}
                             onClick={toggleDrawer('bottom', true)}
                             id="comparisonButton"
                             disabled={selectedDataElement.length < 2 || selectedDataElement.length > 3 ? true : false}>
@@ -1994,32 +1994,33 @@ export default function Codelist() {
                 </div>
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
                   <div>
+                    {dataElements ?
+                      <Tooltip disableFocusListener title="Select">
+                        <Button style={{ marginTop: '10px' }}>
+                          {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
+                            style={{ padding: '5px', marginLeft: '10px' }} /> : ''}
+                          {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
+                            <Checkbox
+                              defaultChecked
+                              indeterminate
+                              inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                              onClick={clearAll}
+                              style={{ padding: '5px', marginLeft: '10px' }}
+                            /> : ''}
+                          {selectedDataElement.length == dataElements.length ?
+                            <Checkbox
+                              checked={checked}
+                              onChange={handleChange}
+                              inputProps={{ 'aria-label': 'primary checkbox' }}
+                              onClick={selectAll}
+                              style={{ padding: '5px', marginLeft: '10px' }}
+                            /> : ''}
 
-                    <Tooltip disableFocusListener title="Select">
-                      <Button  style={{marginTop:'10px'}}>
-                        {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll} 
-                        style={{padding:'5px', marginLeft:'10px'}}/> : ''}
-                        {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
-                          <Checkbox
-                            defaultChecked
-                            indeterminate
-                            inputProps={{ 'aria-label': 'indeterminate checkbox' }}
-                            onClick={clearAll}
-                            style={{padding:'5px', marginLeft:'10px'}}
-                          /> : ''}
-                        {selectedDataElement.length == dataElements.length ? <Checkbox
-                          checked={checked}
-                          onChange={handleChange}
-                          inputProps={{ 'aria-label': 'primary checkbox' }}
-                          onClick={selectAll}
-                          style={{padding:'5px', marginLeft:'10px'}}
-                        /> : ''}
+                          <TiArrowSortedDown onClick={selectMenu('select')} />
 
-                        <TiArrowSortedDown onClick={selectMenu('select')} />
-
-                      </Button>
-                    </Tooltip>
-
+                        </Button>
+                      </Tooltip>
+                      : ''}
                   </div>
                   <div style={{ width: '500px' }}>
                     <Paper component="form" className={classes.search}>
@@ -2037,7 +2038,8 @@ export default function Codelist() {
                       <IconButton type="button" className={classes.searchButton} aria-label="search" id="searchButton" onClick={performSearch}  >
                         <SearchIcon />
                       </IconButton>
-                    </Paper></div>
+                    </Paper>
+                  </div>
                 </div>
                 {/* popover panel */}
                 <Popover
@@ -2098,10 +2100,7 @@ export default function Codelist() {
                             <MenuItem value="None" onClick={clearAll}>None</MenuItem>
                           </FormGroup>
                         </FormControl>
-
                   }
-
-
                 </Popover>
 
 
