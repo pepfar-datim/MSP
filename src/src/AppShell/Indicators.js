@@ -1401,7 +1401,7 @@ export default function Codelist() {
       }
       )
       UIDs = UIDs.substring(0, UIDs.length - 2)
-      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
+      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&limit=0&q=' + UIDs;
     }
     else {
       downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
