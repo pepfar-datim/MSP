@@ -1494,10 +1494,9 @@ export default function DataElementDetails() {
                                                     <TreeView
                                                         className={classes.derivatives}
                                                         defaultCollapseIcon={<ExpandMoreIcon />}
-                                                        defaultExpanded={expanded}
+                                                        expanded={expanded}
                                                         defaultExpandIcon={<ChevronRightIcon />}
                                                         style={{ overflow: 'scroll' }}
-
                                                     >
                                                         {
                                                             Object.keys(derivedCoC).map(
