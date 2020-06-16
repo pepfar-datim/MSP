@@ -1326,10 +1326,22 @@ export default function DataElementDetails() {
                                                                         name = Object(dataElementMapping)[key].to_concept_name
                                                                         code = dataElementMapping[key].to_concept_code
                                                                         derives = 'Derived From'
-                                                                        if (de[dataElementMapping[key].to_concept_code]) {
-                                                                            source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                            type = de[dataElementMapping[key].to_concept_code].concept_class
-                                                                        }
+                                                                        // if (de[dataElementMapping[key].to_concept_code]) {
+                                                                        //     source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                        //     type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                        // }
+                                                                        let derived = {}
+                                                                        Object.values(Object(dataElements)).map(
+                                                                            value => {
+                                                                                if (value.id === code) {
+                                                                                    derived = value
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                        console.log(derived)
+                                                                        name = derived.display_name
+                                                                        source = derived.extras ? derived.extras.source : ''
+                                                                        type = derived.concept_class
                                                                     }
                                                                     else {
                                                                         let from_concept_url = dataElementMapping[key].from_concept_url
@@ -1409,10 +1421,21 @@ export default function DataElementDetails() {
                                                                         name = Object(dataElementMapping)[key].to_concept_name
                                                                         code = dataElementMapping[key].to_concept_code
                                                                         replaces = 'Replaces'
-                                                                        if (de[dataElementMapping[key].to_concept_code]) {
-                                                                            source = de[dataElementMapping[key].to_concept_code].extras.source
-                                                                            type = de[dataElementMapping[key].to_concept_code].concept_class
-                                                                        }
+                                                                        // if (de[dataElementMapping[key].to_concept_code]) {
+                                                                        //     source = de[dataElementMapping[key].to_concept_code].extras.source
+                                                                        //     type = de[dataElementMapping[key].to_concept_code].concept_class
+                                                                        // }
+                                                                        let derived = {}
+                                                                        Object.values(Object(dataElements)).map(
+                                                                            value => {
+                                                                                if (value.id === code) {
+                                                                                    derived = value
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                        name = derived.display_name
+                                                                        source = derived.extras ? derived.extras.source : ''
+                                                                        type = derived.concept_class
                                                                     }
                                                                     else {
                                                                         let from_concept_url = dataElementMapping[key].from_concept_url
@@ -1427,7 +1450,6 @@ export default function DataElementDetails() {
                                                                         source = de[derivationId].extras.source
                                                                         type = de[derivationId].concept_class
                                                                         replaces = 'Replaced By'
-                                                                        console.log(name + code + source + type)
                                                                     }
                                                                     return (
                                                                         <TableRow>
