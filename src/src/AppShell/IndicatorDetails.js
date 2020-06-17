@@ -910,10 +910,13 @@ export default function DataElementDetails() {
                         let dataElementCode = ''
                         if (!numeratorReadableFormula[key].split('].[')[1]) {
                             if (key == Object.keys(numeratorReadableFormula).length - 1) {
-                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length - 2)
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 2)
+                            }
+                            else if(key == 0){
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length - 1)
                             }
                             else {
-                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length - 1)
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 1)
                             }
                         }
                         else {
@@ -985,10 +988,14 @@ export default function DataElementDetails() {
                         let dataElementCode = ''
                         if (!denominatorReadableFormula[key].split('].[')[1]) {
                             if (key == Object.keys(denominatorReadableFormula).length - 1) {
-                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length - 2)
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(1, denominatorReadableFormula[key].split('].[')[0].length - 2)
+                            }
+                            else if(key == 0){
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length - 1)
+
                             }
                             else {
-                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length - 1)
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(1, denominatorReadableFormula[key].split('].[')[0].length - 1)
 
                             }
                         }
