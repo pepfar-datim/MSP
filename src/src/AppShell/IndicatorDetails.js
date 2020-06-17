@@ -1185,8 +1185,8 @@ export default function DataElementDetails() {
                                                                     dropDownName == 'disag' ?
                                                                         <FormControl component="fieldset" className={classes.popOver}>
                                                                             <FormGroup>
-                                                                                <MenuItem value="All" onClick={selectDe}><div style={{ width: '20px' }}>{!disag ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>Data Element</MenuItem>
-                                                                                <MenuItem value="None" onClick={selectDisag}><div style={{ width: '20px' }}>{disag ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>Disaggregate</MenuItem>
+                                                                                <MenuItem value="All" onClick={selectDe}>Data Element</MenuItem>
+                                                                                <MenuItem value="None" onClick={selectDisag}>Disaggregate</MenuItem>
                                                                             </FormGroup>
                                                                         </FormControl> :
                                                                         <FormControl component="fieldset" className={classes.popOver}>
