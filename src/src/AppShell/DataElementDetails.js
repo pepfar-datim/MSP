@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
 import CloseIcon from '@material-ui/icons/Close';
 import { getConfig } from '../config.js';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -588,8 +589,8 @@ export default function DataElementDetails() {
 
         } catch (e) {
             console.log("error:" + e.message);
-            setError(e.message);
-            //setErrorDisplay(e.message);
+            //setError(e.message);
+            setErrorDisplay(e.message);
         }
     };
     async function getDerivatives(id) {
@@ -689,6 +690,8 @@ export default function DataElementDetails() {
     const goBack = () => {
         history.goBack()
     };
+
+    const [errorDisplay, setErrorDisplay] = useState(null)
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const popOpen = Boolean(anchorEl);
@@ -879,7 +882,7 @@ export default function DataElementDetails() {
             </DialogTitle>
             <DialogContent >
               <Typography gutterBottom>
-                {dialogMessage}
+                {errorDisplay}
               </Typography>
             </DialogContent>
             <DialogActions>
@@ -1248,23 +1251,28 @@ export default function DataElementDetails() {
                                                 listView ?
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
+                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
                                                             <Button style={{ backgroundColor: '#fff0b3' }}>
                                                                 <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
                                                             </Button>
+                                                            </Tooltip>
+                                                            <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
                                                             <Button>
                                                                 <MdFunctions size={32} onClick={handleFormulaView} />
-                                                                <TiArrowSortedDown /></Button>
+                                                                <TiArrowSortedDown /></Button></Tooltip>
                                                         </div>
                                                     </Grid>
                                                     :
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
+                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
                                                             <Button>
                                                                 <MdList size={32} onClick={handleListView} />
-                                                            </Button>
+                                                            </Button></Tooltip>
+                                                            <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
                                                             <Button style={{ backgroundColor: '#fff0b3' }}><MdFunctions style={{ backgroundColor: '#fff0b3' }} size={32} onClick={handleFormulaView} />
                                                                 <TiArrowSortedDown onClick={handleFormat('format')} />
-                                                            </Button>
+                                                            </Button>                                                        </Tooltip>
                                                         </div>
                                                     </Grid>
                                             }
