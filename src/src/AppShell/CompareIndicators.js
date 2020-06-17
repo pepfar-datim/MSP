@@ -498,6 +498,12 @@ export default function Compare() {
       }
 
       setSelectedDatim(tempDEs);
+      if(tempDEs.length > 1){
+      if(tempDEs[0].concept_class != tempDEs[1].concept_class){
+        setErrorDisplay('Cannot compare Indicators to Data Elements')
+throw new Error('Cannot compare Data Elements to Indicators')
+      }
+    }
       Object.values(tempDEs).map(
         value => {
           if (dataElements['Indicator Name']) {
