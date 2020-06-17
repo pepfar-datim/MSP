@@ -1100,7 +1100,7 @@ export default function DataElementDetails() {
                                                     {dataElementDetail ? setExportType(dataElementDetail.concept_class) : ''} */}
                                                     <TiArrowSortedDown />
                                                 </div>
-                                                <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('select')}>
+                                                <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('compare')}>
                                                     <Tooltip disableFocusListener disableTouchListener title="Compare" >
                                                         <i >
                                                             {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }}
