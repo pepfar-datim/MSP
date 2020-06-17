@@ -868,6 +868,21 @@ export default function DataElementDetails() {
         setListView(false)
     };
 
+    const [numeratorTable, setNumeratorTable] = React.useState(true);
+    function showNumeratorTable() {
+        setNumeratorTable(true)
+    }
+    function hideNumeratorTable() {
+        setNumeratorTable(false)
+    }
+    const [denominatorTable, setDenominatorTable] = React.useState(true);
+    function showDenominatorTable() {
+        setDenominatorTable(true)
+    }
+    function hideDenominatorTable() {
+        setDenominatorTable(false)
+    }
+
     const [expanded, setExpanded] = React.useState([]);
     const expandAll = (array) => event => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -1355,7 +1370,9 @@ export default function DataElementDetails() {
                                                         <div>
                                                             <div><strong>Data Element Formula References</strong></div>
                                                             <div><i style={{ color: '#808080', fontSize: '15px' }}>NOTE: View the full formula to see mathematical operators</i></div>
-                                                            <div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown />Numerator</strong></div>
+                                                            { numeratorTable ? 
+                                                            [
+                                                            <div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedUp onClick={hideNumeratorTable}/>Numerator</strong></div>,
                                                             <Table className={classes.comboTable} aria-label="simple table" size="small" >
                                                                 {dataElementDetail.extras.numeratorReadableFormula.length > 1 ?
                                                                     <TableHead>
@@ -1433,8 +1450,12 @@ export default function DataElementDetails() {
                                                                         </TableRow>
                                                                     </TableBody>
                                                                 }
-                                                            </Table>
-                                                            <div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown />Denominator</strong></div>
+                                                            </Table> ]
+                                                            :
+                                                            <div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown onClick={showNumeratorTable}/>Numerator</strong></div>
+                                                            }
+                                                            { denominatorTable ?
+                                                            [<div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedUp onClick={hideDenominatorTable}/>Denominator</strong></div>,
                                                             <Table className={classes.comboTable} aria-label="simple table" size="small" >
                                                                 {dataElementDetail.extras.denominatorReadableFormula.length > 1 ?
                                                                     <TableHead>
@@ -1511,7 +1532,10 @@ export default function DataElementDetails() {
                                                                         </TableRow>
                                                                     </TableBody>
                                                                 }
-                                                            </Table>
+                                                            </Table> ]
+                                                            :
+                                                            <div style={{ marginTop: '20px' }}><strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown onClick={showDenominatorTable}/>Denominator</strong></div>
+                                                            }
                                                         </div>
                                                         : ''
                                                     :
