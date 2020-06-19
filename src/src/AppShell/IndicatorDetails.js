@@ -1349,12 +1349,16 @@ export default function DataElementDetails() {
                                                 listView ?
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
+                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
                                                             <Button style={{ backgroundColor: '#fff0b3' }}>
                                                                 <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
                                                             </Button>
+                                                            </Tooltip>
+                                                            <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
                                                             <Button>
                                                                 <MdFunctions size={32} onClick={handleFormulaView} />
                                                                 <TiArrowSortedDown /></Button>
+                                                                </Tooltip>
                                                         </div>
                                                     </Grid>
                                                     :
