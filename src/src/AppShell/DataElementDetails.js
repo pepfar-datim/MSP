@@ -48,6 +48,10 @@ import { Route, useLocation, useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import { BsCheck } from 'react-icons/bs';
 import Breadcrumb from './../Components/Breadcrumb';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+
 //tab panel function
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -765,6 +769,11 @@ export default function DataElementDetails() {
     const handleChange = (event, newPanel) => {
         setPanel(newPanel);
     };
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [dialogMessage, setDialogMessage] = React.useState('');
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
     const [checked, setChecked] = React.useState(false);
     const [format, setFormat] = React.useState('Names');
 
@@ -803,6 +812,14 @@ export default function DataElementDetails() {
     };
 
     const [expanded, setExpanded] = React.useState([]);
+    const [selected, setSelected] = React.useState([]);
+    const handleToggle = (event, nodeIds) => {
+        setExpanded(nodeIds);
+      };
+    
+      const handleSelect = (event, nodeIds) => {
+        setSelected(nodeIds);
+      };
     const expandAll = (array) => event => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
@@ -855,48 +872,48 @@ export default function DataElementDetails() {
             //   `Error when retrieving data element  ${e.message}`
             // );
         }
-        
-    }
-      //Error handling
-  class ErrorBoundary extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { error: null, errorInfo: null };
-    }
 
-    componentDidCatch(error, errorInfo) {
-      // Catch errors in any components below and re-render with error message
-      this.setState({
-        error: error,
-        errorInfo: errorInfo
-      })
-      // You can also log error messages to an error reporting service here
     }
+    //Error handling
+    class ErrorBoundary extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { error: null, errorInfo: null };
+        }
 
-    render() {
-      if (this.state.errorInfo) {
-        // Error path
-        return (
-          <Dialog onClose={handleDialogClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
-            <DialogTitle id="customized-dialog-title" onClose={handleDialogClose}>
-            </DialogTitle>
-            <DialogContent >
-              <Typography gutterBottom>
-                {errorDisplay}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={handleDialogClose} color="primary">
-                OK
+        componentDidCatch(error, errorInfo) {
+            // Catch errors in any components below and re-render with error message
+            this.setState({
+                error: error,
+                errorInfo: errorInfo
+            })
+            // You can also log error messages to an error reporting service here
+        }
+
+        render() {
+            if (this.state.errorInfo) {
+                // Error path
+                return (
+                    <Dialog onClose={handleDialogClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
+                        <DialogTitle id="customized-dialog-title" onClose={handleDialogClose}>
+                        </DialogTitle>
+                        <DialogContent >
+                            <Typography gutterBottom>
+                                {errorDisplay}
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button autoFocus onClick={handleDialogClose} color="primary">
+                                OK
           </Button>
-            </DialogActions>
-          </Dialog>
-        );
-      }
-      // Normally, just render children
-      return this.props.children;
+                        </DialogActions>
+                    </Dialog>
+                );
+            }
+            // Normally, just render children
+            return this.props.children;
+        }
     }
-  }
 
     return (
         <Route render={(history) => (
@@ -931,79 +948,79 @@ export default function DataElementDetails() {
                                     <Grid item xs={9}></Grid>
                                     <Grid item xs={3}>
                                         {/* <div className={classes.tabDashboard}> */}
-                                            <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'right' }} >
-                                                <div style={{ marginTop: '25px', marginRight: '20px' }} onClick={(event) => exportMenu(event, 'export', dataElementDetail.id, dataElementDetail.source, 'data element')}>
-                                                    <Tooltip disableFocusListener title="Download">
-                                                        <i>
-                                                            {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
-                                                            <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" />
-                                                            {/* </Button> */}
-                                                        </i>
-                                                    </Tooltip>
-                                                    <TiArrowSortedDown />
-                                                </div>
-                                                <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('compare')}>
-                                                    <Tooltip disableFocusListener disableTouchListener title="Compare" >
-                                                        <i >
-                                                            {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }}
+                                        <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'right' }} >
+                                            <div style={{ marginTop: '25px', marginRight: '20px' }} onClick={(event) => exportMenu(event, 'export', dataElementDetail.id, dataElementDetail.source, 'data element')}>
+                                                <Tooltip disableFocusListener title="Download">
+                                                    <i>
+                                                        {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
+                                                        <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" />
+                                                        {/* </Button> */}
+                                                    </i>
+                                                </Tooltip>
+                                                <TiArrowSortedDown />
+                                            </div>
+                                            <div style={{ alignSelf: 'right', marginTop: '25px', marginRight: '20px' }} onClick={dropDownMenu('compare')}>
+                                                <Tooltip disableFocusListener disableTouchListener title="Compare" >
+                                                    <i >
+                                                        {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }}
                                                                         //onClick={toggleDrawer('bottom', true)}
                                                                         id="comparisonButton" > */}
-                                                            <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
-                                                            {/* </Button> */}
-                                                        </i>
-                                                    </Tooltip>
-                                                    <TiArrowSortedDown />
-                                                </div>
+                                                        <CompareArrowsIcon style={{ color: '#1D5893', marginLeft: '2px' }} />
+                                                        {/* </Button> */}
+                                                    </i>
+                                                </Tooltip>
+                                                <TiArrowSortedDown />
                                             </div>
+                                        </div>
 
-                                            <Popover
-                                                id={popId}
-                                                open={popOpen}
-                                                anchorEl={anchorEl}
-                                                getContentAnchorEl={null}
-                                                onClose={popHandleClose}
-                                                // anchorReference="anchorPosition"
-                                                // anchorPosition={{ top: 170, left: 600 }}
-                                                anchorOrigin={{
-                                                    vertical: 'bottom',
-                                                    horizontal: 'center',
-                                                }}
-                                                transformOrigin={{
-                                                    vertical: 'top',
-                                                    horizontal: 'center',
-                                                }}
-                                            >
-                                                {/* download popover panel */}
-                                                {
-                                                    dropDownName === "export" ?
+                                        <Popover
+                                            id={popId}
+                                            open={popOpen}
+                                            anchorEl={anchorEl}
+                                            getContentAnchorEl={null}
+                                            onClose={popHandleClose}
+                                            // anchorReference="anchorPosition"
+                                            // anchorPosition={{ top: 170, left: 600 }}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'center',
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'center',
+                                            }}
+                                        >
+                                            {/* download popover panel */}
+                                            {
+                                                dropDownName === "export" ?
+                                                    <FormControl component="fieldset" className={classes.popOver}>
+                                                        <FormGroup>
+                                                            {exportSource === 'DATIM' ?
+                                                                <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
+                                                            {exportSource === 'DATIM' ?
+                                                                <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
+                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
+                                                                </RadioGroup> : ''}
+                                                            <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                                                            <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                                                            </RadioGroup>
+                                                            <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                                                                Download DATA
+                                                                     </Button>
+                                                        </FormGroup>
+                                                    </FormControl> :
+                                                    dropDownName === "format" ?
                                                         <FormControl component="fieldset" className={classes.popOver}>
                                                             <FormGroup>
-                                                                {exportSource === 'DATIM' ?
-                                                                    <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel> : ''}
-                                                                {exportSource === 'DATIM' ?
-                                                                    <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
-                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
-                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
-                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
-                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
-                                                                    </RadioGroup> : ''}
-                                                                <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
-                                                                <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
-                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
-                                                                </RadioGroup>
-                                                                <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                                                                    Download DATA
-                                                                     </Button>
+                                                                <MenuItem value="All" onClick={toggleChecked}><div style={{ width: '20px' }}>{!checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>Name</MenuItem>
+                                                                <MenuItem value="None" onClick={toggleChecked}><div style={{ width: '20px' }}>{checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>UID</MenuItem>
                                                             </FormGroup>
                                                         </FormControl> :
-                                                        dropDownName === "format" ?
-                                                            <FormControl component="fieldset" className={classes.popOver}>
-                                                                <FormGroup>
-                                                                    <MenuItem value="All" onClick={toggleChecked}><div style={{ width: '20px' }}>{!checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>Name</MenuItem>
-                                                                    <MenuItem value="None" onClick={toggleChecked}><div style={{ width: '20px' }}>{checked ? <BsCheck style={{ marginRight: '5px' }}></BsCheck> : ''}</div>UID</MenuItem>
-                                                                </FormGroup>
-                                                            </FormControl> :
-                                                            dropDownName === "compare" ?
+                                                        dropDownName === "compare" ?
                                                             <div style={{ margin: '10px', alignItems: 'right', width: '180px' }}>
                                                                 <Grid container>
                                                                     <Grid xs={12}>
@@ -1029,25 +1046,25 @@ export default function DataElementDetails() {
                                                                 </Grid>
                                                             </div> :
                                                             <FormControl component="fieldset" className={classes.popOver}>
-                                                            <FormGroup>
+                                                                <FormGroup>
                                                                     <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
                                                                     <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
                                                                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="HTML" />} label="HTML" />
                                                                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
                                                                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
                                                                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
-                                                                    </RadioGroup> 
-                                                                <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
-                                                                <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
-                                                                    <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
-                                                                </RadioGroup>
-                                                                <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                                                                    Download DATA
+                                                                    </RadioGroup>
+                                                                    <FormLabel component="legend" className={classes.formLegend}>From Open Concept Lab (OCL)</FormLabel>
+                                                                    <RadioGroup aria-label="export" name="exportRadio" value={exportValue} onChange={handleExportChange}>
+                                                                        <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
+                                                                    </RadioGroup>
+                                                                    <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
+                                                                        Download DATA
                                                                      </Button>
-                                                            </FormGroup>
-                                                        </FormControl>
-                                                }
-                                            </Popover>
+                                                                </FormGroup>
+                                                            </FormControl>
+                                            }
+                                        </Popover>
                                         {/* </div> */}
                                     </Grid>
 
@@ -1081,9 +1098,9 @@ export default function DataElementDetails() {
                                                                 <TableCell> {(Object.keys(dataElementDetail.extras['Applicable Periods']).map(
 
                                                                     key =>
-                                                                    key != dataElementDetail.extras['Applicable Periods'].length -1 ?
-                                                                        dataElementDetail.extras['Applicable Periods'][key] + ", " 
-                                                                        : dataElementDetail.extras['Applicable Periods'][key]
+                                                                        key != dataElementDetail.extras['Applicable Periods'].length - 1 ?
+                                                                            dataElementDetail.extras['Applicable Periods'][key] + ", "
+                                                                            : dataElementDetail.extras['Applicable Periods'][key]
 
                                                                 )
                                                                 )}
@@ -1129,11 +1146,11 @@ export default function DataElementDetails() {
 
                                                         : '' : ''}
                                                     {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source === 'PDH' ?
-                                                        dataElementDetail.extras.pepfarSupportType ? 
-                                                        < TableRow >
-                                                            <TableCell><strong>PEPFAR Support Type</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.pepfarSupportType}</TableCell>
-                                                        </TableRow> : ''
+                                                        dataElementDetail.extras.pepfarSupportType ?
+                                                            < TableRow >
+                                                                <TableCell><strong>PEPFAR Support Type</strong></TableCell>
+                                                                <TableCell>{dataElementDetail.extras.pepfarSupportType}</TableCell>
+                                                            </TableRow> : ''
                                                         :
                                                         <TableRow>
                                                             <TableCell><strong>Other Names</strong></TableCell>
@@ -1180,28 +1197,28 @@ export default function DataElementDetails() {
                                                         </TableRow>
                                                         : '' : '' : ''}
                                                     {!moreAttributes ?
-                                                        <TableRow><TableCell style={{width: '200px'}}><Link href="#" onClick={showMoreAttributes}>more<TiArrowSortedDown /></Link></TableCell><TableCell></TableCell></TableRow>
+                                                        <TableRow><TableCell style={{ width: '200px' }}><Link href="#" onClick={showMoreAttributes}>more<TiArrowSortedDown /></Link></TableCell><TableCell></TableCell></TableRow>
                                                         :
                                                         [
                                                             dataElementDetail.extras.pdh_rule_begin_period ?
-                                                        <TableRow>
-                                                            <TableCell><strong>PDH Rule Begin Period</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.pdh_rule_begin_period}</TableCell>
-                                                        </TableRow> : '',
+                                                                <TableRow>
+                                                                    <TableCell><strong>PDH Rule Begin Period</strong></TableCell>
+                                                                    <TableCell>{dataElementDetail.extras.pdh_rule_begin_period}</TableCell>
+                                                                </TableRow> : '',
                                                             dataElementDetail.extras.standardized_disaggregate ?
-                                                        <TableRow>
-                                                            <TableCell><strong>Standardized Disaggregate</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.standardized_disaggregate}</TableCell>
-                                                        </TableRow> : '',
-                                                        dataElementDetail.extras.pdh_derivation_rule_id ?
-                                                        <TableRow>
-                                                            <TableCell><strong>PDH Derivation Rule Id</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.pdh_derivation_rule_id}</TableCell>
-                                                        </TableRow> : ''
+                                                                <TableRow>
+                                                                    <TableCell><strong>Standardized Disaggregate</strong></TableCell>
+                                                                    <TableCell>{dataElementDetail.extras.standardized_disaggregate}</TableCell>
+                                                                </TableRow> : '',
+                                                            dataElementDetail.extras.pdh_derivation_rule_id ?
+                                                                <TableRow>
+                                                                    <TableCell><strong>PDH Derivation Rule Id</strong></TableCell>
+                                                                    <TableCell>{dataElementDetail.extras.pdh_derivation_rule_id}</TableCell>
+                                                                </TableRow> : ''
                                                         ]
                                                     }
                                                     {!moreAttributes ? '' :
-                                                        <TableRow><TableCell style={{width: '200px'}}><Link href="#" onClick={showLessAttributes}>less<TiArrowSortedUp /></Link></TableCell><TableCell></TableCell></TableRow>
+                                                        <TableRow><TableCell style={{ width: '200px' }}><Link href="#" onClick={showLessAttributes}>less<TiArrowSortedUp /></Link></TableCell><TableCell></TableCell></TableRow>
                                                     }
                                                 </TableBody>
                                             </Table> : ''}
@@ -1238,7 +1255,7 @@ export default function DataElementDetails() {
                                             </div> */}
                                 {/* {showLinked ? <div style={{ padding: '20px', marginLeft: '170px' }}>or select a linked data element below</div> : ''} */}
                                 <div style={{ margin: '15px' }}>
-                                <ErrorBoundary>
+                                    {/* <ErrorBoundary> */}
                                     <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                                         <Tab label="DISAGGREGATIONS" {...a11yProps(0)} />
                                         <Tab label="LINKAGES" {...a11yProps(1)} />
@@ -1251,69 +1268,74 @@ export default function DataElementDetails() {
                                                 listView ?
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
-                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
-                                                            <Button style={{ backgroundColor: '#fff0b3' }}>
-                                                                <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
-                                                            </Button>
+                                                            <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
+                                                                <Button style={{ backgroundColor: '#fff0b3' }}>
+                                                                    <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
+                                                                </Button>
                                                             </Tooltip>
                                                             <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
-                                                            <Button>
-                                                                <MdFunctions size={32} onClick={handleFormulaView} />
-                                                                <TiArrowSortedDown /></Button></Tooltip>
+                                                                <Button>
+                                                                    <MdFunctions size={32} onClick={handleFormulaView} />
+                                                                    <TiArrowSortedDown />
+                                                                </Button>
+                                                            </Tooltip>
                                                         </div>
                                                     </Grid>
                                                     :
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
-                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
-                                                            <Button>
-                                                                <MdList size={32} onClick={handleListView} />
-                                                            </Button></Tooltip>
+                                                            <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
+                                                                <Button>
+                                                                    <MdList size={32} onClick={handleListView} />
+                                                                </Button>
+                                                            </Tooltip>
                                                             <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
-                                                            <Button style={{ backgroundColor: '#fff0b3' }}><MdFunctions style={{ backgroundColor: '#fff0b3' }} size={32} onClick={handleFormulaView} />
-                                                                <TiArrowSortedDown onClick={handleFormat('format')} />
-                                                            </Button>                                                        </Tooltip>
+                                                                <Button style={{ backgroundColor: '#fff0b3' }}>
+                                                                    <MdFunctions style={{ backgroundColor: '#fff0b3' }} size={32} onClick={handleFormulaView} />
+                                                                    <TiArrowSortedDown onClick={handleFormat('format')} />
+                                                                </Button>
+                                                            </Tooltip>
                                                         </div>
                                                     </Grid>
                                             }
                                             <Grid item xs={12} className={classes.comboTable}>
                                                 {listView ?
-                                                <div>
-                                                    <Table className={classes.table} aria-label="simple table" size="small">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell>Name</TableCell>
-                                                                <TableCell>Code</TableCell>
-                                                                <TableCell>Action</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {dataElementDetail ?
-                                                                (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
+                                                    <div>
+                                                        <Table className={classes.table} aria-label="simple table" size="small">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Name</TableCell>
+                                                                    <TableCell>Code</TableCell>
+                                                                    <TableCell>Action</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {dataElementDetail ?
+                                                                    (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
-                                                                    key =>
-                                                                        Object(deMappings[dataElementDetail.id])[key].map_type === 'Has Option' ? (
-                                                                            <TableRow >
-                                                                                <TableCell>
-                                                                                    {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
-                                                                                </TableCell>
-                                                                                <TableCell>
-                                                                                    {Object(deMappings[dataElementDetail.id])[key].to_concept_code}
-                                                                                </TableCell>
-                                                                                <TableCell>
-                                                                                    {/* <Button variant="outlined" className={classes.exportButton}  id="downloadButton" color="primary">
+                                                                        key =>
+                                                                            Object(deMappings[dataElementDetail.id])[key].map_type === 'Has Option' ? (
+                                                                                <TableRow >
+                                                                                    <TableCell>
+                                                                                        {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
+                                                                                    </TableCell>
+                                                                                    <TableCell>
+                                                                                        {Object(deMappings[dataElementDetail.id])[key].to_concept_code}
+                                                                                    </TableCell>
+                                                                                    <TableCell>
+                                                                                        {/* <Button variant="outlined" className={classes.exportButton}  id="downloadButton" color="primary">
                                                                                     <ExportButtonLabel> Export</ExportButtonLabel> */}
-                                                                                    <GetAppIcon style={{ color: '#1D5893' }}
-                                                                                        onClick={(event) => exportMenu(event,"coc", Object(deMappings[dataElementDetail.id])[key].to_concept_code, dataElementDetail.extras.source, 'coc')} />
-                                                                                    {/* </Button> */}
-                                                                                </TableCell>
-                                                                            </TableRow>
-                                                                        ) : ''
-                                                                ) : ''
-                                                                : ''}
-                                                        </TableBody>
-                                                    </Table> 
-                                                    </div>:
+                                                                                        <GetAppIcon style={{ color: '#1D5893' }}
+                                                                                            onClick={(event) => exportMenu(event, "coc", Object(deMappings[dataElementDetail.id])[key].to_concept_code, dataElementDetail.extras.source, 'coc')} />
+                                                                                        {/* </Button> */}
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            ) : ''
+                                                                    ) : ''
+                                                                    : ''}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </div> :
                                                     <Grid container alignItems="center" justify="space-between">
                                                         <Grid   >
                                                             <div className={classes.tableContainer}>
@@ -1571,8 +1593,10 @@ export default function DataElementDetails() {
                                                     <TreeView
                                                         className={classes.derivatives}
                                                         defaultCollapseIcon={<ExpandMoreIcon />}
-                                                        defaultExpanded={expanded}
-                                                        // expanded={expanded}
+                                                        expanded={expanded}
+                                                        selected={selected}
+                                                        onNodeToggle={handleToggle}
+                                                        onNodeSelect={handleSelect}
                                                         defaultExpandIcon={<ChevronRightIcon />}
                                                         style={{ overflow: 'scroll' }}
                                                     >
@@ -1601,7 +1625,7 @@ export default function DataElementDetails() {
                                     </TabPanel>
                                     {pdhDerivatives = []}
                                     {derivedCoC = []}
-                                    </ErrorBoundary>
+                                    {/* </ErrorBoundary> */}
                                 </div>
                             </div>
                         </div>
