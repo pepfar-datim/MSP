@@ -4,7 +4,7 @@ const OCL_DOMAIN = (window.OCL_DOMAIN) || 'staging.openconceptlab.org';
 
 const config = { 
   "domain": OCL_DOMAIN, 
-  "org": "PEPFAR-Test7", 
+  "org": "PEPFAR-Test8", 
   "source": "",
   "defaultYear": "2020" ,
   "versionMap": [

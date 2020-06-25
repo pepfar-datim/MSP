@@ -638,8 +638,12 @@ const useStyles = makeStyles(theme => ({
         return true;
       });
       console.log("filteredByYearData:"); console.log(filteredByYearData);
-      const distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
-      distinctGroup.sort();           
+      let distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
+      distinctGroup.sort();          
+      if (distinctGroup.includes("Other")){      
+        distinctGroup = distinctGroup.filter(group => group != "Other");       
+        distinctGroup.push("Other");       
+      }            
       return distinctGroup;      
     }
 
@@ -666,7 +670,7 @@ const useStyles = makeStyles(theme => ({
       indicatorItem.description = (indicatorOCL.descriptions && indicatorOCL.descriptions.length > 0) ? indicatorOCL.descriptions[0].description : "";        
       indicatorItem.created_on = indicatorOCL.created_on ? indicatorOCL.created_on : "";
       indicatorItem.updated_on = indicatorOCL.updated_on ? indicatorOCL.updated_on : "";        
-      indicatorItem.group = indicatorOCL.extras && indicatorOCL.extras["Indicator Group"] ? indicatorOCL.extras["Indicator Group"]: "";
+      indicatorItem.group = indicatorOCL.extras && indicatorOCL.extras["Indicator Group"] ? indicatorOCL.extras["Indicator Group"]: "Other";
       indicatorItem.level = indicatorOCL.extras && indicatorOCL.extras["Reporting level"] ? indicatorOCL.extras["Reporting level"]: "";
       indicatorItem.source = indicatorOCL.source;
       indicatorItem.frequency = indicatorOCL.extras && indicatorOCL.extras["Reporting frequency"] ? indicatorOCL.extras["Reporting frequency"]: "";
@@ -698,8 +702,8 @@ const useStyles = makeStyles(theme => ({
   }
 
     //indicator that the app has mounted
-    const [init, setInit]= React.useState(false);
-    var queryIndicators = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/?verbose=true&limit=0&conceptClass=\"Reference+Indicator\""; 
+    const [init, setInit]= React.useState(false);    
+    var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + values.fiscal.trim().substring(2,4) + "/concepts/?limit=0&verbose=true";
 
     const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
