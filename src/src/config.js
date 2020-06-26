@@ -4,7 +4,7 @@ const OCL_DOMAIN = (window.OCL_DOMAIN) || 'staging.openconceptlab.org';
 
 const config = { 
   "domain": OCL_DOMAIN, 
-  "org": "PEPFAR-Test7", 
+  "org": "PEPFAR-Test8", 
   "source": "",
   "defaultYear": "2020" ,
   "versionMap": [
@@ -65,7 +65,35 @@ const config = {
       "guidanceDownloadURL":"/assets/FY08%20MER%20Reference%20Guide%20v1_0%20(2007-Jul).pdf"
     }
   ],
-  "MER_Update_CSV_URL": 'https://docs.google.com/spreadsheets/d/1Z7cMxLdyq9ZgFFOOHLMtJnVrkRk-qBO3BPOV6clsCOM/edit#gid=0'
+  "MER_Update_CSV_URL": 'https://docs.google.com/spreadsheets/d/1Z7cMxLdyq9ZgFFOOHLMtJnVrkRk-qBO3BPOV6clsCOM/edit#gid=0',
+  "indicatorGroups" :
+  {
+    "COP 19 indicators": "icbFhgXLSXL",
+    "COP 20 datapack indicators": "NuL7T5sfV0x",
+    "FY18 Achievement": "sXizYxLtf81",
+    "FY19 Results Analytic Indicators": "KUluDIqOAss",
+    "FY19 Results Cleaning Favorite Indicators": "AXmrYBXFigK",
+    "FY19 Targets Cleaning Favorite Indicators": "HRglkige9Jn",
+    "FY20 Results Analytic Indicators": "BsAbiNUPOCf",
+    "FY20 Results Cleaning Favorite Indicators": "R3iYN82Bh69",
+    "FY21 Target Cleaning Favorite Indicators": "m1XZHdoIsFG",
+    "GEND_GBV": "zk2Spl7JNh2",
+    "HRH_CURR": "XecPVEg7Jdp",
+    "HTC": "q30RiWAM3VW",
+    "HTS_TST": "AgMcHnlM9vm",
+    "MOH Alignment": "ZBps2hfKxrO",
+    "OVC_SERV": "rEMeS5Yexdi",
+    "PMTCT": "jIrXUvd7aBw",
+    "TB_STAT": "Brg88UUSyAs",
+    "TX_CURR": "IQ542pKJisF",
+    "TX_NEW": "nzmvCIy9ICt",
+    "TX_RET": "dN2yET6t9GT",
+    "TX_TB": "kuB9tpIjGOG",
+    "VMMC_CIRC": "WLNDIuK80xm",
+    "World AIDS Day 2017": "jSDu6DQxV44",
+    "World AIDS Day 2018": "CHfoV0KkCmm",
+    "World AIDS Day 2019": "FqdBaEo00Hd"
+  }
 }
 
 export function getConfig() {

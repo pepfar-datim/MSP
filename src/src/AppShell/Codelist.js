@@ -62,6 +62,12 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import styled from 'styled-components';
 import MenuItem from '@material-ui/core/MenuItem';
 import { TiArrowSortedDown } from 'react-icons/ti';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Link from '@material-ui/core/Link';
+import Divider from '@material-ui/core/Divider';
 
 //tab panel function
 function TabPanel(props) {
@@ -283,6 +289,7 @@ const useStyles = makeStyles(theme => ({
     //width: '350px',
     margin: '0em',
     marginRight: '2em',
+    marginBottom: '70px',
     paddingBottom: '2em'
 
   },
@@ -313,7 +320,8 @@ const useStyles = makeStyles(theme => ({
 
   },
   errorMessage: {
-    textAlign: 'center',
+    //textAlign: 'center',
+    marginLeft: '100px',
     color: '#FF0000',
     marginBottom: '0 !important'
   },
@@ -641,10 +649,15 @@ export default function Codelist() {
   const [indicatorQuery, setIndicatorQuery] = useState("")
   const [hiddenDataSet, setHiddenDataSet] = useState(true)
   const [hiddenIndicator, setHiddenIndicator] = useState(true)
+  const [sourceQuery, setSourceQuery] = useState([""]);
+  const [periodQuery, setPeriodQuery] = useState([""]);
+  const [codeListQuery, setCodeListQuery] = useState([""]);
+  const [frequencyQuery, setFrequencyQuery] = useState([""]);
+  const [typeQuery, setTypeQuery] = useState([""]);
+  const [supportQuery, setSupportQuery] = useState([""]);
+  const [numeratorQuery, setNumeratorQuery] = useState([""]);
 
-  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
-  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
-  let queryDataElementsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + period + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
+  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
 
   const [collection, setCollection] = useState("");
   let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
@@ -652,8 +665,7 @@ export default function Codelist() {
 
   if (search && search !== "") {
     queryDataElementsAllPeriodsMER = queryDataElementsAllPeriodsMER + "&q=" + search;
-    queryDataElementsAllPeriods = queryDataElementsAllPeriods + "&q=" + search;
-    queryDataElementsByPeriod = queryDataElementsByPeriod + "&q=" + search;
+    //queryDataElementsAllPeriods = queryDataElementsAllPeriods + "&q=" + search;
     queryByCodeList = queryByCodeList + "&q=" + search;
   }
 
@@ -672,64 +684,61 @@ export default function Codelist() {
 
   const loadDataElementsByPeriod = async () => {
     setDELoading(true)
-    if (values.type === "All") {
-      //setDataElementsData([]);
-      //setCountOfValues(0);
-      try {
-        const response = [];
-        let queryToRun = ""
-        if (values.fiscal === 'All') {
-          if (values.source === 'MER') {
-            queryToRun = queryDataElementsAllPeriodsMER
-          } else {
-            queryToRun = queryDataElementsAllPeriods
-          }
-          console.log(" queryDataElementsAllPeriods " + queryToRun)
-        }
-        else {
-          queryToRun = queryDataElementsByPeriod
-          console.log(" queryDataElementsByPeriod " + queryToRun)
-        }
-        response = await fetch(queryToRun);
-        if (!response.ok) {
-          console.log(response);
-          setDataElementsData([]);
-          setCountOfValues(0);
-          setErrorDisplay("Failed to fetch");
-          setDELoading(false)
-          throw new Error(
-            `Error when retrieving data elements: ${response.status} ${response.statusText}`
-          );
-        }
-        const jsonData = await response.json();
-        if (!jsonData.length || jsonData.length === 0) {
-          console.log("jsonData is empty");
-          setDataElementsData([]);
-          setCountOfValues(0);
-          setDELoading(false)
-          throw new Error(
-            `There is no data for this selection. `
-          );
-        }
-        setDELoading(false)
-        setErrorDisplay(null);
-        var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+    // if (values.type === "All") {
+    setDataElementsData([]);
+    setCountOfValues(0);
+    try {
+      const response = [];
+      let queryToRun = queryDataElementsAllPeriodsMER
+      // if (values.fiscal === 'All') {
+      //   // if (values.source === 'MER') {
+      //     setPeriodQuery("")
+      //   } else {
+      //     setPeriodQuery("&extras__Applicable+Periods=" + period)
+      //   }
+      console.log(" queryToRun " + queryToRun)
 
-        //filter by default filters
-
-        const temp = [];
-        setDataElementsData(sortedData);
-        setCountOfValues(parseInt(response.headers.get('num_found')));
-        console.log(jsonData.length + " dataElements.length ")
-        console.log(response.headers.get('num_found') + " results found ")
-        console.log(response.headers.get('num_returned') + " results returned ")
-      } catch (e) {
+      // }
+      response = await fetch(queryToRun);
+      if (!response.ok) {
+        console.log(response);
+        setDataElementsData([]);
+        setCountOfValues(0);
+        setErrorDisplay("Failed to fetch");
         setDELoading(false)
-        console.log("error:" + e.message);
-        setError(e.message);
-        setErrorDisplay(e.message);
+        throw new Error(
+          `Error when retrieving data elements: ${response.status} ${response.statusText}`
+        );
       }
+      const jsonData = await response.json();
+      if (!jsonData.length || jsonData.length === 0) {
+        console.log("jsonData is empty");
+        setDataElementsData([]);
+        setCountOfValues(0);
+        setDELoading(false)
+        throw new Error(
+          `There is no data for this selection. `
+        );
+      }
+      setDELoading(false)
+      setErrorDisplay(null);
+      var sortedData = sortJSONByKey(jsonData, 'display_name', 'asc');
+
+      //filter by default filters
+
+      const temp = [];
+      setDataElementsData(sortedData);
+      setCountOfValues(parseInt(response.headers.get('num_found')));
+      console.log(jsonData.length + " dataElements.length ")
+      console.log(response.headers.get('num_found') + " results found ")
+      console.log(response.headers.get('num_returned') + " results returned ")
+    } catch (e) {
+      setDELoading(false)
+      console.log("error:" + e.message);
+      setError(e.message);
+      setErrorDisplay(e.message);
     }
+    //}
   }
 
   useEffect(() => {
@@ -746,11 +755,10 @@ export default function Codelist() {
 
   useEffect(() => {
     loadDataElementsByPeriod();
-  }, [queryDataElementsByPeriod, queryDataElementsAllPeriods, queryDataElementsAllPeriodsMER]);
+  }, [queryDataElementsAllPeriodsMER]);
 
   const loadDataElementsData = async () => {
     if (collection !== "" && values.dataSet !== "All") {
-      console.log(" queryByCodeList " + queryByCodeList)
       //setDataElementsData([]);
       //setCountOfValues(0);
       setDELoading(true)
@@ -949,22 +957,27 @@ export default function Codelist() {
     dataSet: "All",
     source: "MER",
     frequency: "All",
-    indicator: "All"
+    indicator: "All",
+    support: "All",
+    numerator: "All"
   });
 
-  const type = ["All", "Results", "Target"];
+  const type = ["All", "Result", "Target"];
   //clear all filter values
-  // const clearValues = event => {
-  //   setValues(()=>({
-  //     fiscal: "",
-  //     source: "",
-  //     type: "", 
-  //     dataSet: "",
-  //     frequency: ""
-  //   }));
+  const clearValues = event => {
+    setValues(() => ({
+      fiscal: "All",
+      type: "All",
+      dataSet: "All",
+      source: "MER",
+      frequency: "All",
+      indicator: "All",
+      support: "All",
+      numerator: "All"
+    }));
 
-  //   setDataElements(data);
-  // }
+    //setDataElements(data);
+  }
 
 
   const handleSearchInputChange = () => {
@@ -1047,17 +1060,22 @@ export default function Codelist() {
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
-
     let s = values.source
+    let y = values.fiscal
     let f = values.frequency
     let i = values.indicator
+    let d = values.dataSet
+    let st = values.support
+    let n = values.numerator
     setValues({
       source: s,
-      fiscal: "All",
+      fiscal: y,
       type: "All",
-      dataSet: "All",
+      dataSet: d,
       frequency: f,
-      indicator: i
+      indicator: i,
+      support: st,
+      numerator: n
     })
     values.dataSet = "All";
     setSource(s);
@@ -1070,10 +1088,18 @@ export default function Codelist() {
     if (values.fiscal === "All") {
       setPeriod("")
       setHiddenDataSet(true)
+      setPeriodQuery("")
     }
     else {
-      setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
+      setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
     }
+    if (values.source === "MER") {
+      setSourceQuery("")
+    }
+    else {
+      setSourceQuery("&extras__source=" + values.source)
+    }
+
   }, [values.source]);
 
   //when fiscal changes
@@ -1085,21 +1111,28 @@ export default function Codelist() {
     let year = values.fiscal
     let f = values.frequency
     let i = values.indicator
+    let d = values.dataSet
+    let st = values.support
+    let n = values.numerator
+    if (values.fiscal === "All") {
+      d = "All"
+    }
     setValues({
       fiscal: year,
       type: "All",
-      dataSet: "All",
+      dataSet: d,
       source: s,
       frequency: f,
-      indicator: i
+      indicator: i,
+      support: st,
+      numerator: n
     })
-    values.dataSet = "All";
     if (values.fiscal === "All") {
-      setPeriod("")
       setHiddenDataSet(true)
+      setPeriodQuery("")
     }
     else {
-      setPeriod("-FY" + (values.fiscal + "").substring(2, 4));
+      setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
       if (values.source === 'PDH') {
         setHiddenDataSet(true)
       }
@@ -1115,13 +1148,13 @@ export default function Codelist() {
     setCountOfValues(0)
 
     if (values.dataSet === "All") {
-      loadDataElementsByPeriod()
+      setCodeListQuery("")
     }
     else {
       codeListJson.codeList.map(cl => {
         if (values.dataSet === cl.full_name) {
           console.log(" dataset changed ")
-          setCollection(cl.id)
+          setCodeListQuery("&extras__codelists__id=" + cl.dataset_id)
         }
       })
       console.log(" displaying " + dataElements.length + " results")
@@ -1138,6 +1171,8 @@ export default function Codelist() {
     let t = values.type
     let f = values.frequency
     let i = values.indicator
+    let st = values.support
+    let n = values.numerator
     if (values.type === "All") {
       setValues({
         fiscal: year,
@@ -1145,8 +1180,11 @@ export default function Codelist() {
         dataSet: "All",
         source: s,
         frequency: f,
-        indicator: i
+        indicator: i,
+        support: st,
+        numerator: n
       })
+      setTypeQuery("")
     }
     else {
       let element = document.getElementById("dataSet");
@@ -1157,8 +1195,11 @@ export default function Codelist() {
         dataSet: dataType,
         source: s,
         frequency: f,
-        indicator: i
+        indicator: i,
+        support: st,
+        numerator: n
       })
+      setTypeQuery("&extras__resultTarget=" + values.type)
     }
   }, [values.type]);
 
@@ -1166,6 +1207,7 @@ export default function Codelist() {
   useEffect(() => {
     if (values.frequency === "All") {
       setIndicatorsTemp(indicators)
+      setFrequencyQuery("")
     }
     else {
       setIndicatorsTemp([])
@@ -1176,6 +1218,9 @@ export default function Codelist() {
         }
       })
       setIndicatorsTemp(indicatorList)
+      setFrequencyQuery("&extras__Reporting+frequency=" + values.frequency)
+      setIndicatorQuery("")
+
     }
   }, [values.frequency]);
 
@@ -1185,9 +1230,29 @@ export default function Codelist() {
       setIndicatorQuery("")
     }
     else {
-      setIndicatorQuery("&q='" + values.indicator + "'")
+      setIndicatorQuery("&extras__indicator=" + values.indicator)
     }
   }, [values.indicator]);
+
+  //when support type changes
+  useEffect(() => {
+    if (values.support === "All") {
+      setSupportQuery("")
+    }
+    else {
+      setSupportQuery('&extras__pepfarSupportType="' + values.support + '"')
+    }
+  }, [values.support]);
+
+  //when numerator type changes
+  useEffect(() => {
+    if (values.numerator === "All") {
+      setNumeratorQuery("")
+    }
+    else {
+      setNumeratorQuery('&extras__numeratorDenominator=' + values.numerator)
+    }
+  }, [values.numerator]);
 
   async function getMappings(id) {
     let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id + '/?includeMappings=true&includeInverseMappings=true';
@@ -1654,10 +1719,7 @@ export default function Codelist() {
             </Grid>
           </Grid>
           {/* </div> */}
-          {errorDisplay !== null ?
-            <div className={classes.errorMessage}>{errorDisplay}</div>
-            // <Alert severity="error">{errorDisplay}</Alert>
-            : null}
+
           {/* <div className={classes.container}> */}
           <Grid container>
             {/* filters */}
@@ -1737,84 +1799,140 @@ export default function Codelist() {
                     </Grid>
 
 
-                    <fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}>
-                      {/* type filter */}
-                      <Grid item xs={12} className={classes.filter}  >
-                        <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
-                          {/* <FormControl className={classes.formControl}> */}
+                    {/* <fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}> */}
+                    {/* type filter */}
+                    <Grid item xs={12} className={classes.filter}  >
+                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                        {/* <FormControl className={classes.formControl}> */}
 
-                          <InputLabel htmlFor="type">Type</InputLabel>
-                          <Select size="3"
-                            native
-                            value={values.type}
-                            onChange={handleFilterChange}
-                            className={classes.select}
-                            inputProps={{
-                              name: 'type',
-                              id: 'type',
-                              classes: {
-                                icon: classes.selectIcon
-                              }
-
-                            }}
-                          >
-                            {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) :
-                              type.map(key => <option key={Math.random()} >{key}</option>)
+                        <InputLabel htmlFor="type">Type</InputLabel>
+                        <Select size="3"
+                          native
+                          value={values.type}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'type',
+                            id: 'type',
+                            classes: {
+                              icon: classes.selectIcon
                             }
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      {/* data set filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
-                      <Grid item xs={12} className={classes.filter}>
-                        <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
-                          <InputLabel htmlFor="dataSet">Code List</InputLabel>
-                          <Select
-                            //size={Object.values(codeListMap[values.fiscal]).length +""}
-                            native
-                            value={values.dataSet}
-                            onChange={handleFilterChange}
-                            className={classes.select}
-                            inputProps={{
-                              name: 'dataSet',
-                              id: 'dataSet',
-                              classes: {
-                                icon: classes.selectIcon
-                              },
-                              disabled: values.source === 'PDH'
-                            }}
-                          >
-                            {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
-                            {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
 
-                              key => <option key={Math.random()} >{key}</option>)) : ([])}
-                            {Object.values(codeListMap[values.fiscal]).map(
+                          }}
+                        >
+                          {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) :
+                            type.map(key => <option key={Math.random()} >{key}</option>)
+                          }
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* data set filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
+                    <Grid item xs={12} className={classes.filter}>
+                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                        <InputLabel htmlFor="dataSet">Code List</InputLabel>
+                        <Select
+                          //size={Object.values(codeListMap[values.fiscal]).length +""}
+                          native
+                          value={values.dataSet}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'dataSet',
+                            id: 'dataSet',
+                            classes: {
+                              icon: classes.selectIcon
+                            },
+                            disabled: values.source === 'PDH'
+                          }}
+                        >
+                          {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                          {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
 
-                              key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
-                            )
-                            }
-                            {/* <option value={'facility'}>Facility Based Code List</option>
+                            key => <option key={Math.random()} >{key}</option>)) : ([])}
+                          {Object.values(codeListMap[values.fiscal]).map(
+
+                            key => key.includes(values.type) ? (<option key={Math.random()} >{key}</option>) : ([])
+                          )
+                          }
+                          {/* <option value={'facility'}>Facility Based Code List</option>
                         <option value={'community'}>Community Based Code List</option> */}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </fieldset>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* </fieldset>
 
-                    <fieldset className={classes.fieldset}>
+                    <fieldset className={classes.fieldset}> */}
 
-                      {/* frequency filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    {/* frequency filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    <Grid item xs={12} className={classes.filter} >
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
+                        <Select
+                          native
+                          value={values.frequency}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'frequency',
+                            id: 'frequency',
+                            classes: {
+                              icon: classes.selectIcon
+                            }
+                          }}
+
+                        >
+                          <option value={"All"}>All</option>
+                          <option value={'Annually'}>Annually</option>
+                          <option value={'Semi-Annually'}>Semi-Annually</option>
+                          <option value={'Quarterly'}>Quarterly</option>
+
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* indicator filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    <Grid item xs={12} className={classes.filter} >
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
+                        <Select
+                          native
+                          value={values.indicator}
+                          onChange={handleFilterChange}
+                          className={classes.select}
+                          inputProps={{
+                            name: 'indicator',
+                            id: 'indicator',
+                            classes: {
+                              icon: classes.selectIcon
+                            }
+                          }}
+
+                        >
+                          <option value={'All'}>All</option>
+
+                          {indicatorsTemp.map(key => <option key={Math.random()} value={key.id} >{key.display_name}</option>)
+                          }
+
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* </fieldset> */}
+
+                    {/* support type filter */}
+                    <Grid item xs={12} className={advanced ? classes.filter : classes.hide} style={{ marginTop: '15px' }}>
                       <Grid item xs={12} className={classes.filter} >
                         <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="frequency">Reporting Frequency</InputLabel>
+                          <InputLabel htmlFor="support">PEPFAR Support Type</InputLabel>
                           <Select
                             native
-                            value={values.frequency}
+                            value={values.support}
                             onChange={handleFilterChange}
                             className={classes.select}
                             inputProps={{
-                              name: 'frequency',
-                              id: 'frequency',
+                              name: 'support',
+                              id: 'support',
                               classes: {
                                 icon: classes.selectIcon
                               }
@@ -1822,42 +1940,76 @@ export default function Codelist() {
 
                           >
                             <option value={"All"}>All</option>
-                            <option value={'Annually'}>Annually</option>
-                            <option value={'Semi-Annually'}>Semi-Annually</option>
-                            <option value={'Quarterly'}>Quarterly</option>
+                            <option value={'Technical+Assistance'}>TA</option>
+                            <option value={'Direct+Service+Delivery'}>DSD</option>
 
                           </Select>
                         </FormControl>
                       </Grid>
-                      {/* indicator filter */}
-                      {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} > */}
+                    </Grid>
+                    {/* support type filter */}
+                    <Grid item xs={12} className={advanced ? classes.filter : classes.hide} style={{ marginTop: '15px' }}>
                       <Grid item xs={12} className={classes.filter} >
                         <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="indicator">Reference Indicators</InputLabel>
+                          <InputLabel htmlFor="numerator">Numerator/Denominator</InputLabel>
                           <Select
                             native
-                            value={values.indicator}
+                            value={values.numerator}
                             onChange={handleFilterChange}
                             className={classes.select}
                             inputProps={{
-                              name: 'indicator',
-                              id: 'indicator',
+                              name: 'numerator',
+                              id: 'numerator',
                               classes: {
                                 icon: classes.selectIcon
                               }
                             }}
 
                           >
-                            <option value={'All'}>All</option>
-
-                            {indicatorsTemp.map(key => <option key={Math.random()} value={key.id} >{key.display_name}</option>)
-                            }
+                            <option value={"All"}>All</option>
+                            <option value={'Numerator'}>Numerator</option>
+                            <option value={'Denominator'}>Denominator</option>
 
                           </Select>
                         </FormControl>
                       </Grid>
-                    </fieldset>
+                    </Grid>
+
+                    {/* active type filter */}
+                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide} style={{ marginTop: '15px' }}>
+                      <Grid item xs={12} className={classes.filter} >
+                        <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor="numerator">Active/Inactive</InputLabel>
+                          <Select
+                            native
+                            value={values.active}
+                            onChange={handleFilterChange}
+                            className={classes.select}
+                            inputProps={{
+                              name: 'active',
+                              id: 'active',
+                              classes: {
+                                icon: classes.selectIcon
+                              }
+                            }}
+
+                          >
+                            <option value={"All"}>All</option>
+                            <option value={'Active'}>Active</option>
+                            <option value={'Inactive'}>DenomInactiveinator</option>
+
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid> */}
                   </form>
+                  {/* filter functions */}
+                  <Button onClick={displayAdvanced} className={classes.toggleFilters}>
+                    {advanced ? 'Less Filters' : 'More Filters'}
+                  </Button>
+                  <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
+                    Clear Filters
+                  </Button>
                 </div>
 
               </Paper>
@@ -1920,25 +2072,25 @@ export default function Codelist() {
                   </Dialog>
                 </div>
                 <div style={{ flexDirection: 'row', display: 'flex' }} >
-                <div>
+                  <div>
                     <Tooltip disableFocusListener title="Select">
                       <Button style={{ marginTop: '10px' }}>
                         {selectedDataElement.length == 0 ? <Checkbox inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} onClick={selectAll}
-                          style={{ padding: '5px', marginLeft: '10px' }} /> : ''}
+                          style={{ padding: '5px' }} /> : ''}
                         {selectedDataElement.length > 0 && selectedDataElement.length < dataElements.length ?
                           <Checkbox
                             defaultChecked
                             indeterminate
                             inputProps={{ 'aria-label': 'indeterminate checkbox' }}
                             onClick={clearAll}
-                            style={{ padding: '5px', marginLeft: '10px' }}
+                            style={{ padding: '5px' }}
                           /> : ''}
                         {selectedDataElement.length > 0 && selectedDataElement.length == dataElements.length ? <Checkbox
                           checked={checked}
                           onChange={handleChange}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                           onClick={selectAll}
-                          style={{ padding: '5px', marginLeft: '10px' }}
+                          style={{ padding: '5px' }}
                         /> : ''}
                         <TiArrowSortedDown onClick={selectMenu('select')} />
                       </Button>
@@ -2035,46 +2187,36 @@ export default function Codelist() {
                   <div style={{ paddingTop: '1rem', paddingLeft: '1rem' }}>Loading data elements ...</div>
                 </div> : ([])
               }
-              {dataElements.map(dataElement => (
+              <ErrorBoundary>
+                <List>
+                  {errorDisplay !== null ?
+                    <div className={classes.errorMessage}>{errorDisplay}</div>
+                    // <Alert severity="error">{errorDisplay}</Alert>
+                    : null}
+                  {dataElements.map(dataElement => (
+                    [<ListItem dense button style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : '' }}>
 
-                <div key={dataElement.id}>
-
-                  <ExpansionPanel className={classes.dataelementContainer}
-                    TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                    onClick={() => !deMappings[dataElement.id] ?
-                      getMappings(dataElement.id) : ''}
-
-                  >
-                    {/* data elements summary */}
-                    <ExpansionPanelSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                      className={classes.expansionPanelSummary}
-                      style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : 'white' }}
-
-                    >
-                      <ErrorBoundary>
-                        <FormControlLabel
+                      <ListItemIcon>
+                        <Checkbox
                           aria-label="Acknowledge"
                           onClick={handleCompareCheckbox(dataElement)}
                           onFocus={event => event.stopPropagation()}
-                          control={<Checkbox />}
                           checked={selectedDataElement.includes(dataElement.id) ? true : false}
-
-                        // label="I acknowledge that I should stop the click event propagation"
+                          edge="start"
                         />
+                      </ListItemIcon>
+                      <ListItemText >
                         <Grid container alignItems="center"
                           //justify="space-between"
                           spacing={1}>
-                          <Grid item xs={9}  >
+                          <Grid item xs={12}  >
                             <Typography className={classes.heading}>
-                              {dataElement.display_name}
+                              <Link href={"/codelist/dataElementDetail?id=" + dataElement.id} style={{ textDecoration: 'underline' }}>{dataElement.display_name}</Link>
                             </Typography>
                           </Grid>
 
-                          <Grid item xs={3}>
-                          </Grid>
+                          {/* <Grid item xs={3}>
+                          </Grid> */}
                           <Grid item xs={2} md={3}>
                             <Tooltip disableFocusListener title="Click to copy UID">
                               <span className={classes.chip}
@@ -2094,234 +2236,14 @@ export default function Codelist() {
                           </Grid>
                           <Grid item xs={3} ></Grid>
                         </Grid>
-                      </ErrorBoundary>
-                    </ExpansionPanelSummary>
-                    {/* data elements details */}
-                    <ExpansionPanelDetails
-                      className={classes.expansionPanelDetails}
-
-                    >
-                      <Grid container>
-
-                        <Grid item xs={12} className={classes.expansionPanelLeft}>
-
-                        </Grid>
-                        <Grid item xs={12} className={classes.expansionPanelLeft}>
-
-                          {dataElement.descriptions ? <strong>Description: </strong> : ''}
-                          {dataElement.descriptions ? dataElement.descriptions[0].description : ""}
-                          {dataElement.descriptions ? <br></br> : ''}
-                          {dataElement.descriptions ? <br></br> : ''}
-
-                          {dataElement.names[1] ? <strong>Short Name: </strong> : ""}
-                          {dataElement.names[1] ? dataElement.names[1].name : ""}
-                          {dataElement.names[1] ? <br></br> : ''}
-                          {dataElement.names[1] ? <br></br> : ''}
-
-                          {dataElement.names[2] ? <strong>Code: </strong> : ""}
-                          {dataElement.names[2] ? dataElement.names[2].name : ""}
-                          {dataElement.names[2] ? <br></br> : ''}
-                          {dataElement.names[2] ? <br></br> : ''}
-
-                          {dataElement.extras.indicator ? <strong>Indicator: </strong> : ""}
-                          {dataElement.extras.indicator ? dataElement.extras.indicator : ""}
-                          {dataElement.extras.indicator ? <br></br> : ''}
-                          {dataElement.extras.indicator ? <br></br> : ''}
-
-                          {dataElement.extras["Applicable Periods"] ? (dataElement.extras['Applicable Periods'].length > 0 ? <strong>Applicable Periods: </strong> : "") : ""}
-                          {dataElement.extras['Applicable Periods'] ? (dataElement.extras['Applicable Periods'].length > 0 ? Object.keys(dataElement.extras['Applicable Periods']).map(
-
-                            key =>
-                              dataElement.extras['Applicable Periods'][key] + ", "
-                          ) : '') : ''}
-                          {dataElement.extras["Applicable Periods"] ? (dataElement.extras['Applicable Periods'].length > 0 ? <br></br> : "") : ""}
-                          {dataElement.extras["Applicable Periods"] ? (dataElement.extras['Applicable Periods'].length > 0 ? <br></br> : "") : ""}
-
-                          {dataElement.extras.resultTarget ? <strong>Result/Target: </strong> : ""}
-                          {dataElement.extras.resultTarget ? dataElement.extras.resultTarget : ""}
-                          {dataElement.extras.resultTarget ? <br></br> : ''}
-                          {dataElement.extras.resultTarget ? <br></br> : ''}
-
-                          {dataElement.datatype ? <strong>Data Type: </strong> : ''}
-                          {dataElement.datatype ? dataElement.datatype : ""}
-                          {dataElement.datatype ? <br></br> : ''}
-                          {dataElement.datatype ? <br></br> : ''}
-
-                          {dataElement.retired ? <strong>Retired: </strong> : ''}
-                          {dataElement.retired ? dataElement.datatype : ""}
-                          {dataElement.retired ? <br></br> : ''}
-                          {dataElement.retired ? <br></br> : ''}
-                        </Grid>
-
-                        <Grid item xs={12} className={classes.expansionPanelLeft}>
-                          {/* <ExpansionPanelActions> */}
-                          <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
-                            View Data Element Details
-                </Button>
-                          <Button variant="outlined" className={classes.actionButton} onClick={() => exportMenu("export", dataElement.id, dataElement.extras.source, 'data element')} id="downloadButton" color="primary">
-                            <ActionButtonLabel> Export</ActionButtonLabel><GetAppIcon style={{ color: '#1D5893' }} />
-
-                          </Button>
-                          {/* </ExpansionPanelActions> */}
-                        </Grid>
-
-                      </Grid>
-                    </ExpansionPanelDetails>
-                    <ExpansionPanel className={classes.dataElementContainer}
-                      TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                      onClick={() => !deMappings[dataElement.id] ?
-                        getMappings(dataElement.id) : ''}
-                    >
-                      <ExpansionPanelSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                        className={`${classes.expansionPanelSummary} ${classes.formulaButton}`}
-                        onClick={() => !deMappings[dataElement.id] ?
-                          getMappings(dataElement.id) : ''}
-                      >
-                        <Typography className={classes.heading} onClick={() => !deMappings[dataElement.id] ?
-                          getMappings(dataElement.id) : ''}><strong>Disaggregations and Derivations</strong></Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails className={classes.expansionPanelDetails} >
-                        <ErrorBoundary>
-                          {/* <Route render={() => ( */}
-                          {/* <div className={classes.tableContainer}> */}
-                          <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
-                            <Tab label="DISAGGREGATIONS LIST" {...a11yProps(0)} />
-                            <Tab label="DISAGGREGATIONS FORMULA" {...a11yProps(1)} />
-                            <Tab label="DERIVATIONS" {...a11yProps(2)} />
-                          </Tabs>
-                          <TabPanel value={panel} index={0} className={classes.tabPanel}>
-                            <Grid item xs={12} className={classes.comboTable}>
-
-
-
-
-                              <Table className={classes.table} aria-label="simple table">
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Code</TableCell>
-                                    <TableCell>Action</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {
-                                    (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
-
-                                      key =>
-                                        Object(deMappings[dataElement.id])[key].map_type === 'Has Option' ? (
-                                          <TableRow key={Math.random()}>
-                                            <TableCell component="th" scope="row">
-                                              {Object(deMappings[dataElement.id])[key].to_concept_name}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                              {Object(deMappings[dataElement.id])[key].to_concept_code}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                              <Button variant="outlined" className={classes.exportButton} onClick={() => exportMenu("export", Object(deMappings[dataElement.id])[key].to_concept_code, dataElement.extras.source, 'coc')} id="downloadButton" color="primary">
-                                                <ExportButtonLabel> Export</ExportButtonLabel><GetAppIcon style={{ color: '#1D5893' }} />
-
-                                              </Button></TableCell>
-                                          </TableRow>
-                                        ) : ''
-                                    ) : ''
-                                  }
-                                </TableBody>
-                              </Table>
-                            </Grid>
-                          </TabPanel>
-                          <TabPanel value={panel} index={1} className={classes.tabPanel}>
-                            <Grid container alignItems="center" justify="space-between">
-                              <Grid   >
-                                <div className={classes.tableContainer}>
-                                  {
-
-                                    (deMappings[dataElement.id]) ? Object.keys(Object(deMappings[dataElement.id])).map(
-
-                                      key =>
-                                        Object(deMappings[dataElement.id])[key].map_type === 'Has Option' ? (
-                                          checked ? (Object(deMappings[dataElement.id])[key].to_concept_code +
-                                            ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + '))
-                                            : (Object(deMappings[dataElement.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElement.id]))[Object.keys(Object(deMappings[dataElement.id])).length - 1]) ? '' : ' + ')))
-
-                                          : '') : ''
-                                  }
-
-                                </div></Grid>
-                              <Grid item xs={3} >
-                                <FormControlLabel
-                                  value="Start"
-                                  control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}
-                                  label={format}
-                                  labelPlacement="start"
-                                />
-                              </Grid>
-                            </Grid>
-                          </TabPanel>
-                          <TabPanel value={panel} index={2} className={classes.tabPanel} >
-
-                            {
-                              (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
-                            }
-
-                            <Grid container alignItems="center" justify="space-between">
-                              <Grid item xs={6}></Grid>
-                              <Grid item xs={3}></Grid>
-                              <Grid item xs={3}>
-                                <div>
-                                  {expanded.length !== 0 ? <Button variant="outlined" color="primary" onClick={collapseAll(Object.keys(derivedCoC).concat(Object.keys(pdhDerivatives)))}>Collapse All</Button>
-                                    :
-                                    <Button variant="outlined" color="primary" onClick={expandAll(Object.keys(derivedCoC).concat(Object.keys(pdhDerivatives)))}>Expand All</Button>}
-                                </div>
-                              </Grid>
-                            </Grid>
-                            {dataElement.extras.source_data_elements ?
-                              <TreeView
-                                className={classes.derivatives}
-                                defaultCollapseIcon={<ExpandMoreIcon />}
-                                defaultExpanded={expanded}
-                                defaultExpandIcon={<ChevronRightIcon />}
-                                style={{ overflow: 'scroll', width: '800px' }}
-
-                              >
-                                {
-                                  Object.keys(derivedCoC).map(
-                                    key =>
-                                      <TreeItem key={key} nodeId={key} label={"Derived COC: " + key} >
-                                        {Object.values(derivedCoC[key]).map(
-                                          value =>
-                                            <TreeItem nodeId={value} label={"Source Data Element: " + value}>
-                                              {Object.values(pdhDerivatives[value]).map(
-                                                coc =>
-                                                  key === coc.derivedDisag ?
-                                                    <TreeItem nodeId={coc.sourceDisag} label={"Source COC: " + (coc.sourceDisag.split('|')[0] + ' ............................... ' + (coc.sourceDisag.split('|')[1] == 1 ? ' ADD' : ' SUB'))}>
-                                                    </TreeItem>
-                                                    : ''
-                                              )}
-                                            </TreeItem>
-                                        )}
-
-                                      </TreeItem>
-                                  )
-                                }
-
-                              </TreeView> : 'There are no derivations for this selection'}
-                          </TabPanel>
-                          {pdhDerivatives = []}
-                          {derivedCoC = []}
-                          {/* </div> */}
-
-                        </ErrorBoundary>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                  </ExpansionPanel>
-
-                </div>
-
-              ))}
-              {/* </ErrorBoundary> */}
+                      </ListItemText>
+                    </ListItem>,
+                    <Divider variant="inset" component="li" />]
+                  )
+                  )
+                  }
+                </List>
+              </ErrorBoundary>
               {/* </Parent> */}
 
               <table>

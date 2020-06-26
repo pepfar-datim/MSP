@@ -368,7 +368,7 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 400,
         paddingLeft: '30px',
         paddingRight: '30px',
-        paddingTop: '20px',
+        //paddingTop: '20px',
         textTransform: 'uppercase'
     },
     fixedTop: {
@@ -523,7 +523,7 @@ const useStyles = makeStyles(theme => ({
         },
         comparisonPanelTitle: {
             margin: 0,
-            padding: '30px',
+            //padding: '30px',
             borderBottom: '2px solid #061233'
         },
         compareTitle: {

@@ -366,7 +366,7 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 400,
         paddingLeft: '30px',
         paddingRight: '30px',
-        paddingTop: '20px',
+       // paddingTop: '20px',
         textTransform: 'uppercase'
     },
     fixedTop: {

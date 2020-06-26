@@ -496,14 +496,15 @@ export default function Compare() {
 
       }
 
-      setSelectedDatim(tempDEs);
+      
       if (tempDEs.length > 1) {
         if (tempDEs[0].concept_class != tempDEs[1].concept_class) {
-          setErrorDisplay('Cannot compare Data Elements to Indicators')
+          setErrorDisplay('Unable To Compare Data Elements to Indicators')
           deMappings = {}
-          throw new Error('Cannot compare Data Elements to Indicators')
+          throw new Error('Unable To Compare Data Elements to Indicators')
         }
       }
+      setSelectedDatim(tempDEs);
       setMappings(deMappings);
 
       Object.values(tempDEs).map(
@@ -672,6 +673,7 @@ export default function Compare() {
           </div> :
           (
             <div className={classes.compareRowColumn} key={Math.random()}>
+              
               <ExpansionPanel className={classes.expandPanel}>
                 <ExpansionPanelSummary
                   //expandIcon={<ExpandMoreIcon />}
@@ -679,7 +681,7 @@ export default function Compare() {
                   id="panel3b-header"
                 // onClick={() =>loadMappings()}
                 >
-
+{ selectedDatim.length > 0 ?
                   <Table className={classes.comboTable} aria-label="simple table">
                     {Object.keys(dataElementMatrix) == 2 ?
                       <colgroup>
@@ -697,16 +699,10 @@ export default function Compare() {
                       <TableRow><TableCell></TableCell>
                         {dataElementMatrix['Display Name'] ? (dataElementMatrix['Display Name']).map(
                           name =>
-
-                            // {/* <div className={classes.compareCardSummary}> */}
-                            // {/* <div className={classes.compareTitle}> */}
-                            // {/* <div className={classes.compareCardText}>DATIM Data Element: </div> */}
                             <TableCell>
                               <div className={`${classes.compareTitleColumn} ${classes.fixedTop}`}>
                                 {name}
-                              </div></TableCell>
-                          //   {/* <div className={classes.compareCardText}>DATIM UID: <strong>{datim.external_id}</strong></div> */}
-                          // {/* </div> */}    
+                              </div></TableCell>   
                         ) : ''}
                       </TableRow>
                       {Object.keys(dataElementMatrix).map(
@@ -719,12 +715,6 @@ export default function Compare() {
                           </TableRow>
                       )
                       }
-                      {/* <div className={classes.tableContainer} key={Math.random()}>
-               {/* data element Disaggregations */}
-                      {/* <strong>Disaggregations</strong>:<br />  */}
-
-                      {/* <Table className={classes.table} aria-label="simple table">
-                 <TableHead> */}
                       <TableRow key={Math.random()} style={{ verticalAlign: 'top' }}>
                         <TableCell></TableCell>
                         <TableCell style={{ textAlign: 'right' }}><h3><strong>Disaggregations</strong></h3></TableCell>
@@ -742,7 +732,6 @@ export default function Compare() {
                       <TableRow key={Math.random()} style={{ verticalAlign: 'top' }}>
                         <TableCell></TableCell>
                         {selectedDatim.map(datim =>
-                          // !deMappings[datim.id] ? getMappings(datim.id) : ''
                           <TableCell>
                             <TableRow >
                               <TableCell><strong>Name</strong></TableCell>
@@ -769,13 +758,13 @@ export default function Compare() {
                         )}
                       </TableRow>
                     </TableBody>
-                  </Table>
+                  </Table>: ''}
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.panelDetail}>
 
 
                 </ExpansionPanelDetails>
-              </ExpansionPanel>
+              </ExpansionPanel> 
             </div>
           )}
       </div>
