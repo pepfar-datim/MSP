@@ -316,7 +316,7 @@ const useStyles = makeStyles(theme => ({
 
   },
   errorMessage: {
-    textAlign: 'center',
+    //textAlign: 'center',
     color: '#FF0000',
     marginBottom: '0 !important'
   },
@@ -1559,10 +1559,7 @@ useEffect(() => {
             </Grid>
           </Grid>
           {/* </div> */}
-          {errorDisplay !== null ?
-            <div className={classes.errorMessage}>{errorDisplay}</div>
-            // <Alert severity="error">{errorDisplay}</Alert>
-            : null}
+          
           <Grid container>
             {/* filters */}
             <Grid item xs={12} md={3}>
@@ -1906,6 +1903,10 @@ useEffect(() => {
               {/* {dataElements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(dataElement => ( */}
               <ErrorBoundary>
                 <List>
+                {errorDisplay !== null ?
+            <div className={classes.errorMessage}>{errorDisplay}</div>
+            // <Alert severity="error">{errorDisplay}</Alert>
+            : null}
                   {dataElements.map(dataElement => (
 
 
