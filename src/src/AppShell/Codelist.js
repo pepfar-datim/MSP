@@ -1060,39 +1060,41 @@ export default function Codelist() {
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
-    let s = values.source
-    let y = values.fiscal
-    let f = values.frequency
-    let i = values.indicator
-    let d = values.dataSet
-    let st = values.support
-    let n = values.numerator
-    setValues({
-      source: s,
-      fiscal: y,
-      type: "All",
-      dataSet: d,
-      frequency: f,
-      indicator: i,
-      support: st,
-      numerator: n
-    })
-    values.dataSet = "All";
-    setSource(s);
-    if (s === "PDH") {
-      setHiddenDataSet(true)
-    }
-    else {
-      setHiddenDataSet(false)
-    }
-    if (values.fiscal === "All") {
-      setPeriod("")
-      setHiddenDataSet(true)
-      setPeriodQuery("")
-    }
-    else {
-      setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
-    }
+    // let s = values.source
+    // let y = values.fiscal
+    // let f = values.frequency
+    // let i = values.indicator
+    // let d = values.dataSet
+    // let st = values.support
+    // let n = values.numerator
+    // setValues({
+    //   source: s,
+    //   fiscal: y,
+    //   type: "All",
+    //   dataSet: d,
+    //   frequency: f,
+    //   indicator: i,
+    //   support: st,
+    //   numerator: n
+    // })
+    // values.dataSet = "All";
+    // setSource(s);
+    // if (s === "PDH") {
+    //   setHiddenDataSet(true)
+    // }
+    // else {
+    //   setHiddenDataSet(false)
+    // }
+    // if (values.fiscal === "All") {
+    //   setPeriod("")
+    //   if (!hiddenDataSet) {
+    //     setHiddenDataSet(true)
+    //   }
+    //   setPeriodQuery("")
+    // }
+    // else {
+    //   setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
+    // }
     if (values.source === "MER") {
       setSourceQuery("")
     }
@@ -1106,29 +1108,10 @@ export default function Codelist() {
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
-
-    let s = values.source
-    let year = values.fiscal
-    let f = values.frequency
-    let i = values.indicator
-    let d = values.dataSet
-    let st = values.support
-    let n = values.numerator
     if (values.fiscal === "All") {
-      d = "All"
-    }
-    setValues({
-      fiscal: year,
-      type: "All",
-      dataSet: d,
-      source: s,
-      frequency: f,
-      indicator: i,
-      support: st,
-      numerator: n
-    })
-    if (values.fiscal === "All") {
-      setHiddenDataSet(true)
+      if (!hiddenDataSet) {
+        setHiddenDataSet(true)
+      }
       setPeriodQuery("")
     }
     else {
@@ -1136,7 +1119,10 @@ export default function Codelist() {
       if (values.source === 'PDH') {
         setHiddenDataSet(true)
       }
-      else setHiddenDataSet(false)
+      else {
+        if (hiddenDataSet)
+          setHiddenDataSet(false)
+      }
 
     }
     console.log(" displaying " + dataElements.length + " results")
@@ -1802,12 +1788,13 @@ export default function Codelist() {
                     {/* <fieldset className={`${classes.fieldset} ${hiddenDataSet ? classes.hide : ''}`}> */}
                     {/* type filter */}
                     <Grid item xs={12} className={classes.filter}  >
-                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
+                      <FormControl className={`${classes.formControl}`}>
                         {/* <FormControl className={classes.formControl}> */}
 
                         <InputLabel htmlFor="type">Type</InputLabel>
                         <Select size="3"
                           native
+                          // disabled={hiddenDataSet}
                           value={values.type}
                           onChange={handleFilterChange}
                           className={classes.select}
@@ -1820,8 +1807,7 @@ export default function Codelist() {
 
                           }}
                         >
-                          {(values.fiscal === 'All') ? (<option value={'All'}>All</option>) :
-                            type.map(key => <option key={Math.random()} >{key}</option>)
+                          {type.map(key => <option key={Math.random()} >{key}</option>)
                           }
                         </Select>
                       </FormControl>
@@ -1829,11 +1815,12 @@ export default function Codelist() {
                     {/* data set filter */}
                     {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
                     <Grid item xs={12} className={classes.filter}>
-                      <FormControl className={`${classes.formControl} ${hiddenDataSet ? classes.hide : ''}`}>
-                        <InputLabel htmlFor="dataSet">Code List</InputLabel>
+                      <FormControl className={`${classes.formControl} `}>
+                        <InputLabel htmlFor="dataSet">Code List (Fiscal Year required)</InputLabel>
                         <Select
                           //size={Object.values(codeListMap[values.fiscal]).length +""}
                           native
+                          disabled={hiddenDataSet}
                           value={values.dataSet}
                           onChange={handleFilterChange}
                           className={classes.select}
@@ -1846,7 +1833,7 @@ export default function Codelist() {
                             disabled: values.source === 'PDH'
                           }}
                         >
-                          {(values.type === 'All') ? (<option value={'All'}>All</option>) : ([])}
+                          <option value={'All'}>All</option>
                           {(values.type === 'All') ? (Object.values(codeListMap[values.fiscal]).map(
 
                             key => <option key={Math.random()} >{key}</option>)) : ([])}
