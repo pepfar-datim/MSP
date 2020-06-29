@@ -603,7 +603,9 @@ throw new Error('Unable To Compare Data Elements to Indicators')
 
                 key =>
 
-                  key.name + ", "
+                key != value.extras.indicatorGroups.length - 1 ?
+                key.name + ", "
+                : key.name
 
               )
               ) : '--') : '--')
@@ -615,8 +617,9 @@ throw new Error('Unable To Compare Data Elements to Indicators')
 
                 key =>
 
-                  key.name + ", "
-
+                key != value.extras.indicatorGroups.length - 1 ?
+                key.name + ", "
+                : key.name
               )
               ) : '--') : '--')
             dataElements['Indicator Groups'] = types

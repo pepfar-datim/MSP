@@ -614,9 +614,9 @@ export default function Compare() {
               value.extras['Applicable Periods'] ? (value.extras['Applicable Periods'].length > 0 ? (Object.keys(value.extras['Applicable Periods']).map(
 
                 key =>
-
-                  value.extras['Applicable Periods'][key] + ", "
-
+                key != value.extras['Applicable Periods'].length - 1 ?
+                value.extras['Applicable Periods'][key] + ", "
+                : value.extras['Applicable Periods'][key]
               )
               ) : "--") : "--")
             dataElements['Applicable Periods'] = types
@@ -626,9 +626,9 @@ export default function Compare() {
               value.extras['Applicable Periods'] ? (value.extras['Applicable Periods'].length > 0 ? (Object.keys(value.extras['Applicable Periods']).map(
 
                 key =>
-
-                  value.extras['Applicable Periods'][key] + ", "
-
+                key != value.extras['Applicable Periods'].length - 1 ?
+                value.extras['Applicable Periods'][key] + ", "
+                : value.extras['Applicable Periods'][key]
               )
               ) : "--") : "--")
             dataElements['Applicable Periods'] = types
