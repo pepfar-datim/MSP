@@ -1107,6 +1107,12 @@ export default function DataElementDetails() {
                                                                 </TableCell>
                                                             </TableRow> : '' : ''
                                                     }
+                                                    {
+                                                        dataElementDetail.extras['Reporting frequency'] ?
+                                                        <TableRow><TableCell><strong>Reporting frequency</strong></TableCell>
+                                                        <TableCell>{dataElementDetail.extras['Reporting frequency']}</TableCell></TableRow>
+                                                         : ''
+                                                    }
                                                     {dataElementDetail.extras.resultTarget ?
                                                         <TableRow>
                                                             <TableCell><strong>Result/Target</strong></TableCell>
@@ -1214,6 +1220,16 @@ export default function DataElementDetails() {
                                                                 <TableRow>
                                                                     <TableCell><strong>PDH Derivation Rule Id</strong></TableCell>
                                                                     <TableCell>{dataElementDetail.extras.pdh_derivation_rule_id}</TableCell>
+                                                                </TableRow> : '',
+                                                                dataElementDetail.extras.numeratorDenominator ?
+                                                                <TableRow>
+                                                                    <TableCell><strong>Numerator/Denominator</strong></TableCell>
+                                                                    <TableCell>{dataElementDetail.extras.numeratorDenominator}</TableCell>
+                                                                </TableRow> : '',
+                                                                dataElementDetail.extras.pepfarSupportType ?
+                                                                <TableRow>
+                                                                    <TableCell><strong>PEPFAR Support Type</strong></TableCell>
+                                                                    <TableCell>{dataElementDetail.extras.pepfarSupportType}</TableCell>
                                                                 </TableRow> : ''
                                                         ]
                                                     }
