@@ -535,6 +535,7 @@ const useStyles = makeStyles(theme => ({
       const INDICATOR_PANEL = 0;
       const DATA_ELEMENT_PANEL = 1;
       const DATIM_INDICATOR_PANEL = 2;
+      const DELIMINATOR = "++";
       
     //get indicator and data-elements from context
     const [{ currentIndicator, matchDataElements, matchDatimIndicators }, dispatch] = useStateValue();
@@ -548,7 +549,7 @@ const useStyles = makeStyles(theme => ({
       setPanel(newPanel);            
       setErrorLoadDataElement(null);
       setErrorLoadDatimIndiator(null);
-      
+      console.log(currentIndicator);
       if (newPanel === DATA_ELEMENT_PANEL){       
         console.log("load data elements, page: " + page);
         // reload data element
@@ -627,6 +628,7 @@ const useStyles = makeStyles(theme => ({
   
     const getIndicatorGroup = function (indicatorData) {     
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
+      //console.log(indicatorData);
       var filteredByYearData = indicatorData.filter(function (data) {                
         if (values.frequency !== "" && values.fiscal !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
@@ -637,7 +639,7 @@ const useStyles = makeStyles(theme => ({
         }        
         return true;
       });
-      console.log("filteredByYearData:"); console.log(filteredByYearData);
+    
       let distinctGroup = [...new Set(filteredByYearData.map(item => item.group))];
       distinctGroup.sort();          
       if (distinctGroup.includes("Other")){      
@@ -648,7 +650,8 @@ const useStyles = makeStyles(theme => ({
     }
 
     const getFilteredIndicator = function (indicatorData) {  
-      console.log( "filter value: " + values.fiscal + " freq: " + values.frequency );     
+      console.log( "filter value: " + values.fiscal + " freq: " + values.frequency );    
+     
       var filteredByYearData = indicatorData.filter(function (data) {        
         if (values.frequency !== "" && values.fiscal !== "") {           
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
@@ -690,7 +693,9 @@ const useStyles = makeStyles(theme => ({
       indicatorItem.PEPFAR_support_definition = (indicatorOCL.extras && indicatorOCL.extras["PEPFAR-support definition"] ) ? indicatorOCL.extras["PEPFAR-support definition"] : "";
       indicatorItem.guiding_narrative_questions = indicatorOCL.extras && indicatorOCL.extras["Guiding narrative questions"] ? indicatorOCL.extras["Guiding narrative questions"]: "";
       indicatorItem.guidance_version = indicatorOCL.extras && indicatorOCL.extras["Guidance Version"] ? indicatorOCL.extras["Guidance Version"]: "";
-             
+      indicatorItem.uuid = indicatorOCL.uuid;
+      indicatorItem.id_uuid = indicatorOCL.id + "++" + indicatorOCL.uuid;
+      
       return indicatorItem;     
    }
 
@@ -742,8 +747,7 @@ const useStyles = makeStyles(theme => ({
             `Warning indicators data is emtpy from OCL `
           );
         }        
-        
-        console.log("indicators: " + jsonData.length);
+               
         console.log(jsonData);
         var d = createIndicatorListForUI(jsonData);
         var sortedData = sortJSON(d, 'name', 'asc');
@@ -762,8 +766,9 @@ const useStyles = makeStyles(theme => ({
     
     
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
-    const loadDataElementsDataByIndicator = async (indicatorID)=> {      
-      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1);
+    const loadDataElementsDataByIndicator = async (indicatorID)=> {   
+      
+      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1)+ '&extras__Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query);     
       setDELoading(true);
       setErrorLoadDataElement(null);
@@ -835,7 +840,7 @@ const useStyles = makeStyles(theme => ({
     }
 
     const loadDatimIndicatorByIndicator = async (indicatorID)=> {       
-      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1);
+      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras__Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
         
       console.log("loadDatimIndicatorByIndicator: " + indicatorID + " query: " + query); 
       setDatimIndicatorLoading(true);     
@@ -883,9 +888,9 @@ const useStyles = makeStyles(theme => ({
       
     }
 
-    var indicatorId = getIndicatorIdFromParam(location.pathname); // indicatorId from URL param
-    
-    useEffect(() => {            
+    var indicatorId = getIndicatorIdFromParam(location.pathname); // indicatorId from URL param    
+    useEffect(() => {  
+          
       loadIndicatorData(); 
       setInit(true);      
       setPage(0);
@@ -946,12 +951,20 @@ const useStyles = makeStyles(theme => ({
     };
   
     
-    const loadIndicatorDetailByIndicator =  async (indicatorID)=> {           
-      var query = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/" +  indicatorID + "/";      
+    const loadIndicatorDetailByIndicator =  async (indicatorID)=> {
+
+      let indicatorIDUuid = "";
+      if (indicatorID !== "" && indicatorID.includes(DELIMINATOR)){
+        indicatorIDUuid = indicatorID.split(DELIMINATOR);
+      }
+      
+     // var query = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/" +  indicatorID + "/";     
+      var query = "https://api." + domain + "/orgs/" + org + "/sources/MER" + source + "/concepts/" +  indicatorIDUuid[0] + "/" + indicatorIDUuid[1]+"/";      
       console.log("query indicator detail : " + query );
       setIndicatorDetailLoading(true);
       try {
         const response = await fetch(query);
+        //console.log(response);
         if (!response.ok) {
           console.log(response);
           setIndicatorDetailLoading(false);
@@ -987,15 +1000,16 @@ const useStyles = makeStyles(theme => ({
     }
 
   //update indicator details and matched data-element for selected indicator
-  function updateIndicator(indicatorId, panel){             
+  function updateIndicator(indicatorId, panel){           
     if (indicatorId === '' || !isValidIndicatorID(indicatorId) ) {      
       setErrorLoadIndicatorDetail("Invalid Indicator ID.");
       backtoDefault();
     }else {
       setErrorLoadIndicatorDetail(null);              
-      loadIndicatorDetailByIndicator(indicatorId);                    
+      loadIndicatorDetailByIndicator(indicatorId);  
+      const indicatorIdOnly = indicatorId.includes(DELIMINATOR) ?   indicatorId.split(DELIMINATOR)[0] : indicatorId;            
       if (panel && panel === DATA_ELEMENT_PANEL) {
-        loadDataElementsDataByIndicator(indicatorId);
+        loadDataElementsDataByIndicator(indicatorIdOnly);
       }else {// clear data elements
         dispatch({
           type: 'changeMatchDataElements',
@@ -1003,7 +1017,7 @@ const useStyles = makeStyles(theme => ({
         })
       }
       if (panel && panel === DATIM_INDICATOR_PANEL) {      
-        loadDatimIndicatorByIndicator(indicatorId);
+        loadDatimIndicatorByIndicator(indicatorIdOnly);
       }else {// clear daim indicator
         dispatch({
           type: 'changeMatchDatimIndicators',
@@ -1037,7 +1051,7 @@ const useStyles = makeStyles(theme => ({
     
   function isValidIndicatorID(indicatorID) {   
     //allow only alphanumeric, hyphen, underscore    
-    if (!indicatorID.match(/^[0-9a-zA-Z-_]+$/)){
+    if (!indicatorID.match(/^[0-9a-zA-Z-_+]+$/)){
       return false;
     }else {
       return true;
@@ -1084,7 +1098,8 @@ const useStyles = makeStyles(theme => ({
       //console.log("indicatorListForUI:" + indicatorsListForUI.length);
       var indGroupTemp = getIndicatorGroup(indicatorsListForUI);        
       setIndicatorGroups(indGroupTemp);
-      var filteredInd = getFilteredIndicator(indicatorsListForUI);      
+      var filteredInd = getFilteredIndicator(indicatorsListForUI);  
+         
       setFilteredIndicatorsListForUI(filteredInd);          
     }    
   }, [values]);
@@ -1094,8 +1109,7 @@ const useStyles = makeStyles(theme => ({
     //if it's not the first time the app mounted
     //console.log("***** useEffect, run only when init change to true. init: " + init);
     
-    if(init && indicatorId !== ''){     
-      console.log("setPage to 0, update Indicator:" + indicatorId)
+    if(init && indicatorId !== ''){          
       setPage(0);
       updateIndicator(indicatorId, DATA_ELEMENT_PANEL);                           
     }    
@@ -1117,12 +1131,11 @@ const useStyles = makeStyles(theme => ({
         <ExpansionPanelDetails key={"detail_" + index} className={classes.indicatorList}>
           {
               filteredIndicatorsListForUI.filter(indicator => (indicator.group === indGroup && indicator.periodYear === values.fiscal))
-              .map(indicator =>{
-                //console.log(indicator.id);
+              .map(indicator =>{                
               return(
-                <div key={"group_" + index + indicator.id }  className={currentIndicator.name===indicator.name ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
-                 {currentIndicator.name===indicator.name || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
-                  <NavLink  to={"/referenceIndicator/" + indicator.id} onClick={handleNavLinkChange}><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
+                <div key={"group_" + index + indicator.id }  className={currentIndicator.id === indicator.id  && currentIndicator.uuid === indicator.uuid ? classes.indicatorListItemActive : deloading ? classes.indicatorListItemUnclickable : classes.indicatorListItem}>                                
+                 {(currentIndicator.id ===indicator.id && currentIndicator.uuid === indicator.uuid ) || (panel && panel === DATA_ELEMENT_PANEL && deloading ) ? <div>{indicator.name}</div> : 
+                  <NavLink  to={"/referenceIndicator/" + indicator.id + DELIMINATOR + indicator.uuid} onClick={handleNavLinkChange}><span style={{color: '#000000'}} >{indicator.name}</span></NavLink>  
                  }                                                
                 </div>
               )                 
@@ -1163,7 +1176,8 @@ const useStyles = makeStyles(theme => ({
 
   let downloadIndicatorURL = "";
   if (currentIndicator) {
-    downloadIndicatorURL = "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/" + currentIndicator.id + "/";
+    console.log(currentIndicator);
+    downloadIndicatorURL = "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/" + currentIndicator.id + "/" + currentIndicator.uuid;
   }
 
   function getDEdetailValue(dataElement, field){

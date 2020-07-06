@@ -150,8 +150,64 @@ export const WhatIsNewHome =() =>{
     const [jsonData, setJsonData] = useState([]);
     const [versionToListMap, setVersionToListMap] = React.useState(new Map());
     const [panelToListMap, setPanelToListMap] = React.useState(new Map());
-    
-    const loadData = async ()=> {      
+    const [mapIndicatornameToIDcompound, setMapIndicatornameToIDcompound] = React.useState(new Map());
+    const DELIMINATOR = "++";
+    const domain = getConfig().domain;
+    const org = getConfig().org;
+   
+    const loadIndicatorData = async (version)=> {
+     
+      if (version <= 1.1){ // as of 7/7/2020 there is no indicator link for versions < 1.1
+        return;
+      }
+      
+      let year = "";
+      versionMap.map(   
+        item => {         
+          if (item.version.indexOf(version) > 0 ) {  
+            year = item.year
+          }
+          return null;
+      });  
+     
+      var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + year.substring(2,4) + "/concepts/?limit=0&verbose=true";      
+      console.log("queryIndicators : " + queryIndicators);
+      
+      try {
+        const response = await fetch(queryIndicators);
+        if (!response.ok) {
+          console.log(response);
+          throw new Error(
+            `Error when retrieve indicators ${response.status} ${response.statusText}`
+          );
+        }
+        const jsonData = await response.json();
+        if (!jsonData.length || jsonData.length === 0) {
+          console.log("jsonData is empty");
+          
+          throw new Error(
+            `Warning indicators data is emtpy from OCL `
+          );
+        }        
+        
+        let mapIndicatornameToID = new Map();
+        jsonData.map(
+          item => {           
+            mapIndicatornameToID.set(item.id, item.id + DELIMINATOR + item.uuid);
+            return mapIndicatornameToID;
+          }          
+        );
+       
+       setMapIndicatornameToIDcompound(mapIndicatornameToID);
+       
+      }catch (e){
+        console.log("error:" + e.message);
+        
+      }
+    }
+
+
+    const loadData = async ()=> {        
       try {       
           d3.csv(csvData).then(function(data) {
           console.log(data);          
@@ -187,10 +243,11 @@ export const WhatIsNewHome =() =>{
                 
             versions.sort(function(a, b){return b-a}); // descending
             setVersions(versions);
-            setVersion(versions[0]);
+            setVersion(versions[0]);           
             setJsonData(data);
             setVersionToListMap(versionToListMapTemp);
             setPanelToListMap(panelToListMapTemp);
+            loadIndicatorData(versions[0]);
         }).catch(function(err) {
           throw err;
         })       
@@ -201,15 +258,16 @@ export const WhatIsNewHome =() =>{
 
     useEffect(() => {             
       setInit(true);  
-      if (init) {
-        loadData(); 
+      if (init) {       
+        loadData();         
       }        
     }, [init]);
     
 
     const handleFilterChange = event => {
       event.persist();
-      setVersion( event.target.value);          
+      setVersion( event.target.value);  
+      loadIndicatorData(event.target.value);        
     };
 
      //set initial panel state and panel handle change function
@@ -293,15 +351,15 @@ export const WhatIsNewHome =() =>{
 
          {/* NEW ADDITIONS */}
         <TabPanel value={panel} index={0} className={classes.tabPanel}>
-          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData} mapIndicatornameToIDcompound={mapIndicatornameToIDcompound}></WhatsNewDetail>
         </TabPanel>
         {/* ADJUSTMENTS  */}
         <TabPanel value={panel} index={1} className={classes.tabPanel}>
-          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData} mapIndicatornameToIDcompound={mapIndicatornameToIDcompound}></WhatsNewDetail>
         </TabPanel>
         {/* REMOVALS  */}
         <TabPanel value={panel} index={2} className={classes.tabPanel}>
-          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData}></WhatsNewDetail>
+          <WhatsNewDetail panel={panel} version={versionSelected} versionToListMap={versionToListMap} panelToListMap={panelToListMap} jsonData={jsonData} mapIndicatornameToIDcompound={mapIndicatornameToIDcompound}></WhatsNewDetail>
         </TabPanel>
         </Grid>
       </div>
@@ -343,12 +401,13 @@ export function  WhatsNewDetail(props) {
             <ExpansionPanelDetails key={"panelDetail"+ Math.random()} className={classes.panelDetail}>
               { 
                 props.jsonData.map(item =>{
+                  //console.log(item);
                 return (
                     (item["MER Version"] === props.version && item["List"] === category && getPanelFromItemTab(item["Tab"]) === props.panel) ?
                       (
                       <div className={classes.itemContainer} key={"data" +Math.random()}>
-                      {item["HasIndicatorLink"] && item["HasIndicatorLink"].toLowerCase() === 'true' ? 
-                          <NavLink className={classes.itemTitle}  to={"/referenceIndicator/" + item["Indicator"]} href={`/indicator/${item["Indicator"]}`}>{item["Indicator"]}</NavLink>  
+                      {item["HasIndicatorLink"] && item["HasIndicatorLink"].toLowerCase() === 'true' && props.mapIndicatornameToIDcompound.has(item["Indicator"]) ? 
+                          <NavLink className={classes.itemTitle}  to={"/referenceIndicator/" + props.mapIndicatornameToIDcompound.get(item["Indicator"])} href={`/indicator/${props.mapIndicatornameToIDcompound.get(item["Indicator"])}`}>{item["Indicator"]}</NavLink>  
                           :<div className={classes.itemTitle}><span style={{color: '#000000'}}> {item["Indicator"]}</span></div>
                         }
                         <div className={classes.itemContent} dangerouslySetInnerHTML={{__html: convertMarkdown(item["Description"])}} />                    
