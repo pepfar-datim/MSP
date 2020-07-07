@@ -34,6 +34,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import Link from '@material-ui/core/Link';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -242,6 +243,10 @@ const useStyles = makeStyles(theme => ({
   },
   expansionPanelSummary:{
     borderBottom: '1px solid #C1A783',
+    color: '#000000',       
+        '&:hover, &:focus':{   
+          backgroundColor: '#eeeeee'
+        }
   },
   expansionPanelDetails:{
     paddingTop: '10px'
@@ -564,6 +569,16 @@ const useStyles = makeStyles(theme => ({
           loadDatimIndicatorByIndicator(currentIndicator.id);
         }
       }
+    };
+
+    const copyToClipboard = str => {
+      const el = document.createElement('textarea');
+      el.value = str;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      //handleTooltipOpen()
     };
 
     const [formularPanel, setFormularPanel] = React.useState(0);
@@ -1175,8 +1190,7 @@ const useStyles = makeStyles(theme => ({
   };
 
   let downloadIndicatorURL = "";
-  if (currentIndicator) {
-    console.log(currentIndicator);
+  if (currentIndicator) {   
     downloadIndicatorURL = "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/" + currentIndicator.id + "/" + currentIndicator.uuid;
   }
 
@@ -1398,15 +1412,19 @@ return (
                           onClick={() => dataElement.disags.length === 0 ? getMappings(dataElement.id) : null}>
 
             {/* data elements summary */}
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
+            <ExpansionPanelSummary  aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
               <Grid container alignItems="center" >       
                 <Grid item  xs={12} md={12}>         
-                  <Typography className={classes.heading}> 
-                   {dataElement.display_name}
+                  <Typography className={classes.heading}>                    
+                   <Link href={"/codelist/dataElementDetail?id=" + dataElement.id} style={{ textDecoration: 'underline' }}>{dataElement.display_name}</Link>          
                   </Typography>
                 </Grid>               
-                  <Grid item xs={12} md={3}  className={classes.chip}>                                        
-                    <span>{"UID: " + dataElement.external_id}</span>
+                  <Grid item xs={12} md={3}  className={classes.chip}>                                                            
+                    <Tooltip disableFocusListener title="Click to copy UID">
+                        <span className={classes.chip}
+                          onClick={() => copyToClipboard(dataElement.external_id)}
+                        >{"UID: " + dataElement.external_id}</span>
+                      </Tooltip>
                     </Grid>
                   <Grid item xs={12} md={3} className={classes.chip}>  
                     <span>{"Source: " + dataElement.extras.source} </span>                                                                                     
@@ -1415,227 +1433,6 @@ return (
               </Grid>         
             </ExpansionPanelSummary>
 
-            <DataElementDetail dataElementDetail={dataElementDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
-          {/* data elements details */}
-          <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-            <Grid container>           
-              <Grid item xs={12} >
-                <Table className={classes.comboTable} aria-label="simple table">
-                  <TableBody>
-                    <TableRow>
-                      <TableCell style={{width: '20%'}} padding='none'><strong>Description</strong></TableCell>
-                      <TableCell padding='none'>
-                      {getDEdetailValue(dataElement, "description") !== "" ? getDEdetailValue(dataElement, "description")  : ""}  
-                      </TableCell>
-                  </TableRow>
-                  {
-                    getDEdetailValue(dataElement, "shortName") !== "" ?
-                    <TableRow>
-                    <TableCell  padding='none'><strong>Short Name</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "shortName")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }
-                  {
-                    getDEdetailValue(dataElement, "code") !== "" ?
-                    <TableRow>
-                    <TableCell padding='none'><strong>Code</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "code")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }                 
-                  {
-                    getDEdetailValue(dataElement, "indicator") !== "" ?
-                    <TableRow>
-                    <TableCell  padding='none'><strong>Indicator</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "indicator")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }
-                   {
-                    getDEdetailValue(dataElement, "applicablePeriods") !== "" ?
-                    <TableRow>
-                    <TableCell  padding='none'><strong>Applicable Periods</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "applicablePeriods")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }
-                  {
-                    getDEdetailValue(dataElement, "resultTarget") !== "" ?
-                    <TableRow>
-                    <TableCell padding='none'><strong>Result/Target</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "resultTarget")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }
-                  {
-                    getDEdetailValue(dataElement, "datatype") !== "" ?
-                    <TableRow>
-                    <TableCell style={{width: '30%'}} padding='none'><strong>Data Type</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "datatype")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }
-                  {
-                    getDEdetailValue(dataElement, "retired") !== "" ?
-                    <TableRow>
-                    <TableCell style={{width: '30%'}} padding='none'><strong>Retired</strong></TableCell>
-                    <TableCell padding='none'>
-                    {getDEdetailValue(dataElement, "retired")}
-                    </TableCell>
-                  </TableRow>
-                  : null
-                  }                  
-              </TableBody>
-            </Table>       
-            </Grid>
-
-            <Grid item xs={12} className={classes.expansionPanelLeft}>                        
-              <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(dataElement, 'bottom', true)} color="primary">
-              View data element details
-              </Button>              
-            </Grid>
-
-       
-            {/* data element Disaggregations */}
-            <Grid item  xs={12} className={classes.comboTable}>
-              
-         {/* open the formula panel */}        
-        { 
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content"  id="panel1a-header" className={classes.formulaButton}>
-            <Typography className={classes.heading}><strong>Disaggregations and Derivations</strong></Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
-            <div className={classes.tableContainer} >                     
-              <Tabs value={formularPanel} onChange={handleFormularChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-                <Tab label="DISAGGREGATIONS FORMULA" {...formularProps(0)} />
-                <Tab label="DISAGGREGATIONS LIST" {...formularProps(1)} />
-                {dataElement.extras && dataElement.extras.source === 'PDH' ? (<Tab label="DERIVATIONS" {...formularProps(2)} />) : <Tab label="" {...formularProps(2)} />}
-              </Tabs>
-
-              <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>                
-                <Grid container alignItems="center" justify="space-between">
-                  <Grid item xs={9}  >
-                    <div className={classes.tableContainer}>
-                    {(dataElement && dataElement.disags )?                                                    
-                        dataElement.disags.map(
-                          (item, index ) => 
-                            (index < dataElement.disags.length -1) ?                              
-                              (checked ? (<span key={"item_name" + item.code + index}> {item.code} + </span>) : (<span key={"item_code" + item.code + index}> {item.name.trim().substring(0, 1).toUpperCase() + item.name.trim().substring(1)}</span>))
-                            :                              
-                            (checked ? (<span key={"item_name" + item.code + index}> {item.code} </span>) : (<span key={"item_code" + item.code + index}>{item.name.trim().substring(0, 1).toUpperCase() + item.name.trim().substring(1)}  </span>))                                               
-                        )                           
-                      : null}
-                    </div></Grid>
-                    <Grid item xs={3} md={2}>
-                    <FormControlLabel  value="Start" control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}  label={format} labelPlacement="start" />
-                  </Grid>
-                </Grid>
-              </FormularPanel>
-              <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>                
-                <Table className={classes.table} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                    <TableCell>Code </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                  {
-                  Object.keys(Object(dataElement.disags)).map(
-                    key => 
-                    <TableRow key={Math.random()}>
-                      <TableCell component="th" scope="row">
-                      {Object(dataElement.disags)[key].name}
-                      </TableCell> 
-                      <TableCell component="th" scope="row">
-                      {Object(dataElement.disags)[key].code}
-                      </TableCell> 
-                    </TableRow>              
-                  )
-                  }
-                  </TableBody>
-                </Table>               
-              </FormularPanel>
-              {dataElement.extras && dataElement.extras.source === 'PDH' ? (
-                <FormularPanel value={formularPanel} index={2} className={classes.tabPanel}>
-                  <div className={classes.tableContainer} >
-                    <Table className={classes.table} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell width="25%" align="center">Source Data Element</TableCell>
-                          <TableCell width="60" align="center" >Source Disaggregation</TableCell>
-                          <TableCell width="15%" align="center">+/-</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {
-                          (dataElement.extras.source_data_elements) ? populatePDHDerivatives(dataElement.extras.source_data_elements) : ''
-                        }
-                        {
-                          Object.keys(pdhDerivatives).map(                         
-                            (key, index) =>
-                              <TableRow key={"row_" + index}  style={{verticalAlign: 'top', border: '2px solid #C8C8C8', backgroundColor: (index % 2 === 0) ? "#F8F8F8" : "#F0F0F0" }}  >
-                                <TableCell component="th" scope="row" valign="top" rowSpan={pdhDerivatives[key].size} style={{ borderRight: '2px solid #C8C8C8'}} >
-                                  {key}
-                                </TableCell>
-                                <TableCell>
-                                  <Table>
-                                    <TableBody>                                 
-                                      {Object.keys(pdhDerivatives[key]).map((dissags, disIndex) =>
-                                        <TableRow key={"row_disag_" + index + "_"+ disIndex}>
-                                          <TableCell component="th" scope="row"  width="100%" >
-                                            {pdhDerivatives[key][dissags].substring(0, pdhDerivatives[key][dissags].length - 1)}
-                                          </TableCell>                                         
-                                        </TableRow>
-                                      )}
-                                  </TableBody>
-                                   </Table>
-                                </TableCell>
-                                <TableCell>
-                                  <Table>
-                                    <TableBody>
-                                  {Object.keys(pdhDerivatives[key]).map((dissags, disIndex) =>
-                                    <TableRow key={"row_disag_op_" + index + "_"+ disIndex}>
-                                      <TableCell component="th" scope="row" align="right">
-                                        {(pdhDerivatives[key][dissags].substring(pdhDerivatives[key][dissags].length - 1, pdhDerivatives[key][dissags].length)) == 1 ? '+' : '-'}
-                                      </TableCell>
-                                    </TableRow>
-                                  )}
-                                  </TableBody>
-                                   </Table>
-                                </TableCell>
-                              </TableRow>
-
-                          )
-                        }
-                      </TableBody>
-                    </Table>
-                    {pdhDerivatives = []}
-                  </div>
-                             
-                </FormularPanel>)
-              : null}
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-        }        
-          </Grid>
-        </Grid>
-        </ExpansionPanelDetails>
       </ExpansionPanel>
 
       </div>

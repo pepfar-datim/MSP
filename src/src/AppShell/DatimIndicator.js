@@ -4,25 +4,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import * as color_palette from '../Styles/Colors';
-import styled from 'styled-components';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import DatimIndicatorDetail from './DatimIndicatorDetail';
+
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles(theme => ({  
      
@@ -39,6 +29,10 @@ const useStyles = makeStyles(theme => ({
       expansionPanelSummary: {
         borderBottom: '1px solid #C1A783',
         color: '#000000',
+       
+        '&:hover, &:focus':{   
+          backgroundColor: '#eeeeee'
+        }
       },
       expansionPanelDetails: {
         paddingTop: '30px',
@@ -156,6 +150,16 @@ export default function  DatimIndicator(props) {
       event.preventDefault();
       setFormularPanel(newFormularPanel);
     };
+    const copyToClipboard = str => {
+      const el = document.createElement('textarea');
+      el.value = str;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      //handleTooltipOpen()
+    };
+  
     const [checked, setChecked] = React.useState(false);
     const [format, setFormat] = React.useState('Names');
     const toggleChecked = () => {
@@ -189,17 +193,22 @@ export default function  DatimIndicator(props) {
         {
             props.matchDatimIndicators.map(datimIndicator => (
                 <div key={datimIndicator.id}>
-                    <ExpansionPanel className={classes.expansionPanel}   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}  >
+                    <ExpansionPanel >
                         {/* DATIM indicator summary */}
-                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
+                     <ExpansionPanelSummary aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
                         <Grid container alignItems="center" >       
                             <Grid item  xs={12} md={12}>         
-                                <Typography className={classes.heading}> 
-                                {datimIndicator.display_name}
+                                <Typography className={classes.heading}>                                 
+                                  <Link href={"/indicators/indicatorDetail?id=" + datimIndicator.id} style={{ textDecoration: 'underline' }}>{datimIndicator.display_name}</Link>
                                 </Typography>
                             </Grid>               
                             <Grid item xs={12} md={3}  className={classes.chip}>                                        
-                              <span>{"UID: " + datimIndicator.id}</span>
+                            
+                              <Tooltip disableFocusListener title="Click to copy UID">
+                                <span className={classes.chip}
+                                  onClick={() => copyToClipboard(datimIndicator.id)}
+                                >{"UID: " + datimIndicator.id}</span>
+                              </Tooltip>
                             </Grid>
                             <Grid item xs={12} md={3} className={classes.chip}>  
                               <span>{"Source: DATIM" } </span>                                                                                     
@@ -210,104 +219,7 @@ export default function  DatimIndicator(props) {
                             </Grid>
                             <Grid item xs={12} md={3} />
                           </Grid>         
-                      </ExpansionPanelSummary>
-                      
-                      <DatimIndicatorDetail datimIndicatorDetail={datimIndicatorDetail} classes={classes} detailPanel={detailPanel} toggleDetailDrawer={toggleDetailDrawer}/> 
-
-                      <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-                        <Grid container>           
-                          <Grid item xs={12} >
-                            <Table className={classes.comboTable} aria-label="simple table">
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell style={{width: '30%'}} padding='none'><strong>Indicator Groups:</strong></TableCell>
-                                        <TableCell padding='none'>                                                                                
-                                        {
-                                        datimIndicator.extras && datimIndicator.extras['indicatorGroups'] && datimIndicator.extras['indicatorGroups'].length > 0 ? 
-                                            (Object.values(datimIndicator.extras['indicatorGroups']).map(                                     
-                                                (item, index) =>                                                                           
-                                                    (index < datimIndicator.extras['indicatorGroups'].length -1) ?                              
-                                                        item.name +  ", " 
-                                                        : item.name
-                                                )
-                                            ) : '--'
-                                        }
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell padding='none'><strong>Data Type:</strong></TableCell>
-                                        <TableCell padding='none'>
-                                        {datimIndicator.datatype ? datimIndicator.datatype : '--'}
-                                        </TableCell>
-                                    </TableRow>                                               
-                                    <TableRow>
-                                        <TableCell padding='none'><strong>Numerator Description:</strong></TableCell>
-                                        <TableCell padding='none'>
-                                        {datimIndicator.extras.numeratorDescription ? datimIndicator.extras.numeratorDescription : '--'}
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell padding='none'><strong>Denominator Description:</strong></TableCell>
-                                        <TableCell padding='none'>
-                                        {datimIndicator.extras.denominatorDescription ? datimIndicator.extras.denominatorDescription : '--'}                                     
-                                        </TableCell>
-                                    </TableRow>                           
-                                </TableBody>
-                            </Table>
-                          </Grid>                            
-                          <Grid item xs={12} className={classes.expansionPanelLeft}>                        
-                              <Button variant="outlined" className={classes.detailsButton} onClick={toggleDetailDrawer(datimIndicator, 'bottom', true)} color="primary">
-                              View Datim indicator details
-                              </Button>              
-                          </Grid>
-                        </Grid>
-
-                        {/* formula  */}
-                        <Grid item  xs={12} className={classes.comboTable}>                                
-                        { 
-                        <ExpansionPanel>
-                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content"  id="panel1a-header" className={classes.formulaButton}>
-                            <Typography className={classes.heading}><strong>Formula</strong></Typography>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails  className={classes.expansionPanelDetails}>
-                            <div className={classes.tableContainer} >                     
-                              <Tabs value={formularPanel} onChange={handleFormularChange} className={classes.tabContainer}  classes={{ indicator: classes.bigIndicator }}>
-                                <Tab label="INDICATOR FORMULA" {...formularProps(0)} />
-                                <Tab label="INDICATOR TABLE" {...formularProps(1)} />                    
-                              </Tabs>                
-                              <FormularPanel value={formularPanel} index={0} className={classes.tabPanel}>                
-                                <Grid container alignItems="center" justify="space-between">
-                                    <Grid   item xs={10}>
-                                      <div className={classes.tableContainer}>
-                                        <strong>Numerator: </strong>
-                                        {
-                                          checked ? datimIndicator.extras.numerator : datimIndicator.extras.numeratorReadableFormula
-                                        }<br></br><br></br>
-                                        <strong>Denominator: </strong>
-                                        {
-                                          checked ? datimIndicator.extras.denominator : datimIndicator.extras.denominatorReadableFormula
-                                        }
-                                      </div></Grid>
-                                    <Grid item xs={2} >
-                                      <FormControlLabel
-                                        value="Start"
-                                        control={<Switch color="primary" checked={checked} onChange={toggleChecked} />}
-                                        label={format}
-                                        labelPlacement="start"
-                                      />
-                                    </Grid>
-                                  </Grid>
-                              </FormularPanel>
-                              {/* formula for Indicator Table empty for now */ }
-                              <FormularPanel value={formularPanel} index={1} className={classes.tabPanel}>                
-                                <div></div>     
-                              </FormularPanel>                  
-                            </div>
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        }        
-                      </Grid>
-                    </ExpansionPanelDetails>                       
+                      </ExpansionPanelSummary>                      
                   </ExpansionPanel>
                 </div>
             ))
