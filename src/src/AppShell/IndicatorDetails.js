@@ -1050,6 +1050,34 @@ export default function DataElementDetails() {
             console.log("error:" + e.message);
         }
     }
+    async function getReferenceIndicator(id){
+        let refIndicatorQuery = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id ;
+
+        try {
+           const proxyurl = "https://cors-anywhere.herokuapp.com/"
+            const response = await fetch(proxyurl + refIndicatorQuery)
+            if (!response.ok) {
+                console.log(response);
+                setErrorDisplay("Failed to fetch")
+                throw new Error(
+                    `Error when retrieving reference indicator ${response.status} ${response.statusText}`
+                );
+            }
+
+            const jsonData = await response.json();
+             let uuid = jsonData.uuid
+            // let downloadLink = document.createElement('a');
+            // downloadLink.href = refIndicatorQuery;
+            // downloadLink.click();
+            // revokeDownloadLink(downloadLink.href);
+             history.push("/referenceIndicator/" + id + "++" + uuid)
+
+        } catch (e) {
+            console.log("error:" + e.message);
+            //setError(e.message);
+            //setErrorDisplay(e.message);
+        }
+    }
 
     return (
         <Route render={(history) => (
@@ -1259,7 +1287,11 @@ export default function DataElementDetails() {
                                                     {dataElementDetail.extras.indicator ?
                                                         <TableRow>
                                                             <TableCell><strong>Reference Indicator</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.indicator}</TableCell>
+                                                            <TableCell><Link href="#"
+                                                                component="button"
+                                                                onClick={() => getReferenceIndicator(dataElementDetail.extras.indicator)}
+                                                            >
+                                                                {dataElementDetail.extras.indicator}</Link></TableCell>
                                                         </TableRow> : ''
                                                     }
                                                     {dataElementDetail.extras.numeratorDescription ?
@@ -1349,16 +1381,16 @@ export default function DataElementDetails() {
                                                 listView ?
                                                     <Grid item xs={3}>
                                                         <div style={{ flexDirection: 'row', display: 'flex' }} >
-                                                        <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
-                                                            <Button style={{ backgroundColor: '#fff0b3' }}>
-                                                                <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
-                                                            </Button>
+                                                            <Tooltip disableFocusListener disableTouchListener title="List view" placement="top-start">
+                                                                <Button style={{ backgroundColor: '#fff0b3' }}>
+                                                                    <MdList size={32} onClick={handleListView} style={{ backgroundColor: '#fff0b3' }} />
+                                                                </Button>
                                                             </Tooltip>
                                                             <Tooltip disableFocusListener disableTouchListener title="Formula view" placement="top-start">
-                                                            <Button>
-                                                                <MdFunctions size={32} onClick={handleFormulaView} />
-                                                                <TiArrowSortedDown /></Button>
-                                                                </Tooltip>
+                                                                <Button>
+                                                                    <MdFunctions size={32} onClick={handleFormulaView} />
+                                                                    <TiArrowSortedDown /></Button>
+                                                            </Tooltip>
                                                         </div>
                                                     </Grid>
                                                     :
@@ -1383,7 +1415,7 @@ export default function DataElementDetails() {
                                                             <div><i style={{ color: '#808080', fontSize: '15px' }}>NOTE: View the full formula to see mathematical operators</i></div>
                                                             {numeratorTable ?
                                                                 [
-                                                                    <div style={{ marginTop: '20px' }}  > 
+                                                                    <div style={{ marginTop: '20px' }}  >
                                                                         <Tooltip placement="right" disableFocusListener title="Click to hide numerator" onClick={hideNumeratorTable}>
                                                                             <strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedUp />Numerator</strong>
                                                                         </Tooltip> </div>,
@@ -1474,8 +1506,8 @@ export default function DataElementDetails() {
                                                             }
                                                             {denominatorTable ?
                                                                 [<div style={{ marginTop: '20px' }}>
-                                                                                                                                            <Tooltip placement="right" disableFocusListener title="Click to hide denominator" onClick={hideDenominatorTable}>
-                                                                    <strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedUp onClick={hideDenominatorTable} />Denominator</strong>
+                                                                    <Tooltip placement="right" disableFocusListener title="Click to hide denominator" onClick={hideDenominatorTable}>
+                                                                        <strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedUp onClick={hideDenominatorTable} />Denominator</strong>
                                                                     </Tooltip></div>,
                                                                 <Table className={classes.comboTable} aria-label="simple table" size="small" >
                                                                     {dataElementDetail.extras.denominatorReadableFormula.length > 1 ?
@@ -1556,8 +1588,8 @@ export default function DataElementDetails() {
                                                                 </Table>]
                                                                 :
                                                                 <div style={{ marginTop: '20px' }}>
-                                                                                                                                        <Tooltip placement="right" onClick={showDenominatorTable} disableFocusListener title="Click to show denominator">
-                                                                    <strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown onClick={showDenominatorTable} />Denominator</strong>
+                                                                    <Tooltip placement="right" onClick={showDenominatorTable} disableFocusListener title="Click to show denominator">
+                                                                        <strong style={{ color: '#808080', fontSize: '15px' }}><TiArrowSortedDown onClick={showDenominatorTable} />Denominator</strong>
                                                                     </Tooltip></div>
                                                             }
                                                         </div>
