@@ -366,7 +366,7 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 400,
         paddingLeft: '30px',
         paddingRight: '30px',
-       // paddingTop: '20px',
+        // paddingTop: '20px',
         textTransform: 'uppercase'
     },
     fixedTop: {
@@ -815,11 +815,11 @@ export default function DataElementDetails() {
     const [selected, setSelected] = React.useState([]);
     const handleToggle = (event, nodeIds) => {
         setExpanded(nodeIds);
-      };
-    
-      const handleSelect = (event, nodeIds) => {
+    };
+
+    const handleSelect = (event, nodeIds) => {
         setSelected(nodeIds);
-      };
+    };
     const expandAll = (array) => event => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
@@ -873,6 +873,34 @@ export default function DataElementDetails() {
             // );
         }
 
+    }
+    async function getReferenceIndicator(id){
+        let refIndicatorQuery = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + id ;
+
+        try {
+           const proxyurl = "https://cors-anywhere.herokuapp.com/"
+            const response = await fetch(proxyurl + refIndicatorQuery)
+            if (!response.ok) {
+                console.log(response);
+                setErrorDisplay("Failed to fetch")
+                throw new Error(
+                    `Error when retrieving reference indicator ${response.status} ${response.statusText}`
+                );
+            }
+
+            const jsonData = await response.json();
+             let uuid = jsonData.uuid
+            // let downloadLink = document.createElement('a');
+            // downloadLink.href = refIndicatorQuery;
+            // downloadLink.click();
+            // revokeDownloadLink(downloadLink.href);
+             history.push("/referenceIndicator/" + id + "++" + uuid)
+
+        } catch (e) {
+            console.log("error:" + e.message);
+            //setError(e.message);
+            //setErrorDisplay(e.message);
+        }
     }
     //Error handling
     class ErrorBoundary extends React.Component {
@@ -1109,9 +1137,9 @@ export default function DataElementDetails() {
                                                     }
                                                     {
                                                         dataElementDetail.extras['Reporting frequency'] ?
-                                                        <TableRow><TableCell><strong>Reporting frequency</strong></TableCell>
-                                                        <TableCell>{dataElementDetail.extras['Reporting frequency']}</TableCell></TableRow>
-                                                         : ''
+                                                            <TableRow><TableCell><strong>Reporting frequency</strong></TableCell>
+                                                                <TableCell>{dataElementDetail.extras['Reporting frequency']}</TableCell></TableRow>
+                                                            : ''
                                                     }
                                                     {dataElementDetail.extras.resultTarget ?
                                                         <TableRow>
@@ -1123,8 +1151,13 @@ export default function DataElementDetails() {
                                                     {dataElementDetail.extras.indicator ?
                                                         <TableRow>
                                                             <TableCell><strong>Reference Indicator</strong></TableCell>
-                                                            <TableCell>{dataElementDetail.extras.indicator}</TableCell>
-                                                        </TableRow> : ''}
+                                                            <TableCell><Link href="#"
+                                                                component="button"
+                                                                onClick={() => getReferenceIndicator(dataElementDetail.extras.indicator)}
+                                                            >
+                                                                {dataElementDetail.extras.indicator}</Link></TableCell>
+                                                        </TableRow> : ''
+                                                    }
                                                     {dataElementDetail ? dataElementDetail.extras ? dataElementDetail.extras.source === 'PDH' ?
                                                         < TableRow >
                                                             <TableCell><strong>PDH Indicator</strong></TableCell>
@@ -1221,12 +1254,12 @@ export default function DataElementDetails() {
                                                                     <TableCell><strong>PDH Derivation Rule Id</strong></TableCell>
                                                                     <TableCell>{dataElementDetail.extras.pdh_derivation_rule_id}</TableCell>
                                                                 </TableRow> : '',
-                                                                dataElementDetail.extras.numeratorDenominator ?
+                                                            dataElementDetail.extras.numeratorDenominator ?
                                                                 <TableRow>
                                                                     <TableCell><strong>Numerator/Denominator</strong></TableCell>
                                                                     <TableCell>{dataElementDetail.extras.numeratorDenominator}</TableCell>
                                                                 </TableRow> : '',
-                                                                dataElementDetail.extras.pepfarSupportType ?
+                                                            dataElementDetail.extras.pepfarSupportType ?
                                                                 <TableRow>
                                                                     <TableCell><strong>PEPFAR Support Type</strong></TableCell>
                                                                     <TableCell>{dataElementDetail.extras.pepfarSupportType}</TableCell>
