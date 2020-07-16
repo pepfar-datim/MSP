@@ -952,7 +952,18 @@ export default function Codelist() {
   });
 
   const type = ["All", "Result", "Target"];
+  const clearValues = event => {
+    setValues(() => ({
+      fiscal: "All",
+      indicator: "All",
+      datatype: "All",
+      denom: "All",
+      indicatorGroup: "All",
+      type: "All"
+    }));
 
+    //setDataElements(data);
+  }
 
   const handleSearchInputChange = () => {
     setSearchInputText(document.getElementById("inputSearch").value);
@@ -1730,9 +1741,10 @@ useEffect(() => {
                         </Select>
                       </FormControl>
                     </Grid>
-
-
                   </form>
+                  <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
+                    Clear Filters
+                  </Button>
                 </div>
 
               </Paper>

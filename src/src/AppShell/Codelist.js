@@ -647,6 +647,7 @@ export default function Codelist() {
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("")
+  const [disabledDataSet, setDisabledDataSet] = useState(true)
   const [hiddenDataSet, setHiddenDataSet] = useState(true)
   const [hiddenIndicator, setHiddenIndicator] = useState(true)
   const [sourceQuery, setSourceQuery] = useState([""]);
@@ -1101,6 +1102,17 @@ export default function Codelist() {
     else {
       setSourceQuery("&extras__source=" + values.source)
     }
+    if (values.source === "PDH") {
+      setCodeListQuery("")
+        if (!hiddenDataSet) {
+        setHiddenDataSet(true)
+      }
+    }
+    else {
+      setHiddenDataSet(false)
+      if (values.fiscal !== "All"){
+        setDisabledDataSet(false)}
+    }
 
   }, [values.source]);
 
@@ -1109,19 +1121,19 @@ export default function Codelist() {
     setDataElementsData([])
     setCountOfValues(0)
     if (values.fiscal === "All") {
-      if (!hiddenDataSet) {
-        setHiddenDataSet(true)
+      if (!disabledDataSet) {
+        setDisabledDataSet(true)
       }
       setPeriodQuery("")
     }
     else {
       setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
       if (values.source === 'PDH') {
-        setHiddenDataSet(true)
+        setDisabledDataSet(true)
       }
       else {
-        if (hiddenDataSet)
-          setHiddenDataSet(false)
+        if (disabledDataSet)
+          setDisabledDataSet(false)
       }
 
     }
@@ -1813,14 +1825,14 @@ export default function Codelist() {
                       </FormControl>
                     </Grid>
                     {/* data set filter */}
-                    {/* <Grid item xs={12} className={advanced ? classes.filter : classes.hide}> */}
+                    <Grid item xs={12} className={hiddenDataSet ? classes.hide : ''}>
                     <Grid item xs={12} className={classes.filter}>
                       <FormControl className={`${classes.formControl} `}>
                         <InputLabel htmlFor="dataSet">Code List (Fiscal Year required)</InputLabel>
                         <Select
                           //size={Object.values(codeListMap[values.fiscal]).length +""}
                           native
-                          disabled={hiddenDataSet}
+                          disabled={disabledDataSet}
                           value={values.dataSet}
                           onChange={handleFilterChange}
                           className={classes.select}
@@ -1846,6 +1858,7 @@ export default function Codelist() {
                         <option value={'community'}>Community Based Code List</option> */}
                         </Select>
                       </FormControl>
+                    </Grid>
                     </Grid>
                     {/* </fieldset>
 
