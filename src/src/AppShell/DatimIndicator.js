@@ -192,11 +192,8 @@ export default function  DatimIndicator(props) {
         }
         {
             props.matchDatimIndicators.map(datimIndicator => (
-                <div key={datimIndicator.id}>
-                    <ExpansionPanel >
-                        {/* DATIM indicator summary */}
-                     <ExpansionPanelSummary aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
-                        <Grid container alignItems="center" >       
+                <div key={datimIndicator.id}>                  
+                        <Grid container alignItems="center" className={classes.expansionPanelSummary}  style={{padding: '4px'}}>       
                             <Grid item  xs={12} md={12}>         
                                 <Typography className={classes.heading}>                                 
                                   <Link href={"/indicators/indicatorDetail?id=" + datimIndicator.id} style={{ textDecoration: 'underline' }}>{datimIndicator.display_name}</Link>
@@ -219,8 +216,7 @@ export default function  DatimIndicator(props) {
                             </Grid>
                             <Grid item xs={12} md={3} />
                           </Grid>         
-                      </ExpansionPanelSummary>                      
-                  </ExpansionPanel>
+                     
                 </div>
             ))
         }     

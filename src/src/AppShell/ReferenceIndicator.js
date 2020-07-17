@@ -511,6 +511,7 @@ const useStyles = makeStyles(theme => ({
     const handleChangeRowsPerPage = event => {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
+      setPageForDatimIndicator(0);
       //setExpanded(false);
     };
     const [pageDatimIndicator, setPageForDatimIndicator] = React.useState(0);           
@@ -866,6 +867,7 @@ const useStyles = makeStyles(theme => ({
           console.log(response);
           setDatimIndicatorLoading(false);
           setCountOfValues(0);
+          setPageForDatimIndicator(0);
           throw new Error(
             `Error when retrieve datim indicators ${response.status} ${response.statusText}`
           );
@@ -916,7 +918,7 @@ const useStyles = makeStyles(theme => ({
       if ( init  && indicatorId && indicatorId !== '' ) {                                      
           updateIndicator(indicatorId, panel);                           
         }                            
-    }, [indicatorId, page, rowsPerPage]);
+    }, [indicatorId, page, rowsPerPage, pageDatimIndicator]);
  
     async function getMappings(id) {          
       const queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source  + '/concepts/' + id + '/?includeMappings=true';
@@ -1407,13 +1409,8 @@ return (
       
       {/*  TO DO: consider to put this into a function (for loading) or a component (for reuse) */ }
       {matchDataElements.map(dataElement => (
-        <div key={dataElement.external_id}>
-          <ExpansionPanel className={classes.expansionPanel}   TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}  
-                          onClick={() => dataElement.disags.length === 0 ? getMappings(dataElement.id) : null}>
-
-            {/* data elements summary */}
-            <ExpansionPanelSummary  aria-controls="panel1a-content" id="panel1a-header" className={classes.expansionPanelSummary}>
-              <Grid container alignItems="center" >       
+        <div key={dataElement.external_id}>        
+              <Grid container alignItems="center"  className={classes.expansionPanelSummary} style={{padding: '4px'}}>       
                 <Grid item  xs={12} md={12}>         
                   <Typography className={classes.heading}>                    
                    <Link href={"/codelist/dataElementDetail?id=" + dataElement.id} style={{ textDecoration: 'underline' }}>{dataElement.display_name}</Link>          
@@ -1430,11 +1427,7 @@ return (
                     <span>{"Source: " + dataElement.extras.source} </span>                                                                                     
                   </Grid>
                   <Grid item xs={12} md={6} />
-              </Grid>         
-            </ExpansionPanelSummary>
-
-      </ExpansionPanel>
-
+              </Grid>                       
       </div>
 
       ))}
