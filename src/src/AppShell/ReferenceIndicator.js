@@ -855,9 +855,8 @@ const useStyles = makeStyles(theme => ({
       
     }
 
-    const loadDatimIndicatorByIndicator = async (indicatorID)=> {       
-      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras__Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
-        
+    const loadDatimIndicatorByIndicator = async (indicatorID)=> {           
+      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras__indicator=' + indicatorID;      
       console.log("loadDatimIndicatorByIndicator: " + indicatorID + " query: " + query); 
       setDatimIndicatorLoading(true);     
       setErrorLoadDatimIndiator(null);
@@ -1023,7 +1022,7 @@ const useStyles = makeStyles(theme => ({
       backtoDefault();
     }else {
       setErrorLoadIndicatorDetail(null);              
-      loadIndicatorDetailByIndicator(indicatorId);  
+      loadIndicatorDetailByIndicator(indicatorId);        
       const indicatorIdOnly = indicatorId.includes(DELIMINATOR) ?   indicatorId.split(DELIMINATOR)[0] : indicatorId;            
       if (panel && panel === DATA_ELEMENT_PANEL) {
         loadDataElementsDataByIndicator(indicatorIdOnly);
@@ -1087,6 +1086,7 @@ const useStyles = makeStyles(theme => ({
 
   const handleNavLinkChange = event => {
     setPage(0);
+    setPageForDatimIndicator(0);
   }
 
   //set dropdown popup

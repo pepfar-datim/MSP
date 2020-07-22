@@ -190,6 +190,7 @@ export default function  DatimIndicator(props) {
         {props.error ? 
           <div>{props.error}</div> : null                  
         }
+        {<div style={{marginBottom: '8px'}}>Note: The result includes DATIM indicators from all periods.</div>}
         {
             props.matchDatimIndicators.map(datimIndicator => (
                 <div key={datimIndicator.id}>                  
