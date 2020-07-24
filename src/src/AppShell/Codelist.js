@@ -1128,16 +1128,16 @@ export default function Codelist() {
     let st = values.support
     let n = values.numerator
     if (values.type === "All") {
-      setValues({
-        fiscal: year,
-        type: t,
-        dataSet: "All",
-        source: s,
-        frequency: f,
-        indicator: i,
-        support: st,
-        numerator: n
-      })
+      // setValues({
+      //   fiscal: year,
+      //   type: t,
+      //   dataSet: "All",
+      //   source: s,
+      //   frequency: f,
+      //   indicator: i,
+      //   support: st,
+      //   numerator: n
+      // })
       setTypeQuery("")
     }
     else {
@@ -1168,9 +1168,7 @@ export default function Codelist() {
     else {
       setIndicatorsTemp([])
       let indicatorList = []
-      console.log(indicators)
       indicators.map(indicator => {
-        console.log(indicator)
         if (indicator.extras["Reporting frequency"] === values.frequency) {
           indicatorList.push(indicator)
         }
