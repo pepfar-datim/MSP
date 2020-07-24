@@ -691,12 +691,7 @@ export default function Codelist() {
     try {
       const response = [];
       let queryToRun = queryDataElementsAllPeriodsMER
-      // if (values.fiscal === 'All') {
-      //   // if (values.source === 'MER') {
-      //     setPeriodQuery("")
-      //   } else {
-      //     setPeriodQuery("&extras__Applicable+Periods=" + period)
-      //   }
+
       console.log(" queryToRun " + queryToRun)
 
       // }
@@ -837,14 +832,6 @@ export default function Codelist() {
     loadIndicatorsData();
   }, [queryIndicators]);
 
-  // class TreeNode {
-  //   constructor(value) {
-  //     this.value = value;
-  //     this.descendents = [];
-  //   }
-  // }
-  // let derivatives = new TreeNode('root');
-
   function populatePDHDerivatives(source_data_elements) {
     try {
       source_data_elements.map(source_data_element => {
@@ -950,17 +937,16 @@ export default function Codelist() {
   }))(MuiDialogActions);
 
 
-
   //initial filter state
   const [values, setValues] = React.useState({
-    fiscal: "All",
-    type: "All",
-    dataSet: "All",
-    source: "MER",
+    fiscal: localStorage.getItem("fiscal") ? localStorage.getItem("fiscal") : "All",
+    type: localStorage.getItem("type") ? localStorage.getItem("type") : "All",
+    dataSet: localStorage.getItem("dataSet") ? localStorage.getItem("dataSet") : "All",
+    source: localStorage.getItem("source") ? localStorage.getItem("source") : "MER",
     frequency: "All",
-    indicator: "All",
-    support: "All",
-    numerator: "All"
+    indicator: localStorage.getItem("indicator") ? localStorage.getItem("indicator") : "All",
+    support: localStorage.getItem("support") ? localStorage.getItem("support") : "All",
+    numerator: localStorage.getItem("numerator") ? localStorage.getItem("numerator") : "All"
   });
 
   const type = ["All", "Result", "Target"];
@@ -1061,41 +1047,6 @@ export default function Codelist() {
   useEffect(() => {
     setDataElementsData([])
     setCountOfValues(0)
-    // let s = values.source
-    // let y = values.fiscal
-    // let f = values.frequency
-    // let i = values.indicator
-    // let d = values.dataSet
-    // let st = values.support
-    // let n = values.numerator
-    // setValues({
-    //   source: s,
-    //   fiscal: y,
-    //   type: "All",
-    //   dataSet: d,
-    //   frequency: f,
-    //   indicator: i,
-    //   support: st,
-    //   numerator: n
-    // })
-    // values.dataSet = "All";
-    // setSource(s);
-    // if (s === "PDH") {
-    //   setHiddenDataSet(true)
-    // }
-    // else {
-    //   setHiddenDataSet(false)
-    // }
-    // if (values.fiscal === "All") {
-    //   setPeriod("")
-    //   if (!hiddenDataSet) {
-    //     setHiddenDataSet(true)
-    //   }
-    //   setPeriodQuery("")
-    // }
-    // else {
-    //   setPeriodQuery("&extras__Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
-    // }
     if (values.source === "MER") {
       setSourceQuery("")
     }
@@ -1113,6 +1064,9 @@ export default function Codelist() {
       if (values.fiscal !== "All"){
         setDisabledDataSet(false)}
     }
+
+
+    localStorage.setItem("source", values.source);
 
   }, [values.source]);
 
@@ -1137,6 +1091,7 @@ export default function Codelist() {
       }
 
     }
+    localStorage.setItem("fiscal", values.fiscal);
     console.log(" displaying " + dataElements.length + " results")
   }, [values.fiscal]);
 
@@ -1157,6 +1112,7 @@ export default function Codelist() {
       })
       console.log(" displaying " + dataElements.length + " results")
     }
+    localStorage.setItem("dataSet", values.dataSet);
   }, [values.dataSet]);
 
   //when type changes
@@ -1199,6 +1155,8 @@ export default function Codelist() {
       })
       setTypeQuery("&extras__resultTarget=" + values.type)
     }
+    localStorage.setItem("type", values.type);
+
   }, [values.type]);
 
   //when frequency changes
@@ -1210,7 +1168,9 @@ export default function Codelist() {
     else {
       setIndicatorsTemp([])
       let indicatorList = []
+      console.log(indicators)
       indicators.map(indicator => {
+        console.log(indicator)
         if (indicator.extras["Reporting frequency"] === values.frequency) {
           indicatorList.push(indicator)
         }
@@ -1220,6 +1180,7 @@ export default function Codelist() {
       setIndicatorQuery("")
 
     }
+    localStorage.setItem("frequency", values.frequency);
   }, [values.frequency]);
 
   //when indicator changes
@@ -1240,6 +1201,7 @@ export default function Codelist() {
     else {
       setSupportQuery('&extras__pepfarSupportType="' + values.support + '"')
     }
+    localStorage.setItem("support", values.support);
   }, [values.support]);
 
   //when numerator type changes
@@ -1250,6 +1212,7 @@ export default function Codelist() {
     else {
       setNumeratorQuery('&extras__numeratorDenominator=' + values.numerator)
     }
+    localStorage.setItem("numerator", values.numerator);
   }, [values.numerator]);
 
   async function getMappings(id) {
@@ -1757,7 +1720,7 @@ export default function Codelist() {
                           }}
 
                         >
-                          <option value={'MER'}>All</option> />
+                          <option value={'MER'}>All</option> 
                         <option value={'DATIM'}>DATIM</option>
                           <option value={'PDH'} >PDH</option>
                           {/* <option value={'MOH'} disabled>MOH</option> */}

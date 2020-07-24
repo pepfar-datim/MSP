@@ -943,12 +943,12 @@ export default function Codelist() {
 
   //initial filter state
   const [values, setValues] = React.useState({
-    fiscal: "All",
-    indicator: "All",
-    datatype: "All",
-    denom: "All",
-    indicatorGroup: "All",
-    type: "All"
+    fiscal: localStorage.getItem("fiscal_ind") ? localStorage.getItem("fiscal_ind") : "All",
+    indicator: localStorage.getItem("indicator_ind") ? localStorage.getItem("indicator_ind") : "All",
+    datatype: localStorage.getItem("datatype") ? localStorage.getItem("datatype") : "All",
+    denom: localStorage.getItem("denom") ? localStorage.getItem("denom") : "All",
+    indicatorGroup: localStorage.getItem("indicatorGroup") ? localStorage.getItem("indicatorGroup") : "All",
+    type: localStorage.getItem("type_ind") ? localStorage.getItem("type_ind") : "All"
   });
 
   const type = ["All", "Result", "Target"];
@@ -1059,6 +1059,7 @@ export default function Codelist() {
     })
     setDatatype(t);
     console.log("datatype " + datatype)
+    localStorage.setItem("datatype", values.datatype);
   }, [values.datatype]);
 
   //when denom changes
@@ -1095,6 +1096,7 @@ export default function Codelist() {
       setDatatype("Number")
     }
     console.log(" displaying " + dataElements.length + " results")
+    localStorage.setItem("denom", values.denom);
   }, [values.denom]);
 
   //when data set changes
@@ -1123,7 +1125,7 @@ export default function Codelist() {
       setPeriod("FY" + (values.fiscal + "").substring(2, 4));
 
     }
-    console.log(" displaying " + dataElements.length + " results")
+    localStorage.setItem("fiscal_ind", values.fiscal);
   }, [values.fiscal]);
 
   //when indicator changes
@@ -1134,6 +1136,7 @@ export default function Codelist() {
     else {
       setIndicatorQuery("&extras__indicator=" + values.indicator)
     }
+    localStorage.setItem("indicator_ind", values.indicator);
   }, [values.indicator]);
 
 //when indicator group changes
@@ -1144,6 +1147,7 @@ useEffect(() => {
   else {
     setIndicatorGroupQuery("&extras__indicatorGroups__id=" + indicatorGroups[values.indicatorGroup])
   }
+  localStorage.setItem("indicatorGroup", values.indicatorGroup);
 }, [values.indicatorGroup]);
 
   //when type changes
@@ -1154,6 +1158,7 @@ useEffect(() => {
     else {
       setTypeQuery("&extras__resultTarget=" + values.type)
     }
+    localStorage.setItem("type_ind", values.type);
   }, [values.type]);
 
   async function getMappings(id) {
