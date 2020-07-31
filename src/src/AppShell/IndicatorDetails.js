@@ -899,8 +899,10 @@ export default function DataElementDetails() {
     function populateNumeratorMap(indicator) {
         try {
             if (indicator.extras.numerator.length > 1) {
-                let numerator = indicator.extras.numerator.split(' + ').join('+').split('+')
-                let numeratorReadableFormula = indicator.extras.numeratorReadableFormula.split(' + ').join('+').split('}+{')
+                let numerator = indicator.extras.numerator.trim().replace("  "," ").split(' + ').join('+').split('+')
+                let numeratorReadableFormula = indicator.extras.numeratorReadableFormula.trim()
+                numeratorReadableFormula = numeratorReadableFormula.replace("  "," ")
+                numeratorReadableFormula = numeratorReadableFormula.split(' + ').join('+').split('}+{')
                 console.log('numeratorReadableFormula' + numeratorReadableFormula)
                 Object.keys(numeratorReadableFormula).map(
                     key => {
