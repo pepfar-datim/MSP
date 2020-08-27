@@ -1109,7 +1109,7 @@ export default function Codelist() {
         if (values.dataSet === cl.full_name) {
           console.log(" dataset changed ")
           setCodeListQuery("&extras__codelists__id=" + cl.dataset_id)
-          setDataSetId(cl.dataset_id)
+          setDataSetId(cl.id)
         }
       })
       
