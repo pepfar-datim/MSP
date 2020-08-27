@@ -661,6 +661,7 @@ export default function Codelist() {
   let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
 
   const [collection, setCollection] = useState("");
+  const [dataSetId, setDataSetId] = useState("");
   let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
   const [deloading, setDELoading] = useState(false);
 
@@ -1108,8 +1109,10 @@ export default function Codelist() {
         if (values.dataSet === cl.full_name) {
           console.log(" dataset changed ")
           setCodeListQuery("&extras__codelists__id=" + cl.dataset_id)
+          setDataSetId(cl.dataset_id)
         }
       })
+      
       console.log(" displaying " + dataElements.length + " results")
     }
     localStorage.setItem("dataSet", values.dataSet);
@@ -1418,7 +1421,7 @@ export default function Codelist() {
     if (selectedDataElement.length > 0) {
       downloadURL = baseDownloadURL + "?dataElements=" + selectedDataElement.toString().trim() + "&format=" + downloadValue.trim();
     } else if (values.dataSet !== "All") {
-      downloadURL = baseDownloadURL + '/' + collection + "?format=" + downloadValue.trim();
+      downloadURL = baseDownloadURL + '/' + dataSetId + "?format=" + downloadValue.trim();
     }
     let downloadLink = document.createElement('a');
     downloadLink.href = downloadURL;
