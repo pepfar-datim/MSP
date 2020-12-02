@@ -1,10 +1,10 @@
 
 
-const OCL_DOMAIN = (window.OCL_DOMAIN) || 'staging.openconceptlab.org';
+const OCL_DOMAIN = (window.OCL_DOMAIN) || 'qa2.aws.openconceptlab.org/';
 
 const config = { 
   "domain": OCL_DOMAIN, 
-  "org": "PEPFAR-Test8", 
+  "org": "PEPFAR-Test9", 
   "source": "",
   "defaultYear": "2020" ,
   "versionMap": [
