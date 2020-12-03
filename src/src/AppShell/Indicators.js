@@ -634,7 +634,7 @@ export default function Codelist() {
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
   const [compareInputText, setCompareInputText] = useState(""); // set the search DE to compare
-  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Reference Indicator&limit=0';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("");
@@ -643,17 +643,17 @@ export default function Codelist() {
   const [hiddenDataSet, setHiddenDataSet] = useState(true)
   const [hiddenIndicator, setHiddenIndicator] = useState(true)
 
-  let queryAllIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
-  let queryByDataType = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (page + 1) + '&datatype=' + datatype + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryAllIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryByDataType = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (page + 1) + '&datatype=' + datatype + indicatorQuery + typeQuery + indicatorGroupQuery;
 
-  let queryAllDenom = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery;
-  let queryByDenom = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (page + 1) + '&datatype=' + datatype + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryAllDenom = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery;
+  let queryByDenom = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (page + 1) + '&datatype=' + datatype + indicatorQuery + typeQuery + indicatorGroupQuery;
 
-  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
-  let queryIndicatorsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&conceptClass="Indicator"&extras__Applicable+Periods=' + period + '&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + '/concepts/?verbose=true&q=&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryIndicatorsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&q=&conceptClass=Indicator&extras__Applicable+Periods=' + period + '&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
 
   const [collection, setCollection] = useState("");
-  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery +indicatorGroupQuery;
+  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass=Data+Element&verbose=true&q=&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery +indicatorGroupQuery;
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {
@@ -1346,7 +1346,7 @@ useEffect(() => {
       }
       )
       UIDs = UIDs.substring(0, UIDs.length - 2)
-      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&limit=0&q=' + UIDs;
+      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=&limit=0&q=' + UIDs;
     }
     else {
       downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'

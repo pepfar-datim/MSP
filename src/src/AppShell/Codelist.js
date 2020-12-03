@@ -643,7 +643,7 @@ export default function Codelist() {
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
   const [compareInputText, setCompareInputText] = useState(""); // set the search DE to compare
-  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Reference+Indicator"&limit=0';
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Reference Indicator&limit=0';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("")
@@ -658,11 +658,11 @@ export default function Codelist() {
   const [supportQuery, setSupportQuery] = useState([""]);
   const [numeratorQuery, setNumeratorQuery] = useState([""]);
 
-  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
+  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
 
   const [collection, setCollection] = useState("");
   const [dataSetId, setDataSetId] = useState("");
-  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass="Data+Element"&verbose=true&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
+  let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass=Data+Element&verbose=true&q=&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery;
   const [deloading, setDELoading] = useState(false);
 
   if (search && search !== "") {

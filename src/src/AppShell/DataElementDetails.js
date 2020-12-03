@@ -623,7 +623,7 @@ export default function DataElementDetails() {
         )
         UIDs = UIDs.substring(0, UIDs.length - 2)
         if (UIDs) {
-            let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=' + UIDs;
+            let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=&q=' + UIDs;
             console.log(" queryByDataElement " + queryMapping)
             let response = await fetch(queryMapping);
             if (!response.ok) {
@@ -1107,11 +1107,11 @@ export default function DataElementDetails() {
                                         {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
-                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
+                                        {/* {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
                                         {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
                                             <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
                                             <div><Link href="#" onClick={showLessDescription} style={{ textDecorationLine: 'underline' }}>less<TiArrowSortedUp /></Link></div>
-                                            : '' : '' : ''}
+                                            : '' : '' : ''} */}
                                         {/* {moreAttributes ?
                                                 
                                             } */}

@@ -529,11 +529,11 @@ export default function Compare() {
           }
           if (dataElements['Description']) {
             let descriptions = Array.from(dataElements['Description'])
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
+            descriptions.push(value.descriptions ? value.descriptions.description : "--")
             dataElements['Description'] = descriptions
           } else {
             let descriptions = []
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
+            descriptions.push(value.descriptions ? value.descriptions.description : "--")
             dataElements['Description'] = descriptions
           }
           if (dataElements['UID']) {
