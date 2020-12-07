@@ -650,7 +650,7 @@ export default function Codelist() {
   let queryByDenom = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (page + 1) + '&datatype=' + datatype + indicatorQuery + typeQuery + indicatorGroupQuery;
 
   let queryDataElementsAllPeriods = 'https://api.' + domain + '/orgs/' + org + '/collections/' + source + '/concepts/?verbose=true&q=&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
-  let queryIndicatorsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&q=&conceptClass=Indicator&extras__Applicable+Periods=' + period + '&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
+  let queryIndicatorsByPeriod = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&q=&conceptClass=Indicator&extras.Applicable+Periods=' + period + '&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery + indicatorGroupQuery;
 
   const [collection, setCollection] = useState("");
   let queryByCodeList = 'https://api.' + domain + '/orgs/' + org + '/collections/' + collection + '/concepts/?conceptClass=Data+Element&verbose=true&q=&limit=' + rowsPerPage + '&page=' + (page + 1) + indicatorQuery + typeQuery +indicatorGroupQuery;
@@ -695,7 +695,7 @@ export default function Codelist() {
       }
       console.log("values " + JSON.stringify(values))
       if (values.fiscal !== 'All') {
-        queryToRun = queryToRun + '&extras__Applicable+Periods=' + period
+        queryToRun = queryToRun + '&extras.Applicable+Periods=' + period
       }
       console.log(" queryToRun " + queryToRun)
 
@@ -1134,7 +1134,7 @@ export default function Codelist() {
       setIndicatorQuery("")
     }
     else {
-      setIndicatorQuery("&extras__indicator=" + values.indicator)
+      setIndicatorQuery("&extras.indicator=" + values.indicator)
     }
     localStorage.setItem("indicator_ind", values.indicator);
   }, [values.indicator]);
@@ -1145,7 +1145,7 @@ useEffect(() => {
     setIndicatorGroupQuery("")
   }
   else {
-    setIndicatorGroupQuery("&extras__indicatorGroups__id=" + indicatorGroups[values.indicatorGroup])
+    setIndicatorGroupQuery("&extras.indicatorGroups.id=" + indicatorGroups[values.indicatorGroup])
   }
   localStorage.setItem("indicatorGroup", values.indicatorGroup);
 }, [values.indicatorGroup]);
@@ -1156,7 +1156,7 @@ useEffect(() => {
       setTypeQuery("")
     }
     else {
-      setTypeQuery("&extras__resultTarget=" + values.type)
+      setTypeQuery("&extras.resultTarget=" + values.type)
     }
     localStorage.setItem("type_ind", values.type);
   }, [values.type]);
