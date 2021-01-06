@@ -1875,7 +1875,7 @@ useEffect(() => {
                     dropDownName === "download" ?
                       <FormControl component="fieldset" className={classes.popOver}>
                         <FormGroup>
-                          <FormLabel component="legend" className={classes.formLegend}>From DATIM (Acount Required)</FormLabel>
+                          <FormLabel component="legend" className={classes.formLegend}>From DATIM (Account Required)</FormLabel>
                           <RadioGroup aria-label="export" name="exportRadio" value={downloadValue} onChange={handleDownloadChange}>
                             <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="CSV" />} label="CSV" />
                             <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="JSON" />} label="JSON" />
