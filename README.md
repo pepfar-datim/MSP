@@ -1,4 +1,7 @@
 ![Build Status](https://ci.openmrs.org/plugins/servlet/wittified/build-status/OCL-OM) 
+
+**Repo Owner:** Vlad Shioshvili [@vshioshvili](https://github.com/vshioshvili)
+
 # Metadata Sharing Platform
 >The Metadata Sharing Platform (MSP) is an open-source tool offered by the U.S. President's Emergency Plan for AIDS Relief (PEPFAR) for users within the Data Exchange and Interoperability community with access to the MER Indicator metadata across multiple sources. 
 
