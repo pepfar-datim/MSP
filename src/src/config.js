@@ -4,7 +4,7 @@ const OCL_DOMAIN = (window.OCL_DOMAIN) || 'qa2.aws.openconceptlab.org';
 
 const config = { 
   "domain": OCL_DOMAIN, 
-  "org": "PEPFAR-Test9", 
+  "org": "PEPFAR-Test10", 
   "source": "",
   "defaultYear": "2020" ,
   "versionMap": [
