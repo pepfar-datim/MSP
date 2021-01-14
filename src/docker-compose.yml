@@ -8,8 +8,9 @@ services:
     environment:
     - OCL_DOMAIN=${OCL_DOMAIN:-staging.openconceptlab.org}
     - ENVIRONMENT=${ENVIRONMENT:-dev}
+    - MSP_PORT=${MSP_PORT:-81}
     ports:
-    - 8080:80
+    - 80:81
     restart: always
     healthcheck:
       test: ["CMD", "wget", "-q", "-s", "http://localhost/"]
