@@ -25,20 +25,22 @@ COPY . /usr/src/app
 RUN npm run build
 
 # Stage-2 Production Environment
-# Use the nginx 1.12-alpine runtime image for the production environment
-FROM nginx:1.12-alpine
+# Use the nginx runtime image for the production environment
+FROM nginx:1.19-alpine
+
+ENV MSP_PORT=${MSP_PORT:-80}
 
 # Add bash
 RUN apk add --no-cache bash
 
-# Make port 80 available to the world outside the container
-EXPOSE 80
+# Make port to the world outside the container
+EXPOSE ${MSP_PORT}
 
 # Copy the tagged files from the build to the production environmnet of the nginx server
 COPY --from=build-deps /usr/src/app/build /usr/share/nginx/html
 
 # Copy nginx configuration 
-COPY --from=build-deps /usr/src/app/docker/default.conf /etc/nginx/conf.d/
+COPY --from=build-deps /usr/src/app/docker/default.conf.template /etc/nginx/templates/
 
 # Copy shell script to container
 COPY ./startup.sh .
