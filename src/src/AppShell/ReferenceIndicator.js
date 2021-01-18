@@ -1251,6 +1251,7 @@ return (
       <Grid item xs={12} className={classes.filter} >
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
+          {console.log(Object.keys(codeListMap).reverse())}
             <Select native  value={values.fiscal} onChange={handleFilterChange} className={classes.select}
               inputProps={{
               name: 'fiscal',
