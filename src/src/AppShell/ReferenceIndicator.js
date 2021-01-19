@@ -1335,12 +1335,12 @@ return (
           </Tooltip>
           </div>
        :
-      <span>
+      <span style={{display: 'inline', fontSize:'0.5em'}}>&nbsp;{currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}
           <Tooltip disableFocusListener title={panel === 2 ? "" : "Download data elements"} placement='bottom'>  
             <span style={{float: 'right'}}>        
               <Button variant="outlined" className={classes.actionButton} name="downloadDEButton" onClick={dropDownMenu("downloadDE")} id="downloadDEButton"
               disabled={(matchDataElements.length === 0 || panel === 2 )? true : false} style={{height:'36px',float: 'right'  }}>  
-                {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                           
+                {/* {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                            */}
                 {
                   matchDataElements.length === 0 || panel === 2 ?
                     <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }} />
@@ -1385,7 +1385,7 @@ return (
               }
             </Popover>
           </span>
-       }       
+       }    
        </headings.H1>           
       
       {/* indicator tabs */}    
