@@ -725,7 +725,8 @@ const useStyles = makeStyles(theme => ({
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);    
-    var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + values.fiscal.trim().substring(2,4) + "/concepts/?limit=0&verbose=true";
+    var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/?verbose=true&limit=1000&q=&concept_class=Reference+Indicator&extras.Period=FY" + values.fiscal.trim().substring(2,4);
+    // "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + values.fiscal.trim().substring(2,4) + "/concepts/?limit=0&verbose=true";
 
     const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
