@@ -644,7 +644,8 @@ const useStyles = makeStyles(theme => ({
   
     const getIndicatorGroup = function (indicatorData) {     
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
-      //console.log(indicatorData);
+      console.log('indicator data')
+      console.log(indicatorData);
       var filteredByYearData = indicatorData.filter(function (data) {                
         if (values.frequency !== "" && values.fiscal !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
@@ -1251,7 +1252,7 @@ return (
       <Grid item xs={12} className={classes.filter} >
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
-          {console.log(Object.keys(codeListMap).reverse())}
+          {/* {console.log(Object.keys(codeListMap).reverse())} */}
             <Select native  value={values.fiscal} onChange={handleFilterChange} className={classes.select}
               inputProps={{
               name: 'fiscal',
@@ -1320,16 +1321,18 @@ return (
         : 
       <div>     
       
-      <headings.H1>{currentIndicator.name}    
+      <headings.H1>{currentIndicator.name + "  "}
        {downloadIndicatorURL !== "" && panel === 0 ?
+          <div style={{display: 'inline', fontSize:'0.5em'}}>&nbsp;{currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}
           <Tooltip disableFocusListener title={"Download reference indicator details in json format"}>
            <Button variant="outlined" href={downloadIndicatorURL} className={classes.actionButton} target="_black"
            style={{ float:"right"}}           
           >
-            {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear} 
+             
             <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }}/>
            </Button>  
-          </Tooltip> 
+          </Tooltip>
+          </div>
        :
       <span>
           <Tooltip disableFocusListener title={panel === 2 ? "" : "Download data elements"} placement='bottom'>  
