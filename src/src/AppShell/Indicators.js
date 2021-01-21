@@ -1349,7 +1349,7 @@ useEffect(() => {
       downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=&limit=0&q=' + UIDs;
     }
     else {
-      downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
+      downloadURL = 'https://datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
     }
     console.log("downloadURL " + downloadURL)
     let downloadLink = document.createElement('a');
