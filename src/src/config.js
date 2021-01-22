@@ -1,13 +1,21 @@
 
 
-const OCL_DOMAIN = (window.OCL_DOMAIN) || 'staging.openconceptlab.org';
+const OCL_DOMAIN = (window.OCL_DOMAIN) || 'qa.aws.openconceptlab.org';
 
 const config = { 
   "domain": OCL_DOMAIN, 
-  "org": "PEPFAR-Test8", 
+  "org": "PEPFAR-Test10", 
   "source": "",
-  "defaultYear": "2020" ,
+  "defaultYear": "2021" ,
   "versionMap": [
+    {
+      "year": "2021",
+      "version": "v2.5",
+      "fromToText": "from MER 2.4 to 2.5",
+      "fromText": "MER 2.4",
+      "updateChangeDescription":"Through the past 3 years of quarterly, site-level monitoring, PEPFAR programs have used data to improve implementation. Changes to the MER highlight key program areas (e.g., index testing services) that should be taken to scale.",
+      "guidanceDownloadURL":"/assets/FY21%20MER%20Reference%20Guide%20v2_5%20(2020-Sep).pdf"
+    },
     {
       "year": "2020",
       "version": "v2.4",

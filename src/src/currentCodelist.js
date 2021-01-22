@@ -4,6 +4,168 @@ const list = {
         {
             "description": "",
             "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Community Based",
+            "dataset_id": "TBcmmtoaCBC",
+            "id": "MER_R_COMMUNITY_BASED",
+            "name": "MER R: Community Based"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Community Based - DoD ONLY",
+            "dataset_id": "BPEyzcDb8fT",
+            "id": "MER_R_COMMUNITY_BASED_DOD_ONLY",
+            "name": "MER R: Community Based - DoD ONLY"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Facility Based",
+            "dataset_id": "zL8TlPVzEBZ",
+            "id": "MER_R_FACILITY_BASED",
+            "name": "MER R: Facility Based"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Facility Based - DoD ONLY",
+            "dataset_id": "em1U5x9hhXh",
+            "id": "MER_R_FACILITY_BASED_DOD_ONLY",
+            "name": "MER R: Facility Based - DoD ONLY"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Operating Unit Level (IM)",
+            "dataset_id": "e8pCA4xmEw9",
+            "id": "MER_R_OPERATING_UNIT_LEVEL_IM",
+            "name": "MER R: Operating Unit Level (IM)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "MER Results: Narratives (IM)",
+            "dataset_id": "ey0IaQ5wJ0b",
+            "id": "MER_R_NARRATIVES_IM",
+            "name": "MER R: Narratives (IM)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "Host Country Results: Narratives (USG)",
+            "dataset_id": "dMRA5AEUCxm",
+            "id": "HC_R_NARRATIVES_USG",
+            "name": "HC R: Narratives (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "Host Country Results: Operating Unit Level (USG)",
+            "dataset_id": "h16ZXEdqrtn",
+            "id": "HC_R_OPERATING_UNIT_LEVEL_USG",
+            "name": "HC R: Operating Unit Level (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "Host Country Results: COP Prioritization SNU (USG)",
+            "dataset_id": "xiTCzZJ2GPP",
+            "id": "HC_R_COP_PRIORITIZATION_SNU_USG",
+            "name": "HC R: COP Prioritization SNU (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "Host Country Results: Facility (USG)",
+            "dataset_id": "FOSGngdDbZc",
+            "id": "HC_R_FACILITY_USG",
+            "name": "HC R: Facility (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Results",
+            "periods": ["FY21"],
+            "full_name": "Host Country Results: DREAMS (USG)",
+            "dataset_id": "qHyrHc4zwx4",
+            "id": "HC_R_COMMUNITY_USG",
+            "name": "HC R: Community (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "MER Targets: Narratives (IM)",
+            "dataset_id": "EPokgbBzLhq",
+            "id": "MER_T_NARRATIVES_IM",
+            "name": "MER T: Narratives (IM)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "MER Target Setting: PSNU (Facility and Community Combined) (TARGETS)",
+            "dataset_id": "YfZot37BbTm",
+            "id": "MER_T_PSNU",
+            "name": "MER T: PSNU"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "MER Target Setting: PSNU (Facility and Community Combined) - DoD ONLY (TARGETS)",
+            "dataset_id": "cihuwjoY5xP",
+            "id": "MER_T_PSNU_DOD_ONLY",
+            "name": "MER T: PSNU - DoD Only"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "Host Country Targets: Narratives (USG)",
+            "dataset_id": "TIFlvgZAaqV",
+            "id": "HC_T_NARRATIVES_USG",
+            "name": "HC T: Narratives (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "Host Country Targets: Operating Unit Level (USG)",
+            "dataset_id": "kyZS80bOmTC",
+            "id": "HC_T_OPERATING_UNIT_LEVEL_USG",
+            "name": "HC T: Operating Unit Level (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "Host Country Targets: COP Prioritization SNU (USG)",
+            "dataset_id": "Va7TYyHraRn",
+            "id": "HC_T_COP_PRIORITIZATION_SNU_USG",
+            "name": "HC T: COP Prioritization SNU (USG)"
+          },
+          {
+            "description": "",
+            "codelist_type": "Target",
+            "periods": ["FY21"],
+            "full_name": "Host Country Targets: DREAMS (USG)",
+            "dataset_id": "wvnouBMuLuE",
+            "id": "HC_T_COMMUNITY_USG",
+            "name": "HC T: Community (USG)"
+          },
+        {
+            "description": "",
+            "codelist_type": "Results",
             "periods": [
                 "FY20"
             ],

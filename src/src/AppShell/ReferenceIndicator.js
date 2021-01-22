@@ -644,7 +644,8 @@ const useStyles = makeStyles(theme => ({
   
     const getIndicatorGroup = function (indicatorData) {     
       //console.log( "filter value: " + values.fiscal + " freq:" + values.frequency );
-      //console.log(indicatorData);
+      console.log('indicator data')
+      console.log(indicatorData);
       var filteredByYearData = indicatorData.filter(function (data) {                
         if (values.frequency !== "" && values.fiscal !== "") {          
           return data.periodYear === values.fiscal && data.frequency.trim().toLowerCase() === values.frequency.trim().toLowerCase();
@@ -724,7 +725,8 @@ const useStyles = makeStyles(theme => ({
 
     //indicator that the app has mounted
     const [init, setInit]= React.useState(false);    
-    var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + values.fiscal.trim().substring(2,4) + "/concepts/?limit=0&verbose=true";
+    var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/?verbose=true&limit=1000&q=&concept_class=Reference+Indicator&extras.Period=FY" + values.fiscal.trim().substring(2,4);
+    // "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + values.fiscal.trim().substring(2,4) + "/concepts/?limit=0&verbose=true";
 
     const [, setError] = useState(null);
     const [errorLoadDataElement, setErrorLoadDataElement] = useState(null);
@@ -784,7 +786,7 @@ const useStyles = makeStyles(theme => ({
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {   
       
-      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=' + indicatorID + '&conceptClass="Data+Element"&limit=' + rowsPerPage + '&page=' + (page+1)+ '&extras__Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
+      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=&q=' + indicatorID + '&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page+1)+ '&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query);     
       setDELoading(true);
       setErrorLoadDataElement(null);
@@ -856,7 +858,7 @@ const useStyles = makeStyles(theme => ({
     }
 
     const loadDatimIndicatorByIndicator = async (indicatorID)=> {           
-      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&conceptClass="Indicator"&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras__indicator=' + indicatorID;      
+      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras.indicator=' + indicatorID;      
       console.log("loadDatimIndicatorByIndicator: " + indicatorID + " query: " + query); 
       setDatimIndicatorLoading(true);     
       setErrorLoadDatimIndiator(null);
@@ -1251,6 +1253,7 @@ return (
       <Grid item xs={12} className={classes.filter} >
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="fiscal">Fiscal Year</InputLabel>
+          {/* {console.log(Object.keys(codeListMap).reverse())} */}
             <Select native  value={values.fiscal} onChange={handleFilterChange} className={classes.select}
               inputProps={{
               name: 'fiscal',
@@ -1319,23 +1322,25 @@ return (
         : 
       <div>     
       
-      <headings.H1>{currentIndicator.name}    
+      <headings.H1>{currentIndicator.name + "  "}
        {downloadIndicatorURL !== "" && panel === 0 ?
+          <div style={{display: 'inline', fontSize:'0.5em'}}>&nbsp;{currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}
           <Tooltip disableFocusListener title={"Download reference indicator details in json format"}>
            <Button variant="outlined" href={downloadIndicatorURL} className={classes.actionButton} target="_black"
            style={{ float:"right"}}           
           >
-            {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear} 
+             
             <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }}/>
            </Button>  
-          </Tooltip> 
+          </Tooltip>
+          </div>
        :
-      <span>
+      <span style={{display: 'inline', fontSize:'0.5em'}}>&nbsp;{currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}
           <Tooltip disableFocusListener title={panel === 2 ? "" : "Download data elements"} placement='bottom'>  
             <span style={{float: 'right'}}>        
               <Button variant="outlined" className={classes.actionButton} name="downloadDEButton" onClick={dropDownMenu("downloadDE")} id="downloadDEButton"
               disabled={(matchDataElements.length === 0 || panel === 2 )? true : false} style={{height:'36px',float: 'right'  }}>  
-                {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                           
+                {/* {currentIndicator.source + ": " + currentIndicator.guidance_version + " - FY " + currentIndicator.periodYear}                            */}
                 {
                   matchDataElements.length === 0 || panel === 2 ?
                     <GetAppIcon /> : <GetAppIcon style={{ color: '#1D5893', marginLeft: '6px' }} />
@@ -1380,7 +1385,7 @@ return (
               }
             </Popover>
           </span>
-       }       
+       }    
        </headings.H1>           
       
       {/* indicator tabs */}    

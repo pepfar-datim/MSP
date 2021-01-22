@@ -638,7 +638,7 @@ export default function DataElementDetails() {
         )
         UIDs = UIDs.substring(0, UIDs.length - 2)
         if (UIDs) {
-            let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=' + UIDs;
+            let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=&q=' + UIDs;
             console.log(" queryByDataElement " + queryMapping)
             let response = await fetch(queryMapping);
             if (!response.ok) {
@@ -793,7 +793,7 @@ export default function DataElementDetails() {
         let downloadURL = "";
         if (exportValue.trim() === 'OCL') {
             let UIDs = dataElementDetail.id
-            downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=' + UIDs;
+            downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=&q=' + UIDs;
         }
         else {
             downloadURL = 'https://dev-de.datim.org/api/indicators' + '.' + exportValue.trim() + '?filter=id:in:[' + dataElementDetail.id.trim() + ']&fields=*&paging=false'

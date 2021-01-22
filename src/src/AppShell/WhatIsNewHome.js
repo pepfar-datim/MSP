@@ -170,7 +170,7 @@ export const WhatIsNewHome =() =>{
           return null;
       });  
      
-      var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/collections/MER_REFERENCE_INDICATORS_FY" + year.substring(2,4) + "/concepts/?limit=0&verbose=true";      
+      var queryIndicators =  "https://api." + domain + "/orgs/" + org + "/sources/MER/concepts/?limit=100&verbose=true&q=&conceptClass=Reference+Indicator&extras.Period=FY"+ year.substring(2,4);      
       console.log("queryIndicators : " + queryIndicators);
       
       try {
