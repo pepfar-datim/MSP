@@ -643,7 +643,7 @@ export default function Codelist() {
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
   const [compareInputText, setCompareInputText] = useState(""); // set the search DE to compare
-  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&conceptClass=Reference+Indicator&limit=0';
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&concept_class=Reference+Indicator&limit=999';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("")
@@ -658,7 +658,7 @@ export default function Codelist() {
   const [supportQuery, setSupportQuery] = useState([""]);
   const [numeratorQuery, setNumeratorQuery] = useState([""]);
 
-  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
+  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
 
   const [collection, setCollection] = useState("");
   const [dataSetId, setDataSetId] = useState("");
@@ -1054,7 +1054,7 @@ export default function Codelist() {
     else {
       setSourceQuery("&extras.source=" + values.source)
     }
-    if (values.source === "PDH") {
+    if (values.source === "IHUB") {
       setCodeListQuery("")
         if (!hiddenDataSet) {
         setHiddenDataSet(true)
@@ -1083,7 +1083,7 @@ export default function Codelist() {
     }
     else {
       setPeriodQuery("&extras.Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
-      if (values.source === 'PDH') {
+      if (values.source === 'IHUB') {
         setDisabledDataSet(true)
       }
       else {
@@ -1177,7 +1177,7 @@ export default function Codelist() {
         }
       })
       setIndicatorsTemp(indicatorList)
-      setFrequencyQuery("&extras.Reporting+frequency=" + values.frequency)
+      setFrequencyQuery("&extras.exact.Reporting+frequency=" + values.frequency)
       setIndicatorQuery("")
 
     }
@@ -1475,7 +1475,7 @@ export default function Codelist() {
   //compare dropdown menu
   const [compare, setCompare] = React.useState({
     DATIM: true,
-    PDH: false,
+    IHUB: false,
     MOH: false,
   });
   const handleCompareChange = name => event => {
@@ -1483,7 +1483,7 @@ export default function Codelist() {
   };
 
 
-  const { DATIM, PDH, MOH } = compare;
+  const { DATIM, IHUB, MOH } = compare;
 
 
 
@@ -1726,7 +1726,7 @@ export default function Codelist() {
                         >
                           <option value={'MER'}>All</option> 
                         <option value={'DATIM'}>DATIM</option>
-                          <option value={'PDH'} >PDH</option>
+                          <option value={'IHUB'} >IHUB</option>
                           {/* <option value={'MOH'} disabled>MOH</option> */}
                         </Select>
                       </FormControl>
@@ -1809,7 +1809,7 @@ export default function Codelist() {
                             classes: {
                               icon: classes.selectIcon
                             },
-                            disabled: values.source === 'PDH'
+                            disabled: values.source === 'IHUB'
                           }}
                         >
                           <option value={'All'}>All</option>
@@ -2240,7 +2240,7 @@ export default function Codelist() {
                       {/* comparison panel title */}
                       <div className={classes.compareTitle}>
                         {DATIM ? <div className={classes.compareTitleColumn}>DATIM</div> : ''}
-                        {PDH ? <div className={classes.compareTitleColumn}>PDH</div> : ''}
+                        {IHUB ? <div className={classes.compareTitleColumn}>IHUB</div> : ''}
                         {MOH ? <div className={classes.compareTitleColumn}>MOH</div> : ''}
                       </div>
                     </div>
