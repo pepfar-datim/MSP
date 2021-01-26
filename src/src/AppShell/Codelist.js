@@ -1254,25 +1254,28 @@ export default function Codelist() {
               }
               let arr = from_concept_url.split('/')
               derivationId = arr[arr.length - 1]
+              console.log("Mappings ")
+              console.log(Object.keys(Object(deMappings[id])))
             }
-          }
-          if (!deMappings[derivationId]) {
-            queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
-            console.log(" queryByDataElement " + queryMapping)
-            response = await fetch(queryMapping);
-            if (!response.ok) {
-              console.log(response);
-              setErrorDisplay("Failed to fetch")
-              throw new Error(
-                `Error when retrieving data element mappings ${response.status} ${response.statusText}`
-              );
-            }
-            jsonData = await response.json()
-            sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
-            deMappings[derivationId] = sortedData
-            setDataElementMapping(deMappings[derivationId]);
-            if (!de[derivationId]) {
-              de[derivationId] = jsonData
+            if (!deMappings[derivationId]) {
+              queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/' + derivationId + '/?includeMappings=true&includeInverseMappings=true';
+              console.log("derivationId " + derivationId)
+              console.log(" queryByDataElement " + queryMapping)
+              response = await fetch(queryMapping);
+              if (!response.ok) {
+                console.log(response);
+                setErrorDisplay("Failed to fetch")
+                throw new Error(
+                  `Error when retrieving data element mappings ${response.status} ${response.statusText}  ${queryMapping}`
+                );
+              }
+              jsonData = await response.json()
+              sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+              deMappings[derivationId] = sortedData
+              setDataElementMapping(deMappings[derivationId]);
+              if (!de[derivationId]) {
+                de[derivationId] = jsonData
+              }
             }
           }
 
@@ -2107,7 +2110,7 @@ export default function Codelist() {
                             <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
                           </RadioGroup>
                           <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
-                            Download DATA
+                            Download
                         </Button>
                         </FormGroup>
                       </FormControl> :

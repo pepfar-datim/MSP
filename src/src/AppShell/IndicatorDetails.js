@@ -1254,6 +1254,7 @@ export default function DataElementDetails() {
                                         {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
+                                        {console.log(dataElementDetail)}
                                         {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 200) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
                                         {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ?
                                             <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
