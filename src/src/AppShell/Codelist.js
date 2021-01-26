@@ -1054,7 +1054,7 @@ export default function Codelist() {
     else {
       setSourceQuery("&extras.source=" + values.source)
     }
-    if (values.source === "PDH") {
+    if (values.source === "IHUB") {
       setCodeListQuery("")
         if (!hiddenDataSet) {
         setHiddenDataSet(true)
@@ -1083,7 +1083,7 @@ export default function Codelist() {
     }
     else {
       setPeriodQuery("&extras.Applicable+Periods=FY" + (values.fiscal + "").substring(2, 4))
-      if (values.source === 'PDH') {
+      if (values.source === 'IHUB') {
         setDisabledDataSet(true)
       }
       else {
@@ -1177,7 +1177,7 @@ export default function Codelist() {
         }
       })
       setIndicatorsTemp(indicatorList)
-      setFrequencyQuery("&extras.Reporting+frequency=" + values.frequency)
+      setFrequencyQuery("&extras.exact.Reporting+frequency=" + values.frequency)
       setIndicatorQuery("")
 
     }
@@ -1475,7 +1475,7 @@ export default function Codelist() {
   //compare dropdown menu
   const [compare, setCompare] = React.useState({
     DATIM: true,
-    PDH: false,
+    IHUB: false,
     MOH: false,
   });
   const handleCompareChange = name => event => {
@@ -1483,7 +1483,7 @@ export default function Codelist() {
   };
 
 
-  const { DATIM, PDH, MOH } = compare;
+  const { DATIM, IHUB, MOH } = compare;
 
 
 
@@ -1809,7 +1809,7 @@ export default function Codelist() {
                             classes: {
                               icon: classes.selectIcon
                             },
-                            disabled: values.source === 'PDH'
+                            disabled: values.source === 'IHUB'
                           }}
                         >
                           <option value={'All'}>All</option>
@@ -2240,7 +2240,7 @@ export default function Codelist() {
                       {/* comparison panel title */}
                       <div className={classes.compareTitle}>
                         {DATIM ? <div className={classes.compareTitleColumn}>DATIM</div> : ''}
-                        {PDH ? <div className={classes.compareTitleColumn}>PDH</div> : ''}
+                        {IHUB ? <div className={classes.compareTitleColumn}>IHUB</div> : ''}
                         {MOH ? <div className={classes.compareTitleColumn}>MOH</div> : ''}
                       </div>
                     </div>
