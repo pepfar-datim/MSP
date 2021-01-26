@@ -634,7 +634,7 @@ export default function Codelist() {
   const [search, setSearch] = React.useState(""); // set the search query string which is triggered by the search key
   const [searchInputText, setSearchInputText] = useState(""); // set the search text which is triggered on text change
   const [compareInputText, setCompareInputText] = useState(""); // set the search DE to compare
-  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Reference Indicator&limit=0';
+  const queryIndicators = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&concept_class=Reference+Indicator&limit=999';
   const [indicators, setIndicators] = useState([""]);
   const [indicatorsTemp, setIndicatorsTemp] = useState([""]);
   const [indicatorQuery, setIndicatorQuery] = useState("");
@@ -1346,7 +1346,7 @@ useEffect(() => {
       }
       )
       UIDs = UIDs.substring(0, UIDs.length - 2)
-      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=&limit=0&q=' + UIDs;
+      downloadURL = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?paging=false&verbose=true&q=&limit=999&q=' + UIDs;
     }
     else {
       downloadURL = 'https://datim.org/api/indicators' + '.' + downloadValue.trim() + '?filter=id:in:[' + selectedDataElement.toString().trim() + ']&fields=*&paging=false'
