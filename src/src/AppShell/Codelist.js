@@ -658,7 +658,7 @@ export default function Codelist() {
   const [supportQuery, setSupportQuery] = useState([""]);
   const [numeratorQuery, setNumeratorQuery] = useState([""]);
 
-  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&conceptClass=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
+  let queryDataElementsAllPeriodsMER = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?verbose=true&q=&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page + 1) + sourceQuery + periodQuery + indicatorQuery + typeQuery + codeListQuery + frequencyQuery + supportQuery + numeratorQuery;
 
   const [collection, setCollection] = useState("");
   const [dataSetId, setDataSetId] = useState("");
@@ -1726,7 +1726,7 @@ export default function Codelist() {
                         >
                           <option value={'MER'}>All</option> 
                         <option value={'DATIM'}>DATIM</option>
-                          <option value={'PDH'} >PDH</option>
+                          <option value={'IHUB'} >IHUB</option>
                           {/* <option value={'MOH'} disabled>MOH</option> */}
                         </Select>
                       </FormControl>
