@@ -742,10 +742,10 @@ export default function DataElementDetails() {
         }
         else {
             if (exportType === 'data element') {
-                downloadURL = 'https://dev-de.datim.org/api/dataElements/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
+                downloadURL = 'https://datim.org/api/dataElements/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
             }
             else {
-                downloadURL = 'https://dev-de.datim.org/api/categoryOptionCombos/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
+                downloadURL = 'https://datim.org/api/categoryOptionCombos/' + exportDataElement + '.' + exportValue.trim() + '?fields=*'
             }
         }
         console.log("downloadURL " + downloadURL)

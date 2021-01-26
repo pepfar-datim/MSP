@@ -1886,7 +1886,7 @@ useEffect(() => {
                             <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
                           </RadioGroup>
                           <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
-                            Download DATA
+                            Download
                       </Button>
                         </FormGroup>
                       </FormControl> :
