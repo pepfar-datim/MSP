@@ -1265,7 +1265,7 @@ return (
             >
               {
                 Object.keys(codeListMap).reverse().map(
-                    key => <option key={key} >{key}</option>
+                    key => key === 'All' ? "" : <option key={key} >{key}</option>
                 )
               }                           
             </Select>
