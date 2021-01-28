@@ -585,6 +585,7 @@ export default function DataElementDetails() {
 
         try {
             const response = await fetch(queryMapping);
+            console.log(response);
             if (!response.ok) {
                 console.log(response);
                 setErrorDisplay("Failed to fetch")
@@ -1087,12 +1088,12 @@ export default function DataElementDetails() {
                 <div className={classes.fixedTop}>
                     {/* <NavLink to="/indicators"> */}
                     <Grid container >
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Breadcrumb></Breadcrumb>
                         </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <h2 className={classes.comparisonPanelTitle}>Indicator DETAILS</h2>                        </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                                 id="backButton"> Back</Button>
                         </Grid>
@@ -1253,9 +1254,10 @@ export default function DataElementDetails() {
                                     <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
                                         {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
+                                    
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
                                         {console.log(dataElementDetail)}
-                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 200) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
+                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].length > 200 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 200) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
                                         {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ?
                                             <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
                                             <div><Link href="#" onClick={showLessDescription} style={{ textDecorationLine: 'underline' }}>less<TiArrowSortedUp /></Link></div>
