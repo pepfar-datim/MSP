@@ -1164,8 +1164,6 @@ export default function DataElementDetails() {
                                                             <TableCell>{dataElementDetail.extras.pdh_indicator_code ? dataElementDetail.extras.pdh_indicator_code : '--'}</TableCell>
                                                         </TableRow>
                                                         :
-
-
                                                         dataElementDetail.extras.codelists ? (dataElementDetail.extras.codelists.length > 0 ?
                                                             <TableRow>
                                                                 <TableCell><strong>Code List Membership</strong></TableCell>
@@ -1201,7 +1199,6 @@ export default function DataElementDetails() {
                                                                     <li>
                                                                         {dataElementDetail.names[2] ? <i style={{ color: '#a6a6a6', marginRight: '25px' }}>Short</i> : ''} {dataElementDetail.names[1] ? (dataElementDetail.names[1].name) : '--'}
                                                                     </li>
-
                                                                 </ul>
                                                             </TableCell>
                                                         </TableRow>
@@ -1308,7 +1305,7 @@ export default function DataElementDetails() {
                                     <Tabs value={panel} onChange={handleChange} className={classes.tabContainer} classes={{ indicator: classes.bigIndicator }}>
                                         <Tab label="DISAGGREGATIONS" {...a11yProps(0)} />
                                         <Tab label="LINKAGES" {...a11yProps(1)} />
-                                        {dataElementDetail ? dataElementDetail.extras.source === 'PDH' ? <Tab label="DERIVATIONS" {...a11yProps(2)} /> : '' : ''}
+                                        {dataElementDetail ? dataElementDetail.extras.source === 'IHUB' ? <Tab label="DERIVATIONS" {...a11yProps(2)} /> : '' : ''}
                                     </Tabs>
                                     <TabPanel value={panel} index={0} className={classes.tabPanel}>
                                         <Grid container >
