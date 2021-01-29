@@ -571,7 +571,7 @@ export default function DataElementDetails() {
 
             if (de[params.get('id')]) {
                 setDataElementDetail(de[params.get('id')]);
-                //setDataElementMapping(deMappings[params.get('id')]);
+                setDataElementMapping(deMappings[params.get('id')]);
             }
         }
         loadData();
@@ -585,6 +585,7 @@ export default function DataElementDetails() {
 
         try {
             const response = await fetch(queryMapping);
+            console.log(response);
             if (!response.ok) {
                 console.log(response);
                 setErrorDisplay("Failed to fetch")
@@ -1081,18 +1082,59 @@ export default function DataElementDetails() {
         }
     }
 
+      //Error handling
+      class ErrorBoundary extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { error: null, errorInfo: null };
+        }
+
+        componentDidCatch(error, errorInfo) {
+            // Catch errors in any components below and re-render with error message
+            this.setState({
+                error: error,
+                errorInfo: errorInfo
+            })
+            // You can also log error messages to an error reporting service here
+        }
+
+        render() {
+            if (this.state.errorInfo) {
+                // Error path
+                return (
+                    <Dialog onClose={handleDialogClose} aria-labelledby="customized-dialog-title" open={dialogOpen}>
+                        <DialogTitle id="customized-dialog-title" onClose={handleDialogClose}>
+                        </DialogTitle>
+                        <DialogContent >
+                            <Typography gutterBottom>
+                                {errorDisplay}
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button autoFocus onClick={handleDialogClose} color="primary">
+                                OK
+          </Button>
+                        </DialogActions>
+                    </Dialog>
+                );
+            }
+            // Normally, just render children
+            return this.props.children;
+        }
+    }
+
     return (
         <Route render={(history) => (
             <div className={classes.container} >
                 <div className={classes.fixedTop}>
                     {/* <NavLink to="/indicators"> */}
                     <Grid container >
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Breadcrumb></Breadcrumb>
                         </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <h2 className={classes.comparisonPanelTitle}>Indicator DETAILS</h2>                        </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                                 id="backButton"> Back</Button>
                         </Grid>
@@ -1253,13 +1295,14 @@ export default function DataElementDetails() {
                                     <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
                                         {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
+                                    
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
                                         {console.log(dataElementDetail)}
-                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 200) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
+                                        {/* {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].length > 200 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 200) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
                                         {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 200 ? !moreDescription ?
                                             <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
                                             <div><Link href="#" onClick={showLessDescription} style={{ textDecorationLine: 'underline' }}>less<TiArrowSortedUp /></Link></div>
-                                            : '' : '' : ''}
+                                            : '' : '' : ''} */}
                                         {/* {moreAttributes ?
                                                 
                                             } */}
