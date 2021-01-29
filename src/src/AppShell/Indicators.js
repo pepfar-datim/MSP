@@ -1090,7 +1090,7 @@ export default function Codelist() {
       }
     }
     else if (values.denom === "Yes") {
-      setDatatype('"Percentage"+OR+"Ratio"')
+      setDatatype('"Percentage,Ratio"')
     }
     else {
       setDatatype("Number")
