@@ -1360,8 +1360,10 @@ export default function DataElementDetails() {
                                                                     (deMappings[dataElementDetail.id]) ? Object.keys(Object(deMappings[dataElementDetail.id])).map(
 
                                                                         key =>
+                                                                        
                                                                             Object(deMappings[dataElementDetail.id])[key].map_type === 'Has Option' ? (
                                                                                 <TableRow >
+                                                                                    {console.log(Object(deMappings[dataElementDetail.id])[key])}
                                                                                     <TableCell>
                                                                                         {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
                                                                                     </TableCell>
