@@ -617,11 +617,11 @@ export default function DataElementDetails() {
                     }
                 }
                 if (derivationId) {
-                    UIDs = UIDs + '"' + derivationId + '"OR'
+                    UIDs = UIDs + derivationId + '+OR+'
                 }
             }
         )
-        UIDs = UIDs.substring(0, UIDs.length - 2)
+        UIDs = UIDs.substring(0, UIDs.length - 4)
         if (UIDs) {
             let queryMapping = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + version + '/concepts/?includeMappings=true&includeInverseMappings=true&verbose=true&q=&q=' + UIDs;
             console.log(" queryByDataElement " + queryMapping)
