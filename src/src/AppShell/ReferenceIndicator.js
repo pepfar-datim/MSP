@@ -534,6 +534,7 @@ const useStyles = makeStyles(theme => ({
     });
 
     const [deToggle, setDeToggle] = React.useState(false)
+    const [indToggle, setIndToggle] = React.useState(false)
 
     const getIndicatorIdFromParam = (pathname) =>{      
       var indID = "";
@@ -867,8 +868,10 @@ const useStyles = makeStyles(theme => ({
       
     }
 
-    const loadDatimIndicatorByIndicator = async (indicatorID)=> {           
-      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + '&page=' + (pageDatimIndicator+1) + '&extras.indicator=' + indicatorID;      
+    const loadDatimIndicatorByIndicator = async (indicatorID)=> {    
+      let periodFilter
+      indToggle ? periodFilter = '' : periodFilter = '&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);       
+      const query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/?verbose=true&q=&conceptClass=Indicator&limit=' + rowsPerPage + periodFilter + '&page=' + (pageDatimIndicator+1) + '&extras.indicator=' + indicatorID;      
       console.log("loadDatimIndicatorByIndicator: " + indicatorID + " query: " + query); 
       setDatimIndicatorLoading(true);     
       setErrorLoadDatimIndiator(null);
@@ -1100,7 +1103,12 @@ const useStyles = makeStyles(theme => ({
 
   // handle Toggle Change
   const handleToggleChange = event => {
-    setDeToggle(deToggle => !deToggle);
+    if (event.target.name === 'dataelementsSwitch'){
+      setDeToggle(deToggle => !deToggle);
+    }else {
+      setIndToggle (indToggle => !indToggle);
+    }
+    
   }
 
   const handleNavLinkChange = event => {
@@ -1156,6 +1164,10 @@ const useStyles = makeStyles(theme => ({
   useEffect(() => {
     loadDataElementsDataByIndicator(indicatorId)
   }, [deToggle]);
+
+  useEffect(() => {
+    loadDatimIndicatorByIndicator(indicatorId)
+  }, [indToggle]);
 
 
   //indicator group display
@@ -1436,7 +1448,7 @@ return (
           <Switch
             checked={deToggle}
             onChange={handleToggleChange}
-            name="switch"
+            name="dataelementsSwitch"
             color="primary"
           />
         }
@@ -1501,7 +1513,22 @@ return (
       
     }
 
-    <TabPanel value={panel} index={DATIM_INDICATOR_PANEL} className={classes.tabPanel}>     
+    <TabPanel value={panel} index={DATIM_INDICATOR_PANEL} className={classes.tabPanel}>
+    <div style={{float: 'right'}}><FormGroup className={classes.formGroup} row>
+        <p className='MuiTypography-body1'>{'FY' + values.fiscal.trim().substring(2,4)} Only</p> &nbsp; &nbsp; &nbsp;
+      <FormControlLabel 
+        control={
+          <Switch
+            checked={indToggle}
+            onChange={handleToggleChange}
+            name="indicatorsSwitch"
+            color="primary"
+          />
+        }
+        label="Any Fiscal Year"
+        />
+      </FormGroup>
+      </div>     
       <DatimIndicator currentIndicator={currentIndicator} 
                       matchDatimIndicators={matchDatimIndicators} 
                       classes={classes}  
