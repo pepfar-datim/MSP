@@ -490,6 +490,10 @@ const useStyles = makeStyles(theme => ({
     }
    
   },
+
+  formGroup: {
+    alignItems: 'right'
+  }
   
   
   
@@ -786,9 +790,11 @@ const useStyles = makeStyles(theme => ({
     
     
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
-    const loadDataElementsDataByIndicator = async (indicatorID)=> {   
+    const loadDataElementsDataByIndicator = async (indicatorID)=> {
+      let periodFilter
+      deToggle ? periodFilter = '' : periodFilter = '&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
+      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page+1)+ '&includeMappings=true' + periodFilter + '&extras.indicator='+ indicatorID;
       
-      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page+1)+ '&includeMappings=true&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4) + '&extras.indicator='+ indicatorID;
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query);     
       setDELoading(true);
       setErrorLoadDataElement(null);
@@ -1095,8 +1101,6 @@ const useStyles = makeStyles(theme => ({
   // handle Toggle Change
   const handleToggleChange = event => {
     setDeToggle(deToggle => !deToggle);
-    console.log(deToggle)
-    // updateIndicator(indicatorId,DATA_ELEMENT_PANEL)
   }
 
   const handleNavLinkChange = event => {
@@ -1425,7 +1429,9 @@ return (
      matchDataElements.length === 0 && panel === DATA_ELEMENT_PANEL ? 
      <div><p>No data elements found </p></div> :  
     <TabPanel value={panel} index={DATA_ELEMENT_PANEL} className={classes.tabPanel}>
-      <div><FormControlLabel 
+      <div style={{float: 'right'}}><FormGroup className={classes.formGroup} row>
+        <p className='MuiTypography-body1'>{'FY' + values.fiscal.trim().substring(2,4)} Only</p> &nbsp; &nbsp; &nbsp;
+      <FormControlLabel 
         control={
           <Switch
             checked={deToggle}
@@ -1436,6 +1442,7 @@ return (
         }
         label="Any Fiscal Year"
         />
+      </FormGroup>
       </div>
       {/* <div className={classes.tabDashboard}>
       <Button variant="contained" color="primary" className={classes.button} onClick={toggleDrawer('bottom', true)}>Comparison</Button>
