@@ -526,7 +526,8 @@ const useStyles = makeStyles(theme => ({
     const [values, setValues] = React.useState({
       frequency: "",
       fiscal: defaultYear, 
-      type: ""
+      type: "",
+      switch: false
     });
 
     const getIndicatorIdFromParam = (pathname) =>{      
@@ -1080,6 +1081,7 @@ const useStyles = makeStyles(theme => ({
 
   //implement filtering function by set Values first
   const handleFilterChange = event => {
+    console.log(event)
     event.persist();
       setValues(oldValues => ({
         ...oldValues,
@@ -1087,6 +1089,15 @@ const useStyles = makeStyles(theme => ({
       }));  
       setPage(0);      
   };
+
+
+  // handle Toggle Change
+  const handleToggleChange = event => {
+    setValues(oldValues => ({
+      ...oldValues,
+      switch: event.target.checked
+    }));
+  }
 
   const handleNavLinkChange = event => {
     setPage(0);
@@ -1409,6 +1420,18 @@ return (
      matchDataElements.length === 0 && panel === DATA_ELEMENT_PANEL ? 
      <div><p>No data elements found </p></div> :  
     <TabPanel value={panel} index={DATA_ELEMENT_PANEL} className={classes.tabPanel}>
+      <div><FormControlLabel 
+        control={
+          <Switch
+            checked={values.switch}
+            onChange={handleToggleChange}
+            name="switch"
+            color="primary"
+          />
+        }
+        label="Any Fiscal Year"
+        />
+      </div>
       {/* <div className={classes.tabDashboard}>
       <Button variant="contained" color="primary" className={classes.button} onClick={toggleDrawer('bottom', true)}>Comparison</Button>
       </div> */}      
