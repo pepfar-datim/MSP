@@ -949,12 +949,12 @@ export default function DataElementDetails() {
                 <div className={classes.fixedTop}>
                     {/* <NavLink to="/indicators"> */}
                     <Grid container >
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Breadcrumb></Breadcrumb>
                         </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>                        </Grid>
-                        <Grid xs={4}>
+                        <Grid item={true} xs={4}>
                             <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                                 id="backButton"> Back</Button>
                         </Grid>
@@ -1397,8 +1397,8 @@ export default function DataElementDetails() {
                                                                                         ((key == Object.keys(Object(deMappings[dataElementDetail.id]))[Object.keys(Object(deMappings[dataElementDetail.id])).length - 1]) ? '' : ' + '))
                                                                                         : (Object(deMappings[dataElementDetail.id])[key].to_concept_name + ((key == Object.keys(Object(deMappings[dataElementDetail.id]))[Object.keys(Object(deMappings[dataElementDetail.id])).length - 1]) ? '' : ' + ')))
 
-                                                                                    : '') : ''
-                                                                        : ''}
+                                                                                    : null) : null
+                                                                        : null}
 
                                                             </div></Grid>
                                                         {/* <Grid item xs={3} >

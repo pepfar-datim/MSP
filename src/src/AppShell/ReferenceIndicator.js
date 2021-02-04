@@ -786,7 +786,7 @@ const useStyles = makeStyles(theme => ({
     // for Data Elements tab to get a list of data elements and their disags for the indicatorID
     const loadDataElementsDataByIndicator = async (indicatorID)=> {   
       
-      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER' + source +  '/concepts/'+ indicatorID +'/?verbose=true&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page+1)+ '&includeMappings=true&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4);
+      var query = 'https://api.' + domain + '/orgs/' + org + '/sources/MER/concepts/?verbose=true&concept_class=Data+Element&limit=' + rowsPerPage + '&page=' + (page+1)+ '&includeMappings=true&extras.Applicable+Periods=FY' + values.fiscal.trim().substring(2,4) + '&extras.indicator='+ indicatorID;
       console.log("loadDataElementsByIndicator: " + indicatorID + " query: " + query);     
       setDELoading(true);
       setErrorLoadDataElement(null);
@@ -801,14 +801,14 @@ const useStyles = makeStyles(theme => ({
           );
         }
         const jsonData = await response.json();
-        jsonData = jsonData.mappings;
+        jsonData = jsonData;
         // console.log(jsonData);
         if (!jsonData) {
           console.log("jsonData is empty");
           setCountOfValues(0);
           setDELoading(false);
           throw new Error(
-            `Warning data element data is emtpy from OCL  ` + indicatorID
+            `Warning data element data is empty from OCL  ` + indicatorID
           );
         }
         console.log("data elements : " + jsonData.length);
@@ -1423,7 +1423,7 @@ return (
                    <Link href={"/codelist/dataElementDetail?id=" + dataElement.id} style={{ textDecoration: 'underline' }}>{dataElement.display_name}</Link>          
                   </Typography>
                 </Grid>               
-                  <Grid item xs={18} md={5}  className={classes.chip}>                                                            
+                  <Grid item xs={12} md={5}  className={classes.chip}>                                                            
                     <Tooltip disableFocusListener title="Click to copy UID">
                         <span className={classes.chip}
                           onClick={() => copyToClipboard(dataElement.external_id)}
