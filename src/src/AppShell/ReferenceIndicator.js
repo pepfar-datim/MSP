@@ -526,9 +526,10 @@ const useStyles = makeStyles(theme => ({
     const [values, setValues] = React.useState({
       frequency: "",
       fiscal: defaultYear, 
-      type: "",
-      switch: false
+      type: ""
     });
+
+    const [deToggle, setDeToggle] = React.useState(false)
 
     const getIndicatorIdFromParam = (pathname) =>{      
       var indID = "";
@@ -1093,10 +1094,9 @@ const useStyles = makeStyles(theme => ({
 
   // handle Toggle Change
   const handleToggleChange = event => {
-    setValues(oldValues => ({
-      ...oldValues,
-      switch: event.target.checked
-    }));
+    setDeToggle(deToggle => !deToggle);
+    console.log(deToggle)
+    // updateIndicator(indicatorId,DATA_ELEMENT_PANEL)
   }
 
   const handleNavLinkChange = event => {
@@ -1147,6 +1147,11 @@ const useStyles = makeStyles(theme => ({
     }    
     
   }, [init]);
+
+  // when fiscal year toggle changes
+  useEffect(() => {
+    loadDataElementsDataByIndicator(indicatorId)
+  }, [deToggle]);
 
 
   //indicator group display
@@ -1423,7 +1428,7 @@ return (
       <div><FormControlLabel 
         control={
           <Switch
-            checked={values.switch}
+            checked={deToggle}
             onChange={handleToggleChange}
             name="switch"
             color="primary"
