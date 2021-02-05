@@ -1104,14 +1104,15 @@ export default function DataElementDetails() {
                                         </div>
                                         : ''}
                                     <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
-                                        {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
-                                        {/* {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : '' : ''}
-                                        {dataElementDetail ? dataElementDetail.descriptions ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
+                                        {dataElementDetail ? console.log(dataElementDetail): ''}
+                                        {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : 'No description' : ''}
+ 
+                                        {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
                                             <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
                                             <div><Link href="#" onClick={showLessDescription} style={{ textDecorationLine: 'underline' }}>less<TiArrowSortedUp /></Link></div>
-                                            : '' : '' : ''} */}
+                                            : '' : '' : ''}
                                         {/* {moreAttributes ?
                                                 
                                             } */}
