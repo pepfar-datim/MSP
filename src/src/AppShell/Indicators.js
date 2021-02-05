@@ -106,6 +106,7 @@ const currentYear = getConfig().defaultYear
 const codeListMap = getCodeListMap();
 const codeListJson = getCodeList();
 const indicatorGroups = getConfig().indicatorGroups;
+const versionMap = getConfig().versionMap;
 
 const ActionButtonLabel = styled.p`
     margin:0;
@@ -1604,14 +1605,11 @@ useEffect(() => {
                           }}
 
                         >
-                          {/* <option value={"All"} /> */}
-                          {
-
-                            Object.keys(codeListMap).reverse().map(
-
-                              key => <option key={Math.random()} >{key}</option>
-                            )
-                          }
+                        {
+                          versionMap.map(
+                              item => <option key={item.year} value={item.year}>{`FY${(item.year).trim().substring(2,4)} (MER ${(item.version).substring(1,4)})`}</option>
+                          )
+                        }
                         </Select>
                       </FormControl>
                     </Grid>
