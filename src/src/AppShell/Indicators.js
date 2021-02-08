@@ -1746,7 +1746,7 @@ useEffect(() => {
                     </Grid>
                   </form>
                   <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
-                    Clear Filters
+                    Reset Filters
                   </Button>
                 </div>
 

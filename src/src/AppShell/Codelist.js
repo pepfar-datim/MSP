@@ -1064,7 +1064,7 @@ export default function Codelist() {
     else {
       setHiddenDataSet(false)
       if (values.fiscal !== "All"){
-        setDisabledDataSet(false)}
+        setDisabledDataSet(true)}
     }
 
 
@@ -1752,6 +1752,7 @@ export default function Codelist() {
                           }}
 
                         >
+                          <option value="All">All</option>
                         {
                           versionMap.map(
                               item => <option key={item.year} value={item.year}>{`FY${(item.year).trim().substring(2,4)} (MER ${(item.version).substring(1,4)})`}</option>
@@ -1970,10 +1971,10 @@ export default function Codelist() {
                   </form>
                   {/* filter functions */}
                   <Button onClick={displayAdvanced} className={classes.toggleFilters}>
-                    {advanced ? 'Less Filters' : 'More Filters'}
+                    {advanced ? 'Fewer Filters' : 'More Filters'}
                   </Button>
                   <Button variant="outlined" onClick={clearValues} className={classes.filterButton}>
-                    Clear Filters
+                    Reset Filters
                   </Button>
                 </div>
 
@@ -2129,7 +2130,7 @@ export default function Codelist() {
                               <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
                             </RadioGroup>
                             <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                              Download DATA
+                              Download
                       </Button>
                           </FormGroup>
                         </FormControl> :
@@ -2159,7 +2160,7 @@ export default function Codelist() {
                     // <Alert severity="error">{errorDisplay}</Alert>
                     : null}
                   {dataElements.map(dataElement => (
-                    [<ListItem dense button style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : '' }}>
+                    [<ListItem dense style={{ backgroundColor: selectedDataElement.includes(dataElement.id) ? '#f2dee5' : '' }}>
 
                       <ListItemIcon>
                         <Checkbox

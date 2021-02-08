@@ -62,7 +62,7 @@ export default function  Shortcut(props) {
                         </NavLink>
                         <NavLink to="/indicators">                                                              
                             <Button variant="outlined" color="primary" className={classes.shortcutButton} style={{ color: '#1D5893', paddingLeft: '10px',justifyContent:"left"}} >
-                            <FaTable style={{ color: '#1D5893', marginRight: '5px' }} />  Indicators
+                            <FaTable style={{ color: '#1D5893', marginRight: '5px' }} /> Datim Indicators
                             </Button>                            
                         </NavLink>
                                               
@@ -84,7 +84,7 @@ export default function  Shortcut(props) {
                     </Button> 
                     <NavLink to="/indicators">                                                              
                             <Button variant="outlined" color="primary" className={classes.shortcutButton} style={{ color: '#1D5893', paddingLeft: '10px',justifyContent:"left"}} >
-                            <FaTable style={{ color: '#1D5893', marginRight: '5px' }} />  Indicators
+                            <FaTable style={{ color: '#1D5893', marginRight: '5px' }} /> Datim Indicators
                             </Button>                            
                         </NavLink>                   
                   
@@ -107,7 +107,7 @@ export default function  Shortcut(props) {
                             </Button>                            
                         </NavLink> 
                         <Button  color="primary"  className={classes.shortcutButtonSelected}  style={{ color: '#1D5893', paddingLeft: '10px' ,justifyContent:"left"}}>
-                        <FaTable className="material-icons" style={{ color: '#1D5893', marginRight: '5px' }} />Indicators
+                        <FaTable className="material-icons" style={{ color: '#1D5893', marginRight: '5px' }} />Datim Indicators
                     </Button>                             
                   
                 </Grid>              

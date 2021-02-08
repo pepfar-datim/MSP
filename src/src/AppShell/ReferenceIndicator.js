@@ -1412,7 +1412,7 @@ return (
                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="XML" />} label="XML" />
                       </RadioGroup>
                       <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performDownload}>
-                        Download DATA
+                        Download
                     </Button>
                     </FormGroup>
                   </FormControl> : null                      
