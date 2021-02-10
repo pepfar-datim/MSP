@@ -13,12 +13,16 @@ if [[ ! -z "${OCL_DOMAIN}" ]]; then
     echo "var OCL_DOMAIN = \"${OCL_DOMAIN}\";" >> ${ENV_FILE}
 fi
 
+echo ""
+cat ${ENV_FILE}
+echo ""
+
 echo "Adding nginx configuration"
-envsubst < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '$MSP_PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
 
 echo ""
 cat /etc/nginx/conf.d/default.conf
-echot ""
+echo ""
 
 echo "Starting up the nginx server"
 nginx -g "daemon off;"
