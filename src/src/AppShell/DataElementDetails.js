@@ -1428,7 +1428,7 @@ export default function DataElementDetails() {
                                                             <TableCell><strong>Linkage</strong></TableCell>
                                                             <TableCell><strong>Resource</strong></TableCell>
                                                             <TableCell></TableCell>
-                                                        </TableRow> : ''}
+                                                        </TableRow> : 'No Linkages'}
                                                     {dataElementDetail ? console.log(dataElementDetail.id) : ''}
                                                     {dataElementDetail ? (
                                                         dataElementMapping ? Object.keys(Object(dataElementMapping)).map(
