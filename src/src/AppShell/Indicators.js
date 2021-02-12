@@ -1605,6 +1605,7 @@ useEffect(() => {
                           }}
 
                         >
+                          <option value="All">All</option>
                         {
                           versionMap.map(
                               item => <option key={item.year} value={item.year}>{`FY${(item.year).trim().substring(2,4)} (MER ${(item.version).substring(1,4)})`}</option>
