@@ -8,11 +8,11 @@ const routes = {
   '/inputs': 'Inputs',
   '/codelist': 'Codelist',
   '/referenceIndicator': 'Reference Indicators',
-  '/indicators': 'Indicators',
+  '/indicators': 'DATIM Indicators',
   '/about': 'About',
   '/codelist/indicator': 'Indicator',
-  '/codelist/dataElementDetail': 'DataElementDetails',
-  '/indicators/indicatorDetail': 'IndicatorDetails',
+  '/codelist/dataElementDetail': 'Data Elements > DataElementDetails > Details',
+  '/indicators/indicatorDetail': 'Details',
   '/indicators/compareIndicators': 'CompareIndicators',
   '/codelist/compare': 'Compare'
 };
