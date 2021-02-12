@@ -1368,7 +1368,7 @@ export default function DataElementDetails() {
                                                                                 <TableRow >
                                                                                     {console.log(Object(deMappings[dataElementDetail.id])[key])}
                                                                                     <TableCell>
-                                                                                        {Object(deMappings[dataElementDetail.id])[key].to_concept_name}
+                                                                                        {Object(deMappings[dataElementDetail.id])[key].to_concept_name_resolved}
                                                                                     </TableCell>
                                                                                     <TableCell>
                                                                                         {Object(deMappings[dataElementDetail.id])[key].to_concept_code}
