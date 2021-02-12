@@ -953,7 +953,7 @@ export default function DataElementDetails() {
                             <Breadcrumb></Breadcrumb>
                         </Grid>
                         <Grid item={true} xs={4}>
-                            <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>                        </Grid>
+                            {/* <h2 className={classes.comparisonPanelTitle}>DATA ELEMENT DETAILS</h2>    */}</Grid> 
                         <Grid item={true} xs={4}>
                             <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                                 id="backButton"> Back</Button>

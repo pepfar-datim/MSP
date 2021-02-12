@@ -1133,7 +1133,8 @@ export default function DataElementDetails() {
                             <Breadcrumb></Breadcrumb>
                         </Grid>
                         <Grid item={true} xs={4}>
-                            <h2 className={classes.comparisonPanelTitle}>Indicator DETAILS</h2>                        </Grid>
+                            {/* <h2 className={classes.comparisonPanelTitle}>Indicator DETAILS</h2> */}
+                        </Grid>
                         <Grid item={true} xs={4}>
                             <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                                 id="backButton"> Back</Button>
@@ -1492,14 +1493,14 @@ export default function DataElementDetails() {
 
                                                                                             [
                                                                                                 <TableRow >
-                                                                                                    <TableCell rowSpan={numeratorReadableFormulaMap[key].length}>
+                                                                                                    <TableCell style={{verticalAlign:'top', width:'30px'}} rowSpan={numeratorReadableFormulaMap[key].length}>
                                                                                                         <Link href={"/codelist/dataElementDetail?id=" + numeratorMap[key][0].split('.')[0]} style={{ textDecoration: 'underline' }}>
                                                                                                             {key}
                                                                                                         </Link>
                                                                                                     </TableCell>
-                                                                                                    <TableCell >{numeratorReadableFormulaMap[key][0]}</TableCell>
-                                                                                                    <TableCell >{numeratorMap[key][0]}</TableCell>
-                                                                                                    <TableCell >
+                                                                                                    <TableCell style={{verticalAlign:'top', width:'30px'}} >{numeratorReadableFormulaMap[key][0]}</TableCell>
+                                                                                                    <TableCell style={{verticalAlign:'top', width:'30px'}} >{numeratorMap[key][0]}</TableCell>
+                                                                                                    <TableCell alignItems="left">
                                                                                                         <Tooltip disableFocusListener title="Download">
                                                                                                             <i>
                                                                                                                 <GetAppIcon style={{ color: '#1D5893' }} id="download-icon"
