@@ -1037,7 +1037,7 @@ export default function DataElementDetails() {
                                                                 <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
                                                             </RadioGroup>
                                                             <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                                                                Download DATA
+                                                                Download
                                                                      </Button>
                                                         </FormGroup>
                                                     </FormControl> :
@@ -1087,7 +1087,7 @@ export default function DataElementDetails() {
                                                                         <FormControlLabel control={<Radio style={{ color: '#D55804' }} value="OCL" />} label="JSON" />
                                                                     </RadioGroup>
                                                                     <Button type="submit" variant="outlined" className={classes.downloadButton} onClick={performExport}>
-                                                                        Download DATA
+                                                                        Download
                                                                      </Button>
                                                                 </FormGroup>
                                                             </FormControl>
@@ -1103,7 +1103,9 @@ export default function DataElementDetails() {
                                             <i style={{ color: '#a6a6a6', marginRight: '5px', marginLeft: '15px' }}>UID:</i> {dataElementDetail.id}
                                         </div>
                                         : ''}
-                                    <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
+
+                                     <div style={{ fontSize: '24px', marginLeft: '25px', marginTop: '15px', marginRight: '20px' }}>
+                                        {dataElementDetail ? dataElementDetail.display_name : ""}
                                     </div>
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
                                         {dataElementDetail ? console.log(dataElementDetail): ''}
