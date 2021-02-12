@@ -11,7 +11,7 @@ const routes = {
   '/indicators': 'DATIM Indicators',
   '/about': 'About',
   '/codelist/indicator': 'Indicator',
-  '/codelist/dataElementDetail': 'Data Elements > DataElementDetails > Details',
+  '/codelist/dataElementDetail': 'Data Elements > Details',
   '/indicators/indicatorDetail': 'Details',
   '/indicators/compareIndicators': 'CompareIndicators',
   '/codelist/compare': 'Compare'
