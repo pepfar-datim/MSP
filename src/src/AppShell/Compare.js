@@ -673,16 +673,16 @@ export default function Compare() {
           </div> :
           (
             <div className={classes.compareRowColumn} key={Math.random()}>
-              
-              <ExpansionPanel className={classes.expandPanel}>
+              <div className={classes.expandPanel}>
+              {/* <ExpansionPanel className={classes.expandPanel}>
                 <ExpansionPanelSummary
                   //expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel3b-content"
                   id="panel3b-header"
                 // onClick={() =>loadMappings()}
-                >
+                > */}
 { selectedDatim.length > 0 ?
-                  <Table className={classes.comboTable} aria-label="simple table">
+                  <Table className={classes.comboTable} aria-label="simple table" size="small">
                     {Object.keys(dataElementMatrix) == 2 ?
                       <colgroup>
                         <col style={{ width: '10%' }} />
@@ -759,12 +759,13 @@ export default function Compare() {
                       </TableRow>
                     </TableBody>
                   </Table>: ''}
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelDetail}>
+                {/* </ExpansionPanelSummary> */}
+                {/* <ExpansionPanelDetails className={classes.panelDetail}>
 
 
-                </ExpansionPanelDetails>
-              </ExpansionPanel> 
+                </ExpansionPanelDetails> */}
+              {/* </ExpansionPanel>  */}
+              </div>
             </div>
           )}
       </div>

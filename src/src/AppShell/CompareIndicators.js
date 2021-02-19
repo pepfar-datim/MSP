@@ -526,11 +526,11 @@ throw new Error('Unable To Compare Data Elements to Indicators')
           }
           if (dataElements['Indicator Description']) {
             let descriptions = Array.from(dataElements['Indicator Description'])
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
+            descriptions.push(value.descriptions.length > 0 ? value.descriptions[0].description : "--")
             dataElements['Indicator Description'] = descriptions
           } else {
             let descriptions = []
-            descriptions.push(value.descriptions ? value.descriptions[0].description : "--")
+            descriptions.push(value.descriptions.length > 0 ? value.descriptions[0].description : "--")
             dataElements['Indicator Description'] = descriptions
           }
           if (dataElements['Numerator Description']) {
@@ -647,14 +647,14 @@ throw new Error('Unable To Compare Data Elements to Indicators')
   const table = function () {
     return (
       <div className={classes.compareRowColumn} key={Math.random()}>
-        <ExpansionPanel className={classes.expandPanel}>
+        {/* <ExpansionPanel className={classes.expandPanel}>
           <ExpansionPanelSummary
-            //expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon />}
             aria-controls="panel3b-content"
             id="panel3b-header"
-          // onClick={() =>loadMappings()}
-          >
-
+           onClick={() =>loadMappings()}
+          > */}
+           <div className={classes.expandPanel}>
             <Table className={classes.comboTable} aria-label="simple table">
               {Object.keys(dataElementMatrix) == 2 ?
                 <colgroup>
@@ -696,12 +696,13 @@ throw new Error('Unable To Compare Data Elements to Indicators')
                 }
               </TableBody>
             </Table>
-          </ExpansionPanelSummary>
+          {/* </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.panelDetail}>
 
 
           </ExpansionPanelDetails>
-        </ExpansionPanel>
+        </ExpansionPanel> */}
+      </div>
       </div>
     )
   }
@@ -860,7 +861,8 @@ throw new Error('Unable To Compare Data Elements to Indicators')
                         <Breadcrumb></Breadcrumb>
                         </Grid>
                         <Grid xs={4}>
-                        {/* <h2 className={classes.comparisonPanelTitle}>Compare Indicators</h2>                        </Grid> */}
+                          {/* <h2 className={classes.comparisonPanelTitle}>Compare Indicators</h2>                         */}
+                        </Grid>
                         <Grid xs={4}>
                         <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                         id="backButton"> Back</Button>
