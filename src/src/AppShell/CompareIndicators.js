@@ -860,7 +860,7 @@ throw new Error('Unable To Compare Data Elements to Indicators')
                         <Breadcrumb></Breadcrumb>
                         </Grid>
                         <Grid xs={4}>
-                        <h2 className={classes.comparisonPanelTitle}>Compare Indicators</h2>                        </Grid>
+                        {/* <h2 className={classes.comparisonPanelTitle}>Compare Indicators</h2>                        </Grid> */}
                         <Grid xs={4}>
                         <Button onClick={goBack} color="primary" variant="outlined" className={`${classes.actionButton} ${classes.closeComparePanel}`}
                         id="backButton"> Back</Button>
