@@ -745,10 +745,10 @@ export default function Compare() {
 
                                   <TableRow key={Math.random()} >
                                     <TableCell component="th" scope="row">
-                                      {Object(mappings[datim.id])[key].to_concept_name}
+                                      {Object(mappings[datim.id])[key].to_concept_name_resolved}
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                      {Object(mappings[datim.id])[key].to_concept_code}
+                                      {Object(mappings[datim.id])[key].to_concept_code_resolved}
                                     </TableCell>
                                   </TableRow>
 
