@@ -902,6 +902,7 @@ export default function DataElementDetails() {
             if (indicator.extras.numerator.length > 1) {
                 let numerator = indicator.extras.numerator.trim().replace("  "," ").split(' + ').join('+').split('+')
                 let numeratorReadableFormula = indicator.extras.numeratorReadableFormula.trim()
+                console.log(numeratorReadableFormula)
                 numeratorReadableFormula = numeratorReadableFormula.replace("  "," ")
                 numeratorReadableFormula = numeratorReadableFormula.split(' + ').join('+').split('}+{')
                 console.log('numeratorReadableFormula' + numeratorReadableFormula)
@@ -1030,10 +1031,12 @@ export default function DataElementDetails() {
                             denominatorArray = Array.from(denominatorMap[dataElementCode])
                             if (denominatorReadableFormula[key].split('].[')[1]) {
                                 if (key == Object.keys(denominatorReadableFormula).length - 1) {
+                                    console.log(denominatorReadableFormula[key])
                                     formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 3))
                                 }
                                 else {
                                     formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 1))
+                                    console.log(denominatorReadableFormula[key])
                                 }
                             }
                             else {
@@ -1044,6 +1047,7 @@ export default function DataElementDetails() {
                         }
                         denominatorReadableFormulaMap[dataElementCode] = formulaArray;
                         denominatorMap[dataElementCode] = denominatorArray;
+                        console.log(denominatorMap)
                         setDenominatorReadableFormulaMap[denominatorReadableFormulaMap]
                         setDenominatorMap[denominatorMap]
                     }
