@@ -954,7 +954,11 @@ export default function DataElementDetails() {
                             else {
                                 formulaArray.push('--')
                             }
-                            numeratorArray.push(numerator[key].substring(2, numerator[key].length - 1))
+                            if(key ==0){
+                                numeratorArray.push(numerator[key].substring(3, numerator[key].length - 1))
+                            }else{
+                                numeratorArray.push(numerator[key].substring(2, numerator[key].length - 1))
+                            }
                         }
                         else {
                             formulaArray = Array.from(numeratorReadableFormulaMap[dataElementCode])
@@ -970,7 +974,12 @@ export default function DataElementDetails() {
                             else {
                                 formulaArray.push('--')
                             }
-                            numeratorArray.push(numerator[key].substring(2, numerator[key].length - 1))
+                            if(key ==0){
+                                numeratorArray.push(numerator[key].substring(3, numerator[key].length - 1))
+                            }else{
+                                numeratorArray.push(numerator[key].substring(2, numerator[key].length - 1))
+                            }
+                            // numeratorArray.push(numerator[key].substring(2, numerator[key].length - 1))
 
                         }
                         numeratorReadableFormulaMap[dataElementCode] = formulaArray;
@@ -1050,7 +1059,11 @@ export default function DataElementDetails() {
                                 formulaArray.push('--')
                             }
                             console.log(denominator[key].substring(3, denominator[key].length - 1))
-                            denominatorArray.push(denominator[key].substring(3, denominator[key].length - 1))
+                            if(key == 0){
+                                denominatorArray.push(denominator[key].substring(3, denominator[key].length - 1))
+                            }else{
+                                denominatorArray.push(denominator[key].substring(2, denominator[key].length - 1))
+                            }
                         }
                         else {
                             formulaArray = Array.from(denominatorReadableFormulaMap[dataElementCode])
@@ -1068,8 +1081,11 @@ export default function DataElementDetails() {
                             else {
                                 formulaArray.push('--')
                             }
-                            
-                            denominatorArray.push(denominator[key].substring(2, denominator[key].length - 1))
+                            if(key == 0){
+                                denominatorArray.push(denominator[key].substring(3, denominator[key].length - 1))
+                            }else{
+                                denominatorArray.push(denominator[key].substring(2, denominator[key].length - 1))
+                            }
 
                         }
                         denominatorReadableFormulaMap[dataElementCode] = formulaArray;
@@ -1613,12 +1629,12 @@ export default function DataElementDetails() {
                                                                                     key =>
 
                                                                                         <TableRow >
-                                                                                            <TableCell >
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}} rowSpan={denominatorReadableFormulaMap[key].length}>
                                                                                                 <Link href={"/codelist/dataElementDetail?id=" + denominatorMap[key][0].split('.')[0]} style={{ textDecoration: 'underline' }}>
                                                                                                     {key}
                                                                                                 </Link>
                                                                                             </TableCell>
-                                                                                            <TableCell >
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
                                                                                                 {Object.keys(denominatorReadableFormulaMap[key]).map(
                                                                                                     i =>
                                                                                                         <TableRow >
@@ -1626,7 +1642,7 @@ export default function DataElementDetails() {
                                                                                                         </TableRow>
                                                                                                 )}
                                                                                             </TableCell>
-                                                                                            <TableCell>
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
                                                                                                 {Object.keys(denominatorReadableFormulaMap[key]).map(
                                                                                                     i =>
                                                                                                         <TableRow>
@@ -1634,11 +1650,11 @@ export default function DataElementDetails() {
                                                                                                         </TableRow>
                                                                                                 )}
                                                                                             </TableCell>
-                                                                                            <TableCell>
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
                                                                                                 {Object.keys(denominatorReadableFormulaMap[key]).map(
                                                                                                     i =>
                                                                                                         <TableRow>
-                                                                                                            <TableCell style={{ borderBottom: "none" }}>
+                                                                                                            <TableCell alignItems="left" style={{ borderBottom: "none" }}>
                                                                                                                 <Tooltip disableFocusListener title="Download">
                                                                                                                     <i>
                                                                                                                         {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
