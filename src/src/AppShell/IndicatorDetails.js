@@ -912,7 +912,10 @@ export default function DataElementDetails() {
                         let formulaArray = []
                         let numeratorArray = []
                         let dataElementCode = ''
+                        console.log(numeratorReadableFormula[key])
                         if (!numeratorReadableFormula[key].split('].[')[1]) {
+                            console.log("Getting Here")
+                            console.log(numeratorReadableFormula[key])
                             if (key == Object.keys(numeratorReadableFormula).length - 1) {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 2)
                             }
@@ -926,6 +929,7 @@ export default function DataElementDetails() {
                         else {
                             if (key == 0) {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length)
+                                
                             }
                             else {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length)
@@ -934,8 +938,17 @@ export default function DataElementDetails() {
                         if (!numeratorReadableFormulaMap[dataElementCode]) {
 
                             if (numeratorReadableFormula[key].split('].[')[1]) {
+                                const numeratorSubFormula = numeratorReadableFormula[key].split('].[')[1]
+                                console.log(numeratorReadableFormula[key].split('].[')[1])
                                 if (key == Object.keys(numeratorReadableFormula).length - 1) {
-                                    formulaArray.push(numeratorReadableFormula[key].split('].[')[1].substring(0, numeratorReadableFormula[key].split('].[')[1].length - 3))
+                                    let formula
+                                    if(numeratorReadableFormula[key].includes('].')){
+                                        formula = numeratorSubFormula.split('].')[0]
+                                        console.log(formula)
+                                    }else{
+                                        formula = numeratorReadableFormula[key].split('].[')[1].substring(0, numeratorReadableFormula[key].split('].[')[1].length - 3)
+                                    }
+                                    formulaArray.push(formula)
                                 }
                                 else {
                                     formulaArray.push(numeratorReadableFormula[key].split('].[')[1].substring(0, numeratorReadableFormula[key].split('].[')[1].length - 1))
@@ -1014,12 +1027,27 @@ export default function DataElementDetails() {
                         if (!denominatorReadableFormulaMap[dataElementCode]) {
 
                             if (denominatorReadableFormula[key].split('].[')[1]) {
+                                const denominatorSubFormula = denominatorReadableFormula[key].split('].[')[1]
+                                console.log(denominatorReadableFormula[key].split('].[')[1])
                                 if (key == Object.keys(denominatorReadableFormula).length - 1) {
-                                    formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 3))
+                                    let formula
+                                    if(denominatorReadableFormula[key].includes('].')){
+                                        formula = denominatorSubFormula.split('].')[0]
+                                        console.log(formula)
+                                    }else{
+                                        formula = denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 3)
+                                    }
+                                    formulaArray.push(formula)
                                 }
                                 else {
                                     formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 1))
                                 }
+                                // if (key == Object.keys(denominatorReadableFormula).length - 1) {
+                                //     formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 3))
+                                // }
+                                // else {
+                                //     formulaArray.push(denominatorReadableFormula[key].split('].[')[1].substring(0, denominatorReadableFormula[key].split('].[')[1].length - 1))
+                                // }
                             }
                             else {
                                 formulaArray.push('--')
