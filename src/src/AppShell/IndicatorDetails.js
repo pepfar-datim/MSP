@@ -902,17 +902,15 @@ export default function DataElementDetails() {
             if (indicator.extras.numerator.length > 1) {
                 let numerator = indicator.extras.numerator.trim().replace("  "," ").split(' + ').join('+').split('+')
                 let numeratorReadableFormula = indicator.extras.numeratorReadableFormula.trim()
-                console.log(numeratorReadableFormula)
                 numeratorReadableFormula = numeratorReadableFormula.replace("  "," ")
                 numeratorReadableFormula = numeratorReadableFormula.split(' + ').join('+').split('}+{')
-                console.log('numeratorReadableFormula' + numeratorReadableFormula)
+                // console.log('numeratorReadableFormula' + numeratorReadableFormula)
                 Object.keys(numeratorReadableFormula).map(
                     key => {
                         console.log(key)
                         let formulaArray = []
                         let numeratorArray = []
                         let dataElementCode = ''
-                        console.log(numeratorReadableFormula[key])
                         if (!numeratorReadableFormula[key].split('].[')[1]) {
                             console.log("Getting Here")
                             console.log(numeratorReadableFormula[key])
@@ -920,7 +918,7 @@ export default function DataElementDetails() {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 2)
                             }
                             else if (key == 0) {
-                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length - 1)
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(3, numeratorReadableFormula[key].split('].[')[0].length - 1)
                             }
                             else {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 1)
@@ -928,7 +926,7 @@ export default function DataElementDetails() {
                         }
                         else {
                             if (key == 0) {
-                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length)
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(3, numeratorReadableFormula[key].split('].[')[0].length)
                                 
                             }
                             else {
@@ -1052,7 +1050,8 @@ export default function DataElementDetails() {
                             else {
                                 formulaArray.push('--')
                             }
-                            denominatorArray.push(denominator[key].substring(2, denominator[key].length - 1))
+                            console.log(denominator[key].substring(3, denominator[key].length - 1))
+                            denominatorArray.push(denominator[key].substring(3, denominator[key].length - 1))
                         }
                         else {
                             formulaArray = Array.from(denominatorReadableFormulaMap[dataElementCode])
@@ -1070,6 +1069,7 @@ export default function DataElementDetails() {
                             else {
                                 formulaArray.push('--')
                             }
+                            
                             denominatorArray.push(denominator[key].substring(2, denominator[key].length - 1))
 
                         }
