@@ -912,7 +912,6 @@ export default function DataElementDetails() {
                         let numeratorArray = []
                         let dataElementCode = ''
                         if (!numeratorReadableFormula[key].split('].[')[1]) {
-                            console.log("Getting Here")
                             console.log(numeratorReadableFormula[key])
                             if (key == Object.keys(numeratorReadableFormula).length - 1) {
                                 dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(1, numeratorReadableFormula[key].split('].[')[0].length - 2)
@@ -1006,7 +1005,7 @@ export default function DataElementDetails() {
                                 dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(1, denominatorReadableFormula[key].split('].[')[0].length - 2)
                             }
                             else if (key == 0) {
-                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length - 1)
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(3, denominatorReadableFormula[key].split('].[')[0].length - 1)
 
                             }
                             else {
@@ -1016,7 +1015,7 @@ export default function DataElementDetails() {
                         }
                         else {
                             if (key == 0) {
-                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length)
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(3, denominatorReadableFormula[key].split('].[')[0].length)
                             }
                             else {
                                 dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(1, denominatorReadableFormula[key].split('].[')[0].length)
