@@ -1346,7 +1346,7 @@ export default function DataElementDetails() {
                                     </div>
                                     
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
-                                    {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : <div><p>No description</p></div>: ''}
+                                    {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : <div>No description</div>: ''}
  
                                     {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
                                         <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
