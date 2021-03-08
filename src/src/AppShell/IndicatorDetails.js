@@ -904,7 +904,7 @@ export default function DataElementDetails() {
                 let numeratorReadableFormula = indicator.extras.numeratorReadableFormula.trim()
                 numeratorReadableFormula = numeratorReadableFormula.replace("  "," ")
                 numeratorReadableFormula = numeratorReadableFormula.split(' + ').join('+').split('}+{')
-                // console.log('numeratorReadableFormula' + numeratorReadableFormula)
+                console.log('numeratorReadableFormula' + numeratorReadableFormula)
                 Object.keys(numeratorReadableFormula).map(
                     key => {
                         console.log(key)
@@ -925,7 +925,7 @@ export default function DataElementDetails() {
                         }
                         else {
                             if (key == 0) {
-                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(3, numeratorReadableFormula[key].split('].[')[0].length)
+                                dataElementCode = numeratorReadableFormula[key].split('].[')[0].substring(2, numeratorReadableFormula[key].split('].[')[0].length)
                                 
                             }
                             else {
@@ -1340,12 +1340,13 @@ export default function DataElementDetails() {
                                             <i style={{ color: '#a6a6a6', marginRight: '5px', marginLeft: '15px' }}>UID:</i> {dataElementDetail.id}
                                         </div>
                                         : ''}
-                                    <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px' }}>
+                                    <div style={{ fontSize: '24px', marginLeft: '25px', marginBottom: '15px', marginTop: '15px', marginRight: '20px', width: '100%'}}>
                                         {dataElementDetail ? dataElementDetail.display_name : ""}
+                                        <br/>
                                     </div>
                                     
                                     <div style={{ color: '#808080', marginLeft: '25px', marginBottom: '15px', marginRight: '20px' }}>
-                                    {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : 'No description' : ''}
+                                    {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ? dataElementDetail.descriptions[0].description.substring(0, 190) : dataElementDetail.descriptions[0].description : dataElementDetail.descriptions[0].description : <div><p>No description</p></div>: ''}
  
                                     {dataElementDetail ? dataElementDetail.descriptions.length > 0 ? dataElementDetail.descriptions[0].description.length > 190 ? !moreDescription ?
                                         <div><Link href="#" onClick={showMoreDescription} style={{ textDecorationLine: 'underline' }}>more<TiArrowSortedDown /></Link></div> :
@@ -1607,13 +1608,13 @@ export default function DataElementDetails() {
                                                                     {dataElementDetail.extras.denominatorReadableFormula.length > 1 ?
                                                                         <TableHead>
                                                                             <TableRow>
-                                                                                <TableCell>
+                                                                                <TableCell style={{width:'40px'}}>
                                                                                     Data Element
                                                                                 </TableCell>
-                                                                                <TableCell>
+                                                                                <TableCell style={{width:'30px'}}>
                                                                                     Disaggregate
                                                                                 </TableCell>
-                                                                                <TableCell>
+                                                                                <TableCell style={{width:'30px'}}>
                                                                                     UID(s)
                                                                                 </TableCell>
                                                                                 <TableCell></TableCell>
@@ -1628,45 +1629,86 @@ export default function DataElementDetails() {
                                                                                 Object.keys(denominatorReadableFormulaMap).map(
                                                                                     key =>
 
-                                                                                        <TableRow >
+                                                                                    [
+                                                                                        <TableRow key={key} >
                                                                                             <TableCell style={{verticalAlign:'top', width:'30px'}} rowSpan={denominatorReadableFormulaMap[key].length}>
                                                                                                 <Link href={"/codelist/dataElementDetail?id=" + denominatorMap[key][0].split('.')[0]} style={{ textDecoration: 'underline' }}>
                                                                                                     {key}
                                                                                                 </Link>
                                                                                             </TableCell>
-                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
-                                                                                                {Object.keys(denominatorReadableFormulaMap[key]).map(
-                                                                                                    i =>
-                                                                                                        <TableRow >
-                                                                                                            <TableCell style={{ borderBottom: "none" }}>{denominatorReadableFormulaMap[key][i]}</TableCell>
-                                                                                                        </TableRow>
-                                                                                                )}
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}} >{denominatorReadableFormulaMap[key][0]}</TableCell>
+                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}} >{denominatorMap[key][0]}</TableCell>
+                                                                                            <TableCell alignItems="left">
+                                                                                                <Tooltip disableFocusListener title="Download">
+                                                                                                    <i>
+                                                                                                        <GetAppIcon style={{ color: '#1D5893' }} id="download-icon"
+                                                                                                            onClick={(event) => disagMenu(event, 'disag', denominatorMap[key][0])} />
+                                                                                                    </i>
+                                                                                                </Tooltip>
                                                                                             </TableCell>
-                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
-                                                                                                {Object.keys(denominatorReadableFormulaMap[key]).map(
-                                                                                                    i =>
-                                                                                                        <TableRow>
-                                                                                                            <TableCell style={{ borderBottom: "none" }}>{denominatorMap[key][i]}</TableCell>
-                                                                                                        </TableRow>
-                                                                                                )}
-                                                                                            </TableCell>
-                                                                                            <TableCell style={{verticalAlign:'top', width:'30px'}}>
-                                                                                                {Object.keys(denominatorReadableFormulaMap[key]).map(
-                                                                                                    i =>
-                                                                                                        <TableRow>
-                                                                                                            <TableCell alignItems="left" style={{ borderBottom: "none" }}>
-                                                                                                                <Tooltip disableFocusListener title="Download">
-                                                                                                                    <i>
-                                                                                                                        {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
-                                                                                                                        <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" onClick={dropDownMenu('download')} />
-                                                                                                                        {/* </Button> */}
-                                                                                                                    </i>
-                                                                                                                </Tooltip>
-                                                                                                            </TableCell>
-                                                                                                        </TableRow>
-                                                                                                )}
-                                                                                            </TableCell>
-                                                                                        </TableRow>
+                                                                                        </TableRow>,
+                                                                                        <React.Fragment> {Object.keys(denominatorReadableFormulaMap[key]).map(
+                                                                                            i =>
+                                                                                                i > 0 ?
+                                                                                                    <TableRow>
+                                                                                                        <TableCell style={{verticalAlign:'top', width:'30px'}} >{denominatorReadableFormulaMap[key][i]}</TableCell>
+                                                                                                        <TableCell style={{verticalAlign:'top', width:'30px'}} >{denominatorMap[key][i]}</TableCell>
+                                                                                                        <TableCell style={{verticalAlign:'top', width:'30px'}}>
+                                                                                                            <Tooltip disableFocusListener title="Download">
+                                                                                                                <i>
+                                                                                                                    {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
+                                                                                                                    <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" onClick={dropDownMenu('download')} />
+                                                                                                                    {/* </Button> */}
+                                                                                                                </i>
+                                                                                                            </Tooltip>
+                                                                                                        </TableCell>
+                                                                                                    </TableRow>
+                                                                                                    : ''
+                                                                                        )
+                                                                                        } </React.Fragment>
+
+                                                                                    ]
+                                                                                    // key =>
+
+                                                                                    //     <TableRow >
+                                                                                    //         <TableCell style={{verticalAlign:'top', width:'30px'}} rowSpan={denominatorReadableFormulaMap[key].length}>
+                                                                                    //             <Link href={"/codelist/dataElementDetail?id=" + denominatorMap[key][0].split('.')[0]} style={{ textDecoration: 'underline' }}>
+                                                                                    //                 {key}
+                                                                                    //             </Link>
+                                                                                    //         </TableCell>
+                                                                                    //         <TableCell style={{verticalAlign:'top', width:'30px'}}>
+                                                                                    //             {Object.keys(denominatorReadableFormulaMap[key]).map(
+                                                                                    //                 i =>
+                                                                                    //                     <TableRow >
+                                                                                    //                         <TableCell style={{ borderBottom: "none" }}>{denominatorReadableFormulaMap[key][i]}</TableCell>
+                                                                                    //                     </TableRow>
+                                                                                    //             )}
+                                                                                    //         </TableCell>
+                                                                                    //         <TableCell style={{verticalAlign:'top', width:'30px'}}>
+                                                                                    //             {Object.keys(denominatorReadableFormulaMap[key]).map(
+                                                                                    //                 i =>
+                                                                                    //                     <TableRow>
+                                                                                    //                         <TableCell style={{ borderBottom: "none" }}>{denominatorMap[key][i]}</TableCell>
+                                                                                    //                     </TableRow>
+                                                                                    //             )}
+                                                                                    //         </TableCell>
+                                                                                    //         <TableCell style={{verticalAlign:'top', width:'30px'}}>
+                                                                                    //             {Object.keys(denominatorReadableFormulaMap[key]).map(
+                                                                                    //                 i =>
+                                                                                    //                     <TableRow>
+                                                                                    //                         <TableCell style={{ borderBottom: "none" }}>
+                                                                                    //                             <Tooltip disableFocusListener title="Download">
+                                                                                    //                                 <i>
+                                                                                    //                                     {/* <Button variant="outlined" className={classes.actionButton} style={{ height: '48px', width: '80px', marginBottom: '10px' }} onClick={dropDownMenu("download")} id="downloadButton"> */}
+                                                                                    //                                     <GetAppIcon style={{ color: '#1D5893' }} id="download-icon" onClick={dropDownMenu('download')} />
+                                                                                    //                                     {/* </Button> */}
+                                                                                    //                                 </i>
+                                                                                    //                             </Tooltip>
+                                                                                    //                         </TableCell>
+                                                                                    //                     </TableRow>
+                                                                                    //             )}
+                                                                                    //         </TableCell>
+                                                                                    //     </TableRow>
                                                                                 )
                                                                             }
                                                                         </TableBody>
