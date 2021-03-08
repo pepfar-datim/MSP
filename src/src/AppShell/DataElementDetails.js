@@ -579,7 +579,7 @@ export default function DataElementDetails() {
             }
 
             const jsonData = await response.json();
-            let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name', 'asc');
+            let sortedData = sortJSONByKey(jsonData.mappings, 'to_concept_name_resolved', 'asc');
             if (!deMappings[id]) {
                 deMappings[id] = sortedData;
                 //setDataElementMapping(deMappings[id]);
