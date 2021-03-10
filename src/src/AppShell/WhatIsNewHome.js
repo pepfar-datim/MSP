@@ -401,7 +401,7 @@ export function  WhatsNewDetail(props) {
             <ExpansionPanelDetails key={"panelDetail"+ Math.random()} className={classes.panelDetail}>
               { 
                 props.jsonData.map(item =>{
-                  //console.log(item);
+                  console.log(item);
                 return (
                     (item["MER Version"] === props.version && item["List"] === category && getPanelFromItemTab(item["Tab"]) === props.panel) ?
                       (
