@@ -1,6 +1,6 @@
 
 
-const OCL_DOMAIN = (window.OCL_DOMAIN) || 'staging.aws.openconceptlab.org';
+const OCL_DOMAIN = (window.OCL_DOMAIN) || 'aws.openconceptlab.org';
 
 const config = { 
   "domain": OCL_DOMAIN, 
