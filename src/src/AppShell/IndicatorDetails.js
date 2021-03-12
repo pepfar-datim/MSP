@@ -907,10 +907,11 @@ export default function DataElementDetails() {
                 console.log('numeratorReadableFormula' + numeratorReadableFormula)
                 Object.keys(numeratorReadableFormula).map(
                     key => {
-                        console.log(key)
+                        // console.log(key)
                         let formulaArray = []
                         let numeratorArray = []
                         let dataElementCode = ''
+                        console.log(numeratorReadableFormula[key])
                         if (!numeratorReadableFormula[key].split('].[')[1]) {
                             console.log(numeratorReadableFormula[key])
                             if (key == Object.keys(numeratorReadableFormula).length - 1) {
@@ -1001,7 +1002,8 @@ export default function DataElementDetails() {
         try {
             if (indicator.extras.denominator.length > 1) {
                 let denominator = indicator.extras.denominator.split(' + ').join('+').split('+')
-                let denominatorReadableFormula = indicator.extras.denominatorReadableFormula.split(' + ').join('+').split('}+{')
+                console.log(denominator)
+                let denominatorReadableFormula = indicator.extras.denominatorReadableFormula.split(' + ').join('+').split('}+{').join().split('} -{').join().split('} - {').join().split('} +{').join().split('],[')
                 console.log('denominatorReadableFormula' + denominatorReadableFormula)
                 Object.keys(denominatorReadableFormula).map(
                     key => {
@@ -1024,7 +1026,7 @@ export default function DataElementDetails() {
                         }
                         else {
                             if (key == 0) {
-                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(3, denominatorReadableFormula[key].split('].[')[0].length)
+                                dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(2, denominatorReadableFormula[key].split('].[')[0].length)
                             }
                             else {
                                 dataElementCode = denominatorReadableFormula[key].split('].[')[0].substring(1, denominatorReadableFormula[key].split('].[')[0].length)
