@@ -1001,7 +1001,7 @@ export default function DataElementDetails() {
     function populateDenominatorMap(indicator) {
         try {
             if (indicator.extras.denominator.length > 1) {
-                let denominator = indicator.extras.denominator.split(' + ').join('+').split('+')
+                let denominator = indicator.extras.denominator.split(' + ').join('+').split('+').join().split(' - ').join('-').split('-')
                 console.log(denominator)
                 let denominatorReadableFormula = indicator.extras.denominatorReadableFormula.split(' + ').join('+').split('}+{').join().split('} -{').join().split('} - {').join().split('} +{').join().split('],[')
                 console.log('denominatorReadableFormula' + denominatorReadableFormula)
