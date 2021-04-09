@@ -1109,7 +1109,7 @@ export default function Codelist() {
       codeListJson.codeList.map(cl => {
         if (values.dataSet === cl.full_name) {
           console.log(" dataset changed ")
-          setCodeListQuery("&extras.codelists.id=" + cl.dataset_id)
+          setCodeListQuery("&extras.codelists=" + cl.dataset_id)
           setDataSetId(cl.id)
         }
       })
