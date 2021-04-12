@@ -892,7 +892,7 @@ const useStyles = makeStyles(theme => ({
           setCountOfValues(0);
           setDatimIndicatorLoading(false);
           throw new Error(
-            `Warning datim indicator data is emtpy from OCL  ` + indicatorID
+            `Warning datim indicator data is empty from OCL  ` + indicatorID
           );
         }
         console.log("datim indicators : " + jsonData.length);

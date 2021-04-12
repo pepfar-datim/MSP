@@ -1146,7 +1146,7 @@ useEffect(() => {
     setIndicatorGroupQuery("")
   }
   else {
-    setIndicatorGroupQuery("&extras.indicatorGroups.id=" + indicatorGroups[values.indicatorGroup])
+    setIndicatorGroupQuery("&extras.indicatorGroups=" + indicatorGroups[values.indicatorGroup])
   }
   localStorage.setItem("indicatorGroup", values.indicatorGroup);
 }, [values.indicatorGroup]);
